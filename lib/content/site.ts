@@ -75,6 +75,6 @@ export const CHAIRMAN = {
     "We drive technology-led transformation, delivering future-ready solutions that empower enterprises to scale, innovate, and thrive in an evolving digital landscape.",
     "Built on expertise, trust, and innovation, we deliver software and services in artificial intelligence to accelerate business success across diverse industries.",
     "As industries evolve, Azkashine remains a trusted partner — transforming vision into reality and challenges into opportunities.",
-    "Together, let's shape a future where technology is not just adopted but truly admired.",
+    "Together, let’s shape a future where technology is not just adopted but truly admired.",
   ],
 } as const;

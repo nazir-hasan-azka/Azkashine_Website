@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Per-area stylesheets. Split so several people can work on different parts of the
+   site at once without three edits landing on the same file, and so a route's own
+   rules sit next to each other rather than at the bottom of a 2,000-line sheet.
+   Everything shared — tokens, the gutter, the spine, the route furniture — stays in
+   this file, because that is what makes it shared. */
+@import "./styles/practices.css";
+@import "./styles/products.css";
+@import "./styles/pages.css";
+@import "./styles/film.css";
+
 /*
   Azkashine design tokens — extracted from the Figma "Landing Page 1" SVG.
   Tailwind v4 is CSS-first: tokens declared in @theme generate utilities
@@ -31,6 +41,24 @@
   --color-border: #e4eafe;
   --color-border-strong: #d3e7fe;
 
+  /* ── Statement-card tints, added 2026-09-07 ─────────────────────────────────
+     Tokens Studio's colour is not in its ground — its `<body>` is #ffffff across all
+     9,568px. The colour a visitor remembers is in inset rounded cards sitting ON the
+     white. `.claude/TOKENS-STUDIO.md` has the measurements and `DIRECTION.md` carries
+     the resolution: the ground stays white, colour arrives as objects.
+
+     THREE TINTS AT MATCHED LIGHTNESS, which is a decision about equal measure before
+     it is one about colour. The three practices get one card each; a ladder from pale
+     to saturated would rank them, and this company does three things in equal measure.
+     So the CARD is a pale step in one family and the ACCENT inside it is that step's
+     hue at full strength — which is also Tokens Studio's own rule, where text on a
+     tinted card stays ink and exactly one element inverts.
+
+     Ink measures 15:1 or better on all three. */
+  --color-tint-cyan: #d9f2fd;
+  --color-tint-blue: #dfe9fd;
+  --color-tint-deep: #dde4f0;
+
   /* Accents (illustrations / badges) */
   --color-accent-yellow: #ffe200;
   --color-accent-orange: #ff7f22;
@@ -39,6 +67,35 @@
 
   /* Type */
   --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-heavy), Impact, sans-serif;
+
+  /* The type scale, from CLAUDE.md. Nine fixed steps; `display` is the hero's own and
+     stays there, because it is capped by viewport height as well as width and nothing
+     else on the site is.
+
+     Three scales existed when these landed — the hero's, Tailwind's defaults, and a set
+     of arbitrary pixel values that came in with the staged components. These exist so a
+     fourth does not: a section that needs a size picks a step instead of inventing one.
+     Tailwind emits them as utilities (`text-h2`), and they are ordinary custom
+     properties too, so the CSS blocks below read them with `var(--text-h2)`. */
+  --text-label-sm: 10px;
+  --text-label: 11px;
+  --text-body-sm: 14px;
+  --text-body: 16px;
+  --text-body-lg: 17px;
+  --text-h4: 20px;
+  --text-h3: 24px;
+  --text-h2: 32px;
+  --text-h1: 44px;
+  /* Two steps ABOVE the ten, added 2026-09-06 for the film and the route headers.
+     `DIRECTION.md` asks for Copula's type-as-tone — oversized words set a shade off the
+     paper, reading as structure rather than as a headline — and the scale topped out at
+     44px outside the hero, so there was nothing to set them in. Both are fluid and both
+     are capped, because an uncapped vw unit is a headline that runs off a 2560 window.
+     `display` stays the hero's own, capped by height as well as width. */
+  --text-display-sm: clamp(2.75rem, 5.6vw, 5rem);
+  --text-display-lg: clamp(3.25rem, 9vw, 9.5rem);
 
   /* Motion — a small, fixed vocabulary. Every transition on the site picks from
      these; components do not invent their own timings. Matching the range the
@@ -58,10 +115,41 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Page gutter: content sits in the 1520px design box (→ 200px margins at 1920),
-   never less than a 2rem gutter on smaller screens. */
+/* Page gutter — ONE definition, used by the header, the hero and every section that
+   follows. Anything that sets its own horizontal padding will drift out of alignment
+   with the rest of the page, which is exactly what happened when the hero had its own. */
+:root {
+  --page-gutter: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-gutter: max(4.5rem, calc((100% - 1440px) / 2));
+  }
+}
+
+/* Where the trace runs — ONE definition, and the film's canvas reads this one rather
+   than carrying the formula in JavaScript as well.
+
+   It sits IN the margin, not on the text edge. `--page-gutter` is the WIDTH of the
+   margin, so a rule at exactly that x touches the first character of every line it
+   passes, including the hero's lede. Just under half the margin keeps it clear of the
+   type at 320px and still tracks the text column as the gutter grows. */
+:root {
+  --spine-x: calc(var(--page-gutter) - min(24px, var(--page-gutter) * 0.42));
+  /* How far a film stage or a route indents its copy past the spine, so the rule reads
+     as a margin rule down a ledger rather than as a line struck through the text. */
+  --spine-step: 2rem;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --spine-step: 1.25rem;
+  }
+}
+
 @utility page-gutter {
-  padding-inline: max(2rem, calc((100% - 1520px) / 2));
+  padding-inline: var(--page-gutter);
 }
 
 body {
@@ -269,5 +357,1964 @@ button:hover > .nudge {
   .lift:hover,
   .btn-motion:hover {
     transform: none;
+  }
+}
+
+/* ─── Home hero ──────────────────────────────────────────────────────────────
+   The headline as an aperture. The heading is a real `<h1>` in ink underneath
+   the canvas; the canvas floods it with light on arrival and the ink then fades,
+   so a browser without WebGL2 keeps a finished-looking headline. See
+   `components/hero/Hero.tsx` for why the layering is in that order. */
+
+[data-hero] {
+  /* Room the chrome needs above and below the headline. `reserves()` in
+     ApertureCanvas mirrors these exactly — move one, move the other. */
+  --hero-top-reserve: 132px;
+  --hero-bottom-reserve: 148px;
+  /* 0.98 of the free band over the ink the four lines actually paint — 4.01em, not
+     the 3.52em the line boxes measure. See the INK note in ApertureCanvas. */
+  --hero-fit: calc(
+    (100svh - var(--hero-top-reserve) - var(--hero-bottom-reserve)) * 0.2444
+  );
+  --hero-ink: var(--color-ink);
+  --hero-dim: var(--color-muted);
+  /* Reads from the site-wide gutter so the hero lines up with the header. `layout()`
+     in ApertureCanvas mirrors the same numbers, so the canvas and the DOM agree on
+     where the text starts. */
+  --hero-gutter: var(--page-gutter);
+  /* Pure white, not the #fafbff token. Against a saturated material anything short of
+     white reads as grey, and grey is what made this feel unfinished. */
+  background: #ffffff;
+}
+
+/* Mirrors `reserves()` in ApertureCanvas — three buckets, the same three numbers.
+   These two files disagreeing is the single easiest way to break this hero. */
+@media (min-width: 768px) and (max-width: 1199px) {
+  [data-hero] {
+    --hero-top-reserve: 132px;
+    --hero-bottom-reserve: 220px;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-hero] {
+    --hero-top-reserve: 140px;
+    --hero-bottom-reserve: 288px;
+  }
+}
+
+
+/* The dark ground. The material is unchanged — only what it sits on and the chrome
+   that has to stay legible over it. */
+[data-hero][data-ground="deep"] {
+  --hero-deep: #070a16;
+  --hero-ink: #f2f6ff;
+  --hero-dim: rgba(238, 244, 255, 0.62);
+  background: var(--hero-deep);
+}
+
+/* Centred on the viewport. `layout()` in ApertureCanvas uses the same two numbers,
+   so the ink heading and the aperture land on each other exactly. */
+[data-hero] .hero-h1 {
+  position: absolute;
+  z-index: 0;
+  left: var(--hero-gutter);
+  right: var(--hero-gutter);
+  top: calc(
+    var(--hero-top-reserve) +
+      (100svh - var(--hero-top-reserve) - var(--hero-bottom-reserve)) / 2
+  );
+  transform: translateY(-50%);
+  font-family: var(--font-heavy), Impact, sans-serif;
+  font-weight: 400;
+  /* Capped by the window's HEIGHT as well as its width. Width alone was the bug: on a
+     short wide window four lines overran the rule above and the lede below. */
+  font-size: max(
+    1.375rem,
+    min(calc((100vw - 2 * var(--hero-gutter)) / 8.85), var(--hero-fit), 10.9rem)
+  );
+  line-height: 0.88;
+  letter-spacing: -0.015em;
+  color: var(--hero-ink);
+  pointer-events: none;
+  transition: color var(--dur-slower) var(--ease-out-soft);
+}
+
+/* The canvas owns the glyphs from the moment it reports in. It used to wait for the
+   reveal to finish, which was right when the mask was static — now the letters fly in,
+   and an ink heading sitting still underneath them would show through the whole
+   arrival. */
+[data-hero][data-canvas="on"] .hero-h1 {
+  color: transparent;
+}
+
+[data-hero] .hero-h1 span {
+  display: block;
+  animation: hero-rise 1100ms var(--ease-out-soft) both;
+}
+
+[data-hero] .hero-h1 span:nth-child(1) { animation-delay: 60ms; }
+[data-hero] .hero-h1 span:nth-child(2) { animation-delay: 140ms; }
+[data-hero] .hero-h1 span:nth-child(3) { animation-delay: 220ms; }
+[data-hero] .hero-h1 span:nth-child(4) { animation-delay: 300ms; }
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(0.14em); }
+  to { opacity: 1; transform: none; }
+}
+
+[data-hero] .hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+}
+
+[data-hero][data-canvas="on"] .hero-canvas {
+  opacity: 1;
+}
+
+/* Paper. Real film grain — one noise tile jumped around in discrete steps, because a
+   smooth transform reads as a moving texture and steps read as grain. */
+[data-hero] .hero-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  /* `multiply` at 0.34 was dragging the #fafbff ground down to roughly #d0d1d4 — the
+     page read grey, and grey under a saturated material looks dirty. `soft-light`
+     textures without darkening: it lifts and lowers around the midpoint instead of
+     only ever subtracting, so the ground stays the colour the token says it is. */
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: hero-grain 700ms steps(1, end) infinite;
+}
+
+@keyframes hero-grain {
+  0% { background-position: 0 0; }
+  20% { background-position: -37px 22px; }
+  40% { background-position: 46px -31px; }
+  60% { background-position: -19px -44px; }
+  80% { background-position: 29px 38px; }
+  100% { background-position: 0 0; }
+}
+
+[data-hero] .hero-frame {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 5rem);
+  /* Horizontal padding belongs to the children now, so the closing band can run the
+     full width while the copy above it stays on the gutter. */
+  padding: 1.75rem 0 0;
+}
+
+[data-hero] .hero-top {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+[data-hero] .hero-top {
+  padding-inline: var(--hero-gutter);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--hero-dim);
+  animation: hero-fade 900ms var(--ease-out-soft) both;
+}
+
+[data-hero] .hero-top span:first-child {
+  color: var(--hero-ink);
+}
+
+[data-hero] .hero-bottom {
+  /* Pushed to the foot of the column by the flex parent, with the band beneath it. */
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.75rem 2.5rem;
+  padding: 1rem var(--hero-gutter) 1.6rem;
+  border-top: 1px solid rgba(15, 17, 37, 0.08);
+  animation: hero-fade 900ms var(--ease-out-soft) 700ms both;
+}
+
+[data-hero] .hero-lede {
+  /* Sans, not mono. Mono earns its place on a label; on a sentence someone has to
+     actually read it just looks like console output. */
+  font-family: var(--font-sans);
+  max-width: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  letter-spacing: -0.005em;
+  color: var(--hero-dim);
+}
+
+[data-hero] .hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+[data-hero] .hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 3.125rem;
+  padding-inline: 1.6rem;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  transition:
+    transform var(--dur-fast) var(--ease-out-soft),
+    background-color var(--dur-fast) linear;
+}
+
+[data-hero] .hero-btn:hover { transform: translateY(-2px); }
+
+[data-hero] .hero-btn-solid {
+  background: var(--hero-ink);
+  color: #fff;
+}
+
+[data-hero] .hero-btn-ghost {
+  border: 1px solid rgba(15, 17, 37, 0.18);
+  color: var(--hero-ink);
+}
+
+[data-hero] .hero-btn-ghost:hover { background: rgba(15, 17, 37, 0.05); }
+
+[data-hero][data-ground="deep"] .hero-btn-solid {
+  background: var(--color-brand-light);
+  color: var(--hero-deep);
+}
+
+[data-hero][data-ground="deep"] .hero-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Grain over near-black needs to add light, not soften midtones. */
+[data-hero][data-ground="deep"] .hero-grain {
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+}
+
+@keyframes hero-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The global reduced-motion switch already collapses the entrances. The grain loop
+   and the canvas need saying explicitly: the canvas cancels its own frame loop and
+   paints once with the reveal complete (see ApertureCanvas), so the aperture is
+   still there, it just holds still. */
+/* Phone. These have to sit AFTER every rule they override — the earlier copy of this
+   block lost every tie on source order and the chrome never shrank. On a 320px screen
+   the eyebrow, copy, buttons and closing band together wanted more than the whole
+   viewport, leaving nothing for the headline they exist to support. */
+@media (max-width: 767px) {
+  [data-hero] .hero-frame {
+    padding-top: 1.1rem;
+  }
+
+  [data-hero] .hero-lede {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    max-width: none;
+  }
+
+  [data-hero] .hero-bottom {
+    gap: 0.9rem 1.5rem;
+    padding-top: 0.8rem;
+    padding-bottom: 0.9rem;
+  }
+
+  [data-hero] .hero-btn {
+    height: 2.7rem;
+    padding-inline: 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  [data-hero] .hero-top {
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hero] .hero-grain {
+    animation: none !important;
+  }
+}
+
+/* ─── Clients ────────────────────────────────────────────────────────────────
+   The logo row under the hero. Quiet on purpose: the hero above is a prismatic
+   headline, and five logos in five brand colours would compete with it. */
+
+.clients {
+  border-top: 1px solid rgba(15, 17, 37, 0.08);
+  background: #fff;
+}
+
+.clients-inner {
+  padding: 2.75rem var(--page-gutter) 3rem;
+}
+
+.clients-label {
+  text-align: center;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.clients-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  /* Centred. Five marks do not fill a 1400px column, and left-aligned they left a wide
+     empty right side that read as a mistake rather than as space. */
+  justify-content: center;
+  /* Wide gaps, because these marks have very little breathing room of their own and a
+     tight row reads as a strip of stickers. */
+  gap: 1.9rem clamp(2.5rem, 5.5vw, 5rem);
+  margin-top: 2.1rem;
+}
+
+.clients-row img {
+  /* Full brand colour. A silhouette read as calmer against the hero, but it also read
+     as hedging — these are real marks and dimming them undersells them. */
+  transition: transform var(--dur-base) var(--ease-out-soft);
+}
+
+.clients-row li:hover img {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 767px) {
+  .clients-inner {
+    padding-top: 2rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .clients-row {
+    gap: 1.4rem 2.25rem;
+    margin-top: 1.4rem;
+  }
+
+  /* The clamp already scales them; this only stops a wide mark crowding the gutter
+     when five wrap to two rows. */
+  .clients-row img {
+    max-width: 40vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clients-row li:hover img {
+    transform: none;
+  }
+}
+
+/* ─── What we do ─────────────────────────────────────────────────────────────
+   The three practices as a stacking deck on a saturated band. Full bleed, hard
+   left — none of which is true of the hero or the logo row above it. The colour
+   change *is* the boundary, so there is no border-top here; a rule on top of a
+   colour change draws a line on a line.
+
+   Contrast, measured rather than assumed. On the band: white 11.7:1, `brand-light`
+   7.9:1, dimmed body 6.8:1. On the card, which is lighter: white 9.4:1,
+   `brand-light` 6.4:1, dimmed body 5.7:1. All clear of 4.5:1 for body copy, and
+   nothing here sets `brand` on a light ground, which is the trap
+   `.claude/rules/styles.md` records. */
+
+.wwd {
+  background: var(--color-blue-900);
+  color: var(--wwd-text);
+
+  /* Section-scoped, so the band's palette is named once and read everywhere below.
+     These four are the values for type sitting on the BAND — the section head. The
+     card redefines all of them, because it is white and everything on it inverts. */
+  --wwd-text: #ffffff;
+  --wwd-dim: rgba(255, 255, 255, 0.72);
+  --wwd-accent: var(--color-brand-light);
+  --wwd-card: #ffffff;
+  --wwd-line-soft: rgba(255, 255, 255, 0.12);
+}
+
+.wwd-inner {
+  padding: clamp(4.5rem, 8vw, 7.5rem) var(--page-gutter);
+}
+
+.wwd-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--wwd-accent);
+}
+
+.wwd-heading {
+  margin-top: 1.1rem;
+  font-size: var(--text-h1);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.wwd-lede {
+  margin-top: 1.1rem;
+  max-width: 42ch;
+  /* Balanced, because at 34ch this broke as "and the nine / products built on them"
+     and split the two figures the sentence exists to put next to each other. */
+  text-wrap: balance;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: var(--wwd-dim);
+}
+
+/* ── The deck ────────────────────────────────────────────────────────────────
+   Each card sticks a little lower than the one before it, so the earlier cards
+   stay on screen as a deck of edges while the next slides over them. Sticky
+   positioning and nothing else — no scroll listener, no library, nothing to
+   throttle.
+
+   `--stack-top` clears the 5rem header with room to spare; `--stack-step` is what
+   is left visible of the card underneath. */
+.wwd-stack {
+  --stack-top: 6.5rem;
+  /* The step IS the strip. What shows of a card once the next one lands on it is
+     exactly its number and its name — never a half-cut line of something else. */
+  --strip-h: 3.75rem;
+  --stack-step: var(--strip-h);
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+}
+
+/* WHITE, NOT A LIGHTER BLUE. The card was the ground lifted 8% toward white, which
+   was legible and inert — a deck of edges you had to look for. Pure white against a
+   saturated ground is the same call the hero already makes, and for the same reason:
+   anything short of white reads grey next to this much colour. It also needs no
+   border, because white on blue-900 is its own edge.
+
+   Everything on the card inverts, so the four tokens are redefined here rather than
+   overridden rule by rule. `brand-light` in particular CANNOT come along: it measures
+   1.42:1 on white and fails at any size, which is the trap `.claude/rules/styles.md`
+   records. `blue-700` carries the accent at 5.9:1.
+   Measured on white: ink 18.6:1, muted 4.8:1, blue-700 5.9:1. */
+.wwd-card {
+  border-radius: 24px;
+  background: var(--wwd-card);
+  color: var(--color-ink);
+  --wwd-text: var(--color-ink);
+  --wwd-dim: var(--color-muted);
+  --wwd-accent: var(--color-blue-700);
+  --wwd-line-soft: var(--color-border-strong);
+  /* Clipped, so the strip's corners follow the card's and the deck's edges stay
+     clean where they overlap. */
+  overflow: hidden;
+}
+
+/* The label strip: the card's header, and the part of it that survives being
+   covered. Fixed height rather than padding-derived, because `--stack-step` reads
+   it — leave it to line-height and the deck shows a sliver of the next line. */
+.wwd-strip {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--strip-h);
+  padding-inline: clamp(1.75rem, 3vw, 3rem);
+  border-bottom: 1px solid var(--wwd-line-soft);
+}
+
+.wwd-card + .wwd-card {
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .wwd-card {
+    position: sticky;
+    top: calc(var(--stack-top) + var(--i, 0) * var(--stack-step));
+    /* CAST UPWARD. The card that covers arrives from BELOW and slides up over the one
+       before it, so the seam is its top edge — a downward shadow falls into empty
+       space and the deck reads as one continuous white panel with the content
+       changing halfway down. The hairline draws the seam and the shadow gives it
+       depth. Both are needed: white on white has no edge of its own, which is the
+       cost of the card colour being right. */
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -26px 50px -26px rgba(3, 18, 47, 0.4);
+  }
+
+  .wwd-card + .wwd-card {
+    margin-top: 2rem;
+  }
+}
+
+/* Holds the assembled deck on screen. A sticky box is clamped to its containing
+   block's *content* box, and that box ends with the last card — so without this the
+   deck forms and lets go in almost the same gesture. Padding cannot do it: padding
+   is outside the content box. */
+.wwd-dwell {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .wwd-dwell {
+    display: block;
+    height: 45vh;
+  }
+}
+
+.wwd-index {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  color: var(--wwd-accent);
+  /* Fixed, so all three numbers start at the same x and the rules line up. */
+  flex: none;
+}
+
+.wwd-body {
+  display: grid;
+  padding: clamp(1.75rem, 3vw, 3rem);
+  /* Both tracks `minmax(0, ...)`: a grid child defaults to min-width auto and will
+     not shrink under its longest word — "Automation & Quality Engineering" pushed
+     this past the gutter at 320px before these were here. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  gap: clamp(2.5rem, 5vw, 5.5rem);
+}
+
+.wwd-copy {
+  min-width: 0;
+}
+
+.wwd-name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.wwd-tagline {
+  font-size: var(--text-body-lg);
+  line-height: 1.5;
+  color: var(--wwd-accent);
+}
+
+.wwd-intro {
+  margin-top: 1.1rem;
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--wwd-dim);
+}
+
+.wwd-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.6rem;
+  /* 16px at 1.5 is 24px of line box exactly — the padding is what puts real air
+     around WCAG 2.5.8's 24x24 rather than landing on it. */
+  padding-block: 0.4rem;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--wwd-accent);
+  transition: color var(--dur-fast) linear;
+}
+
+.wwd-link:hover {
+  color: var(--wwd-text);
+}
+
+.wwd-caps {
+  min-width: 0;
+  align-self: start;
+}
+
+/* Ruled rows, top border on each: the first rule closes the gap under the card's
+   own rule and the last one leaves the list open at the bottom, which is what stops
+   the four lines reading as a boxed table. */
+.wwd-cap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: baseline;
+  padding: 0.95rem 0;
+  border-top: 1px solid var(--wwd-line-soft);
+}
+
+.wwd-cap-title {
+  min-width: 0;
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--wwd-text);
+}
+
+.wwd-cap-desc {
+  min-width: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--wwd-dim);
+}
+
+@media (max-width: 1023px) {
+  .wwd-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.25rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .wwd-heading {
+    font-size: var(--text-h2);
+  }
+
+  .wwd-lede {
+    font-size: var(--text-body);
+  }
+
+  .wwd-name {
+    font-size: var(--text-h3);
+  }
+
+  .wwd-tagline {
+    font-size: var(--text-body);
+  }
+
+  /* Stacked, not two columns. Side by side at this width the descriptor column is
+     narrower than its longest word and every row wraps to three lines. */
+  .wwd-cap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.3rem;
+  }
+
+  .wwd-strip {
+    gap: 0.75rem;
+    padding-inline: 1.25rem;
+  }
+}
+
+/* ─── VARIATION: horizontal deck ─────────────────────────────────────────────
+   Not production. `app/variations/horizontal/` only — a prototype of the site as
+   panels presented one at a time instead of a page scrolled down.
+
+   The document does not scroll here. `:has()` scopes that to the presence of the
+   deck rather than to a route, so nothing global has to know this page exists, and
+   the lock lifts by itself the moment the component unmounts. The site footer goes
+   with it: in a deck there is no bottom of the page to put it at, which is one of
+   the real costs of the idea rather than an oversight. */
+
+body:has([data-hdeck]) {
+  overflow: hidden;
+}
+
+body:has([data-hdeck]) > div > footer {
+  display: none;
+}
+
+.hdeck {
+  /* Under the 5rem sticky header, which stays: the deck replaces the scroll, not
+     the site's chrome. */
+  height: calc(100svh - 5rem);
+  overflow: hidden;
+  position: relative;
+}
+
+.hdeck-track {
+  display: flex;
+  height: 100%;
+  /* One transform for the whole deck — compositor-only, so a six-panel move costs
+     the same as a one-panel move and nothing relayouts. */
+  transform: translateX(calc(var(--panel, 0) * -100%));
+  transition: transform 700ms var(--ease-out-soft);
+}
+
+.hdeck-panel {
+  flex: 0 0 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--page-gutter);
+}
+
+/* The hero brings its own frame and its own full-height sizing, so this panel just
+   gets out of its way. */
+.hdeck-panel-hero {
+  display: block;
+  padding-inline: 0;
+}
+
+.hdeck-panel-light {
+  background: #ffffff;
+}
+
+.hdeck-panel-deep {
+  background: var(--color-blue-900);
+  color: #ffffff;
+}
+
+.hdeck-centre {
+  width: 100%;
+  text-align: center;
+}
+
+.hdeck-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.hdeck-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 6vw, 6rem);
+  margin-top: clamp(2.5rem, 6vh, 5rem);
+}
+
+.hdeck-title {
+  max-width: 40ch;
+}
+
+.hdeck-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-brand-light);
+}
+
+.hdeck-heading {
+  margin-top: 1.1rem;
+  font-size: var(--text-h1);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.hdeck-lede {
+  margin-top: 1.25rem;
+  text-wrap: balance;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ── The practice card, at panel scale ─────────────────────────────────────── */
+
+.hdeck-card {
+  width: 100%;
+  max-height: 100%;
+  border-radius: 24px;
+  background: #ffffff;
+  color: var(--color-ink);
+  overflow: hidden;
+  box-shadow: 0 40px 90px -50px rgba(3, 18, 47, 0.75);
+}
+
+.hdeck-strip {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem clamp(1.75rem, 3vw, 3rem);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.hdeck-index {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  color: var(--color-blue-700);
+  flex: none;
+}
+
+.hdeck-name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.hdeck-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+  gap: clamp(2rem, 4vw, 4.5rem);
+  padding: clamp(1.5rem, 3vw, 2.75rem) clamp(1.75rem, 3vw, 3rem);
+}
+
+.hdeck-copy {
+  min-width: 0;
+}
+
+.hdeck-tagline {
+  font-size: var(--text-body-lg);
+  line-height: 1.5;
+  color: var(--color-blue-700);
+}
+
+.hdeck-intro {
+  margin-top: 1rem;
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+.hdeck-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.4rem;
+  padding-block: 0.4rem;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-blue-700);
+  transition: color var(--dur-fast) linear;
+}
+
+.hdeck-link:hover {
+  color: var(--color-ink);
+}
+
+.hdeck-caps {
+  min-width: 0;
+  align-self: start;
+}
+
+.hdeck-cap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: baseline;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.hdeck-cap-title {
+  min-width: 0;
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.hdeck-cap-desc {
+  min-width: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── The deck's own controls ───────────────────────────────────────────────── */
+
+.hdeck-nav {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1rem, 3vh, 2rem);
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 40px -28px rgba(3, 18, 47, 0.9);
+}
+
+.hdeck-arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--color-blue-700);
+  transition: background-color var(--dur-fast) linear, opacity var(--dur-fast) linear;
+}
+
+.hdeck-arrow:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.hdeck-arrow:disabled {
+  opacity: 0.3;
+}
+
+.hdeck-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+/* Real buttons at 24x24 minimum, not decorative pips: the dots are the only visible
+   way to reach a panel without guessing at a gesture. */
+.hdeck-dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+
+.hdeck-dot-mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-border-strong);
+  transition: background-color var(--dur-fast) linear, transform var(--dur-base) var(--ease-out-soft);
+}
+
+.hdeck-dot[data-on] .hdeck-dot-mark {
+  background: var(--color-blue-700);
+  transform: scale(1.5);
+}
+
+.hdeck-dot-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .hdeck-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .hdeck-name {
+    font-size: var(--text-h4);
+  }
+
+  .hdeck-heading {
+    font-size: var(--text-h2);
+  }
+
+  .hdeck-cap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+    padding: 0.6rem 0;
+  }
+}
+
+/* The slide is the whole idea, so with reduced motion the deck cuts between panels
+   rather than sliding. It still works; it just stops moving. */
+@media (prefers-reduced-motion: reduce) {
+  .hdeck-track {
+    transition: none;
+  }
+}
+
+/* ─── VARIATION: the trace ───────────────────────────────────────────────────
+   Not production. `app/variations/trace/` only — the line from `DIRECTION.md`
+   with nothing on top of it, so the metaphor can be judged moving.
+
+   The wrapper's height is the scene's duration; the stage inside it is sticky and
+   one viewport tall. That is the same unit foodnia.co.jp is built from, and the
+   same one the What we do deck already uses. */
+
+.tp {
+  position: relative;
+  background: #ffffff;
+}
+
+.tp-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.tp-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tp-chrome {
+  position: absolute;
+  top: clamp(5.5rem, 12vh, 8rem);
+  left: var(--page-gutter);
+  right: var(--page-gutter);
+}
+
+.tp-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.tp-note {
+  margin-top: 0.6rem;
+  max-width: 26ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* Bottom-left, on the gutter, so it reads as a caption on the line rather than a
+   caption on the page. */
+.tp-status {
+  position: absolute;
+  left: var(--page-gutter);
+  bottom: clamp(1.5rem, 5vh, 3rem);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-body-sm);
+  color: var(--color-ink);
+}
+
+/* ─── The header ─────────────────────────────────────────────────────────────
+   Rebuilt 2026-09-07 from the measurement in `.claude/TOKENS-STUDIO.md`.
+
+   THE OUTER BAR PAINTS NOTHING. On tokens.studio it is `position: fixed`, full
+   width, 78px, and `rgba(0,0,0,0)` — the white you see is one descendant. Ours
+   stays `sticky` rather than `fixed` because the whole site's offsets (the
+   spine's top, the chapter marks, every `scroll-margin`) are already derived
+   from a 5rem bar that occupies flow. Sticky is `fixed` that keeps its space.
+
+   THE PILL CONTRACTS ON SCROLL, and that is the move worth taking — it is
+   invisible in a screenshot, which is why it had to be driven in a browser to
+   find. Measured: full-bleed and shadowless at rest, then at ~500px it becomes
+   a centred 1024px pill, 20px from the top, radius 10, with a shadow of
+   `rgba(12,15,15,0.2) 0 3px 0 0`.
+
+   THAT SHADOW IS NOT AN ELEVATION SHADOW: three pixels down, ZERO blur, zero
+   spread. It is a printed-sticker offset. Copying this with a soft blur is the
+   single easiest way to get it wrong, so it is written here once and reused by
+   the ledger cards.
+
+   NO JAVASCRIPT. It is a scroll-driven CSS animation, the same mechanism the
+   site's `.reveal` already uses. Without support it resolves to the resting
+   state, which is a perfectly good header. */
+
+:root {
+  /* The hard offset. One definition, used by the header and the statement cards. */
+  --shadow-hard: 0 3px 0 0 rgba(15, 17, 37, 0.16);
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* Paints nothing. The pill inside is the only thing with a background. */
+  background: transparent;
+  /* `flow-root`, or the pill's animated `margin-top` collapses straight through this
+     empty box and the pill never lifts off the top edge — it contracted horizontally
+     and stayed welded to y=0. A parent with no padding, border or block formatting
+     context does not stop a child's top margin. */
+  display: flow-root;
+}
+
+.nav-pill {
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  padding-inline: var(--page-gutter);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-pill {
+      animation: nav-contract linear both;
+      animation-timeline: scroll();
+      /* Contracts across the first 500px, which is where the reference does it —
+         far enough in that it reads as a response to committing to the page
+         rather than as a twitch. */
+      animation-range: 0 500px;
+    }
+  }
+}
+
+@keyframes nav-contract {
+  from {
+    max-width: 100%;
+    margin-top: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom-color: var(--color-border);
+  }
+  to {
+    max-width: 71%;
+    margin-top: 1.25rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-hard);
+    border-bottom-color: transparent;
+  }
+}
+
+/* 1024 of 1440 is 0.711, so the contracted width is a percentage rather than a
+   fixed 1024px — at 2560 a 1024px pill would be a stripe in the middle of the
+   window. The floor keeps it from squeezing the nav on a laptop. */
+.nav-pill {
+  margin-inline: auto;
+  min-width: min(100%, 60rem);
+}
+
+@media (max-width: 1023px) {
+  /* No contraction on a phone. The pill would inset a bar that is already
+     narrow, and the drawer beneath it is positioned against the header's own
+     box — a moving header would drag it around. */
+  .nav-pill {
+    animation: none;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 0;
+    border-radius: 0;
+  }
+}
+
+/* ─── The routes ─────────────────────────────────────────────────────────────
+   The sixteen pages that are not the film. Conventional and fast on purpose: a
+   buyer comparing vendors needs them scannable, and `DIRECTION.md` puts the
+   cinema on the home page and nowhere else.
+
+   What carries the language across is the spine — the same `--spine-x` the
+   film's canvas measures, so the rule on a product page is on exactly the line
+   the trace runs down on `/`. No canvas here, no loop, no gates. */
+
+.page {
+  position: relative;
+}
+
+/* One fixed element and a border. There is no JavaScript on an inner route at
+   all. It starts below the header, which is white at 90% with a blur — a line
+   passing behind it reads as a smudge rather than as a rule. */
+.spine {
+  position: fixed;
+  top: 5rem;
+  bottom: 0;
+  left: var(--spine-x);
+  z-index: 1;
+  width: 0;
+  border-left: 1px solid var(--color-border-strong);
+  pointer-events: none;
+}
+
+/* ── Bands ──────────────────────────────────────────────────────────────── */
+
+.band {
+  position: relative;
+  z-index: 2;
+  background: var(--color-background);
+  /* The ghost word below is oversized on purpose and must never reach the edge
+     of the viewport. Standard 1 does not care how good it looked at 1440. */
+  overflow: hidden;
+}
+
+.band[data-tone="tint"] {
+  background: var(--color-surface-2);
+}
+
+.band[data-tone="deep"] {
+  background: var(--color-blue-900);
+  color: #ffffff;
+}
+
+.band-inner {
+  /* Left is the gutter PLUS the step past the spine; right is the plain gutter.
+     Every band on every route uses this one rule, which is what stops sixteen
+     pages inventing sixteen margins. */
+  padding: clamp(3.5rem, 7vw, 6rem) var(--page-gutter) clamp(3.5rem, 7vw, 6rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  max-width: 1680px;
+}
+
+/* ── The route header ───────────────────────────────────────────────────── */
+
+.rh {
+  position: relative;
+  z-index: 2;
+  padding: clamp(2rem, 5vh, 3.5rem) var(--page-gutter) clamp(3rem, 6vw, 5rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  background: var(--color-background);
+}
+
+.rh-crumbs {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.rh-crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.rh-crumbs a {
+  color: var(--color-muted);
+  transition: color var(--dur-fast) linear;
+}
+
+.rh-crumbs a:hover {
+  color: var(--color-blue-700);
+}
+
+.rh-crumbs [aria-current="page"] {
+  color: var(--color-ink);
+}
+
+.rh-sep {
+  margin: 0 0.6rem;
+  color: var(--color-border-strong);
+}
+
+.rh-body {
+  margin-top: clamp(2rem, 5vw, 3.25rem);
+}
+
+.rh-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+/* The largest thing on the page is the name of the page. `--text-display-sm` is
+   a step above everything else here and fluid to 80px; the negative tracking is
+   what stops a display size reading as a body face that simply got bigger. */
+.rh-title {
+  margin-top: 1rem;
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  text-wrap: balance;
+  color: var(--color-ink);
+}
+
+.rh-lede {
+  margin-top: 1.5rem;
+  max-width: 52ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+/* ── Section heads, and the ghost ───────────────────────────────────────── */
+
+.sh {
+  position: relative;
+}
+
+/* TYPE AS TONE. An oversized word in a grey a shade off the paper, reading as
+   texture and structure rather than as a second headline competing with the
+   real one. Copula builds a whole site out of this move and no second colour. */
+.sh-ghost {
+  position: absolute;
+  top: -0.34em;
+  left: -0.06em;
+  z-index: 0;
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+  white-space: nowrap;
+  color: var(--color-border);
+  pointer-events: none;
+  user-select: none;
+}
+
+.sh-body {
+  position: relative;
+  z-index: 1;
+}
+
+.sh-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.sh-title {
+  margin-top: 0.9rem;
+  font-size: var(--text-h1);
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  line-height: 1.05;
+  color: var(--color-ink);
+}
+
+.sh-lede {
+  margin-top: 1rem;
+  max-width: 48ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.band[data-tone="deep"] .sh-title {
+  color: #ffffff;
+}
+
+.band[data-tone="deep"] .sh-lede {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.band[data-tone="deep"] .sh-eyebrow {
+  color: var(--color-brand-light);
+}
+
+.band[data-tone="deep"] .sh-ghost {
+  color: rgba(255, 255, 255, 0.07);
+}
+
+/* ── Provenance: removed 2026-09-07 ─────────────────────────────────────────
+   `DIRECTION.md`'s signature moment 03 was "every claim shows its source" — hover a
+   product and it reveals the deck page its facts came from. It was built, and Nazir
+   pulled it, correctly: "p11-12" and "product deck - not in the portfolio deck" are
+   OUR filing references. They tell a buyer nothing and they advertise internal
+   process on a page meant to sell.
+
+   `deckPage` stays on every product in `products.ts`. It is what the claims rule is
+   enforced against and it is why provenance can be checked at all — it just is not
+   something a visitor should be reading. */
+
+/* ── Product cards ──────────────────────────────────────────────────────── */
+
+/* A hairline grid rather than floating cards, and the rules are borders on the
+   CARDS rather than a 1px gap over a filled background.
+
+   The gap trick is neater to write and wrong here: five products in a three-column
+   grid leaves one track empty, and an empty track painted the background straight
+   through as a solid slab of border colour — a sixth tile that looked like a card
+   that had failed to load. Borders on the cards plus a top and left edge on the
+   grid gives the same unbroken rules with nothing doubled up, and an empty track is
+   simply the page. */
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  margin-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
+}
+
+.pcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Grid items default to min-width auto and will not shrink below their
+     content's min-content width — a long product name pushes the card past the
+     gutter on a phone without this. `.claude/rules/components.md` records it. */
+  min-width: 0;
+  padding: 1.75rem;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-background);
+  transition: background-color var(--dur-base) var(--ease-out-soft);
+}
+
+.pcard:hover,
+.pcard:focus-within {
+  background: #ffffff;
+}
+
+.pcard-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 1.25rem;
+}
+
+.pcard-cat {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.pcard-name {
+  margin-top: 1.35rem;
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-ink);
+}
+
+/* The whole card is the target. An overlay on the anchor rather than a link
+   wrapping everything, so the card's other text is not read out as part of the
+   link's accessible name. */
+.pcard-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.pcard-tagline {
+  margin-top: 0.7rem;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.pcard-summary {
+  margin-top: 0.75rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--color-muted);
+  /* Four lines, then stop. The summaries run to very different lengths and a
+     grid whose cards each set their own height reads as broken alignment. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+
+.pcard-more {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+/* ── Rows: capabilities, values, anything that is a list of title and line ── */
+
+.rows {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--color-border);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 22ch) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: baseline;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.row-index {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.19em;
+  color: var(--color-muted-2);
+}
+
+.row-title {
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.row-desc {
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.band[data-tone="deep"] .rows,
+.band[data-tone="deep"] .row {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.band[data-tone="deep"] .row-title {
+  color: #ffffff;
+}
+
+.band[data-tone="deep"] .row-desc {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ── Pills ──────────────────────────────────────────────────────────────── */
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.pill {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  color: var(--color-muted);
+}
+
+/* ── Inline text link ───────────────────────────────────────────────────── */
+
+.tlink {
+  display: inline-flex;
+  align-items: center;
+  /* WCAG 2.2 SC 2.5.8 wants 24x24 on a pointer target, and `tests/links.mjs`
+     enforces it. Mono at 11px in an inline-flex box measures about 15px tall, so
+     every bare `.tlink` on the site would have failed. The exemption for inline
+     links does not apply — inline-flex is not inline. */
+  min-height: 1.5rem;
+  gap: 0.4rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+  transition: color var(--dur-fast) linear;
+}
+
+.tlink:hover {
+  color: var(--color-blue-900);
+}
+
+.band[data-tone="deep"] .tlink {
+  color: var(--color-brand-light);
+}
+
+/* ── The closing block ──────────────────────────────────────────────────── */
+
+.cta {
+  position: relative;
+  z-index: 2;
+  background: var(--color-blue-900);
+  color: #ffffff;
+}
+
+.cta-inner {
+  padding: clamp(4rem, 9vw, 7rem) var(--page-gutter) clamp(4rem, 9vw, 7rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  max-width: 1680px;
+}
+
+.cta-heading {
+  max-width: 20ch;
+  font-size: var(--text-h1);
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.cta-lede {
+  margin-top: 1.25rem;
+  max-width: 54ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 2.25rem;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: 999px;
+  font-size: var(--text-body);
+  font-weight: 600;
+  transition:
+    transform var(--dur-fast) var(--ease-out-soft),
+    background-color var(--dur-fast) linear,
+    border-color var(--dur-fast) linear;
+}
+
+.cta-btn-solid {
+  background: var(--color-brand-light);
+  color: var(--color-ink);
+}
+
+.cta-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  color: #ffffff;
+}
+
+.cta-btn-ghost:hover {
+  border-color: #ffffff;
+}
+
+/* A standalone action in a row of buttons, so it is held to the same 24x24 pointer
+   target as they are (WCAG 2.2 SC 2.5.8). `tests/links.mjs` exempts INLINE links
+   inside prose; this is not one, and as a bare inline anchor at 14px it measured
+   322x21 and failed on every route that closes with this block. */
+.cta-mail {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-body-sm);
+  color: rgba(255, 255, 255, 0.76);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.cta-mail:hover {
+  color: #ffffff;
+}
+
+/* ── Narrow screens, after the rules they override ──────────────────────── */
+
+@media (max-width: 1023px) {
+  .row {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    row-gap: 0.4rem;
+  }
+
+  .row-desc {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Still texture, but a display word at 9vw on a 360px phone is three letters
+     and a clipped edge. Smaller reads as a watermark rather than as a mistake. */
+  .sh-ghost {
+    top: -0.2em;
+    font-size: var(--text-display-sm);
+  }
+
+  .rh-lede,
+  .sh-lede {
+    font-size: var(--text-body);
+  }
+
+  .sh-title {
+    font-size: var(--text-h2);
+  }
+
+  .cta-heading {
+    font-size: var(--text-h2);
+  }
+
+  .cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cta-mail {
+    width: 100%;
+  }
+
+  .pcard {
+    padding: 1.5rem;
+  }
+}
+
+/* The source reveal is a hover affordance and a touch device has no hover. It
+   stays visible there rather than never appearing at all. */
+
+/* ─── VARIATION: the film ────────────────────────────────────────────────────
+   `app/variations/film/` only. The home page rebuilt as one continuous piece —
+   see `.claude/DIRECTION.md`. `/` does not load a line of this.
+
+   THE SCENE UNIT AND NOTHING ELSE. A wrapper whose height IS the scene's
+   duration, holding one viewport-tall child at `position: sticky; top: 0`. No
+   library pins anything; this is what foodnia.co.jp is built from and what the
+   What we do deck above already does. The only thing JavaScript adds is `--p`,
+   written onto the stage by the one loop in `lib/film/loop.ts`. */
+
+.film {
+  position: relative;
+  /* THE SITE'S PAPER, not pure white — changed 2026-09-07 when the header became a
+     floating white pill. A white object on a white page is invisible: all you can see
+     of it is its shadow and two rounded corners, which reads as a rendering fault.
+     Tokens Studio's ground is `#f7f8f8` for exactly this reason, and `--color-background`
+     is our equivalent. It also puts the film on the same paper as the other sixteen
+     routes, which were already using it.
+
+     The HERO keeps pure white — it sets its own, and it needs it: against a saturated
+     material anything short of white reads grey. */
+  background: var(--color-background);
+}
+
+/* The one canvas, for the whole film. Fixed, so segments draw in viewport
+   coordinates — which is the frame of reference a pinned scene already works in.
+   Below the header's z-50 on purpose: the header is white at 90% with a blur, so
+   the line passes behind it and dims instead of crossing it. */
+.film-trace {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The gutter, measured rather than transcribed. `--page-gutter` is a max() of a
+   rem and a percentage; the canvas reads this element's resolved padding instead
+   of carrying a copy of that formula in JavaScript. */
+.film-gutter-probe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  /* `--spine-x` resolved by the browser. The canvas cannot resolve a custom property
+     that is a max() of a rem and a percentage, and a JavaScript transcription of that
+     formula is a second definition to keep in step. */
+  padding-left: var(--spine-x);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.film-scene {
+  position: relative;
+  height: calc(var(--screens) * 100svh);
+}
+
+.film-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.film-copy {
+  max-width: 36rem;
+}
+
+.film-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.film-heading {
+  margin-top: 1.1rem;
+  font-size: var(--text-h1);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--color-ink);
+}
+
+.film-lede {
+  margin-top: 1.1rem;
+  max-width: 42ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+/* ── The gate ────────────────────────────────────────────────────────────────
+   ORDINARY FLOW, CENTRED. The stage used to place the copy and the checkpoint at
+   absolute fractions of its height, and at 320x568 the heading grew to four lines,
+   ran up under the header and lost its first line. Flow gives every window the
+   composition its own type produced, and it takes the last shared number out of
+   this scene: the canvas reads `.film-gate-line` rather than agreeing with the
+   stylesheet about where 56% is.
+
+   The left padding is the gutter plus a step, so the copy clears the spine — which
+   runs in the margin. A rule struck through the first character of every line is
+   not a margin rule. */
+
+.film-gate-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6rem var(--page-gutter) 3rem calc(var(--page-gutter) + var(--spine-step));
+}
+
+/* Where the bar is drawn. Zero-height, so it sets a position and occupies nothing. */
+.film-gate-line {
+  height: 0;
+  margin-top: 3.25rem;
+}
+
+.film-gate-foot {
+  margin-top: 1.6rem;
+}
+
+.film-gate-status {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  transition: color var(--dur-slow) var(--ease-out-soft);
+}
+
+/* The wait, breathing. The ring on the canvas answers the scroll, but it lives out
+   in the margin — and a visitor whose page has just stopped is looking at the middle
+   of the screen, not at the gutter. This puts one slow pulse under the heading where
+   the eye already is, which is the difference between a page that is waiting and a
+   page that has died. */
+.film-gate-inner[data-state="waiting"] .film-gate-status {
+  animation: film-waiting 2200ms var(--ease-in-out-soft) infinite;
+}
+
+@keyframes film-waiting {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.42; }
+}
+
+/* Approved is the only place on this page that gets the deep blue, and the mark on
+   the canvas is the other half of the same beat. Scarcity is what makes it land. */
+.film-gate-inner[data-state="signed"] .film-gate-status,
+.film-gate-inner[data-state="released"] .film-gate-status {
+  color: var(--color-blue-900);
+}
+
+/* Hidden until the wait has been felt. The loop fades it in a moment into the
+   hold, and it is the single most load-bearing sentence on the page: a page that
+   stops moving looks broken, and only words fix that. */
+.film-gate-hint {
+  margin-top: 0.65rem;
+  max-width: 32ch;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-soft);
+}
+
+/* ── The close ──────────────────────────────────────────────────────────────── */
+
+.film-close {
+  position: relative;
+  padding: clamp(6rem, 14vh, 10rem) var(--page-gutter) clamp(7rem, 18vh, 12rem);
+}
+
+.film-close-inner {
+  margin-left: 2rem;
+  max-width: 44rem;
+}
+
+/* Where the line terminates. Zero-height, so it marks a position and occupies
+   nothing; the canvas draws the closing mark on it. */
+.film-end {
+  height: 0;
+  margin-top: 3.5rem;
+}
+
+.film-note {
+  margin-top: 3.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-body-sm);
+  color: var(--color-muted-2);
+}
+
+.film-note-tag {
+  margin-right: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+/* Short windows first, then narrow ones, then the tiers — each override after
+   what it overrides, because a media query loses to a later rule of the same
+   specificity. */
+@media (max-height: 720px) {
+  .film-heading {
+    font-size: var(--text-h2);
+  }
+
+  .film-lede {
+    font-size: var(--text-body);
+  }
+}
+
+@media (max-width: 1023px) {
+  .film-scene {
+    height: calc(var(--screens-sm) * 100svh);
+  }
+}
+
+@media (max-width: 767px) {
+  .film-gate-inner {
+    padding: 5.5rem var(--page-gutter) 2rem calc(var(--page-gutter) + var(--spine-step));
+  }
+
+  .film-gate-line {
+    margin-top: 2.25rem;
+  }
+
+  .film-close-inner {
+    margin-left: 1.25rem;
+  }
+
+  .film-heading {
+    font-size: var(--text-h2);
+  }
+
+  .film-lede {
+    font-size: var(--text-body);
+  }
+}
+
+/* The first of the three tiers in `.claude/DIRECTION.md`: every scene at its final
+   state, stacked. Content complete, nothing moving, and no scene spending four
+   screens of scroll on an animation that is not going to run. */
+@media (prefers-reduced-motion: reduce) {
+  .film-scene {
+    height: 100svh;
+  }
+
+  .film-gate-inner[data-state="waiting"] .film-gate-status {
+    animation: none;
+  }
+}
+
+@media (scripting: none) {
+  .film-scene {
+    height: 100svh;
   }
 }

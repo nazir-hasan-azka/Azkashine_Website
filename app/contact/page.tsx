@@ -1,78 +1,86 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/Container";
+import { Page, Section, SectionHead } from "@/components/site/Page";
+import { RouteHeader } from "@/components/site/RouteHeader";
+import { CONTACT, ENQUIRY_PRODUCTS } from "@/lib/content/contact";
 import { SITE } from "@/lib/content/site";
-import { PRODUCTS } from "@/lib/content/products";
+import { CRUMB_HOME } from "@/lib/content/company-pages";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Get in touch with Azkashine — Bengaluru, India. Email contact@azkashine.com or call +91 9492062249.",
+  title: CONTACT.metaTitle,
+  description: CONTACT.metaDescription,
 };
 
 /**
- * The site is a static export (`output: "export"`), so there is no server to receive a
- * form post. Contact is therefore direct — mailto and telephone links — rather than a
- * form that silently fails. Wiring a third-party form service is a separate decision.
+ * The three mobiles and the landline in one list, so the page has one place a number
+ * can be read from. `note` marks the landline apart from the mobiles above it.
+ */
+const NUMBERS: { number: string; note?: string }[] = [
+  ...SITE.phones.map((number) => ({ number })),
+  { number: SITE.landline, note: CONTACT.landlineSuffix },
+];
+
+/** `tel:` will not dial a number with spaces in it; the visible text keeps them. */
+const dial = (number: string) => `tel:${number.replace(/\s/g, "")}`;
+
+/**
+ * Contact.
+ *
+ * NO FORM, AND THAT IS A DECISION — `lib/content/contact.ts` records it and this route
+ * only honours it. The site is a static export with no server behind it, so a form
+ * would need a third-party endpoint or would accept an enquiry and drop it, and a form
+ * that silently swallows an enquiry is worse than no form. `mailto:` and `tel:` work
+ * everywhere and land on a person. That is also why nothing on this page is a Client
+ * Component: there is no state to hold.
+ *
+ * NO CLOSING `<Cta />` EITHER. Every other inner route ends with "tell us what you are
+ * trying to solve"; a "talk to us" block at the bottom of the page whose whole job is
+ * talking to us is a page arguing with itself. The browse line closes it instead, and
+ * points at the two places a visitor who is not ready to write yet should go.
+ *
+ * The phone list and the enquiry list are LISTS OF LINKS, not sentences with links in
+ * them, so the inline exemption in `tests/links.mjs` does not cover them and each row
+ * carries a real 2.75rem target of its own.
  */
 export default function ContactPage() {
   return (
-    <>
-      <PageHeader
-        title="Contact us"
-        lede="Tell us what you are trying to solve. If we are not the right fit, we will say so."
-        crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]}
+    <Page>
+      <RouteHeader
+        crumbs={[{ label: CRUMB_HOME, href: "/" }, { label: CONTACT.crumb }]}
+        title={CONTACT.title}
+        lede={CONTACT.lede}
       />
 
-      <section aria-labelledby="contact-heading" className="py-16 lg:py-24">
-        <Container>
-          <h2 id="contact-heading" className="sr-only">
-            Contact details
-          </h2>
+      <Section tone="paper" labelledBy="contact-heading">
+        <SectionHead id="contact-heading" title={CONTACT.detailsHeading} />
 
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">
-                Email
-              </h3>
-              <a
-                href={`mailto:${SITE.email}`}
-                className="mt-3 block text-2xl font-bold text-ink underline underline-offset-4 hover:text-brand lg:text-[32px]"
-              >
+        <div className="contact-split">
+          <div className="reveal-group">
+            <div className="block">
+              <h3 className="subhead">{CONTACT.emailHeading}</h3>
+              <a href={`mailto:${SITE.email}`} className="cmail">
                 {SITE.email}
               </a>
+            </div>
 
-              <h3 className="mt-10 text-sm font-semibold uppercase tracking-wider text-muted">
-                Phone
-              </h3>
-              <ul className="mt-3 space-y-1.5">
-                {SITE.phones.map((phone) => (
-                  <li key={phone}>
-                    <a
-                      href={`tel:${phone.replace(/\s/g, "")}`}
-                      className="text-lg text-ink hover:text-brand lg:text-xl"
-                    >
-                      {phone}
+            <div className="block">
+              <h3 className="subhead">{CONTACT.phoneHeading}</h3>
+              <ul className="clist">
+                {NUMBERS.map(({ number, note }) => (
+                  <li key={number}>
+                    <a href={dial(number)}>
+                      <span>{number}</span>
+                      {note && <span className="clist-note">{note}</span>}
                     </a>
                   </li>
                 ))}
-                <li>
-                  <a
-                    href={`tel:${SITE.landline.replace(/[\s-]/g, "")}`}
-                    className="text-lg text-muted hover:text-brand lg:text-xl"
-                  >
-                    {SITE.landline}{" "}
-                    <span className="text-sm">(landline)</span>
-                  </a>
-                </li>
               </ul>
+            </div>
 
-              <h3 className="mt-10 text-sm font-semibold uppercase tracking-wider text-muted">
-                Office
-              </h3>
-              <address className="mt-3 text-lg not-italic leading-relaxed text-ink lg:text-xl">
-                <span className="block font-semibold">{SITE.legalName}</span>
+            <div className="block">
+              <h3 className="subhead">{CONTACT.officeHeading}</h3>
+              <address className="caddr">
+                <span className="caddr-org">{SITE.legalName}</span>
                 {SITE.address.lines.map((line) => (
                   <span key={line} className="block">
                     {line}
@@ -80,50 +88,43 @@ export default function ContactPage() {
                 ))}
               </address>
             </div>
-
-            <div className="rounded-[20px] border border-white bg-white p-8 shadow-[0_4px_24px_#E2E9F8] lg:p-10">
-              <h3 className="text-xl font-bold text-ink lg:text-2xl">
-                Asking about a specific product?
-              </h3>
-              <p className="mt-3 text-base leading-relaxed text-muted">
-                Pick one and we will reply with a walkthrough against your own use case
-                rather than a generic deck.
-              </p>
-              <ul className="mt-6 space-y-1">
-                {PRODUCTS.map((p) => (
-                  <li key={p.slug}>
-                    <a
-                      href={`mailto:${SITE.email}?subject=${encodeURIComponent(
-                        `${p.name} enquiry`,
-                      )}`}
-                      className="block rounded-lg px-3 py-2 text-base font-medium text-ink transition-colors hover:bg-surface hover:text-brand"
-                    >
-                      {p.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-6 border-t border-border pt-5 text-sm text-muted">
-                Prefer to browse first? See{" "}
-                <Link
-                  href="/products/"
-                  className="text-ink underline underline-offset-4 hover:text-brand"
-                >
-                  all products
-                </Link>{" "}
-                or{" "}
-                <Link
-                  href="/what-we-do/"
-                  className="text-ink underline underline-offset-4 hover:text-brand"
-                >
-                  what we do
-                </Link>
-                .
-              </p>
-            </div>
           </div>
-        </Container>
-      </section>
-    </>
+
+          <aside className="ecard" aria-labelledby="enquiry-heading">
+            <h3 id="enquiry-heading" className="ecard-title">
+              {CONTACT.enquiry.heading}
+            </h3>
+            <p className="ecard-lede">{CONTACT.enquiry.lede}</p>
+            {/* Eight, derived from `PRODUCTS`. The old site listed nine because it
+                predated Community Connect being removed; a count nobody derives is a
+                count nobody updates. */}
+            <ul className="ecard-list">
+              {ENQUIRY_PRODUCTS.map((product) => (
+                <li key={product.name}>
+                  <a href={product.href}>
+                    <span>{product.name}</span>
+                    <span aria-hidden="true" className="nudge">
+                      →
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        </div>
+
+        <p className="browse">
+          {CONTACT.browse.before}{" "}
+          <Link href={CONTACT.browse.products.href}>
+            {CONTACT.browse.products.label}
+          </Link>{" "}
+          {CONTACT.browse.between}{" "}
+          <Link href={CONTACT.browse.whatWeDo.href}>
+            {CONTACT.browse.whatWeDo.label}
+          </Link>
+          {CONTACT.browse.after}
+        </p>
+      </Section>
+    </Page>
   );
 }

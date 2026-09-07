@@ -1,5 +1,5 @@
 /**
- * The nine Azkashine products.
+ * The eight Azkashine products.
  *
  * Facts, figures, and capability lists come from the corporate portfolio deck; the
  * `deckPage` field records provenance so any claim can be traced back. Two products
@@ -434,41 +434,6 @@ export const PRODUCTS: Product[] = [
     deckPage: "p11–12",
   },
   {
-    slug: "community-connect",
-    stats: [
-      { value: "99.9%", label: "Uptime guarantee" },
-      { value: "<5ms", label: "Response time" },
-      { value: "100k+", label: "Daily visitors" },
-    ],
-    image: "prod-community",
-    name: "Community Connect",
-    category: "digital-platforms",
-    capability: "Smart Applications",
-    tagline: "Enterprise-grade smart visitor management.",
-    summary:
-      "A smart visitor management system with real-time tracking, automated workflows, and seamless integrations — replacing paper logbooks and reception bottlenecks with contactless, auditable entry.",
-    problem:
-      "Reception desks remain a security gap and a queue. Paper logbooks are unauditable, hosts are notified late or not at all, and there is no reliable record of who was on site and when.",
-    features: [
-      {
-        title: "Streamlined registration",
-        description: "Visitor registration with OTP validation and real-time notifications.",
-      },
-      {
-        title: "Contactless entry",
-        description:
-          "Secure QR codes for contactless entry and enhanced security protocols.",
-      },
-      {
-        title: "Intelligent check-in / check-out",
-        description: "Automated host notifications throughout the visit.",
-      },
-    ],
-    outcomes: [],
-    demoUrl: null,
-    deckPage: "p16",
-  },
-  {
     slug: "cloud-orchestration",
     stats: [
       { value: "10x", label: "Faster infrastructure onboarding" },
@@ -513,7 +478,7 @@ export const PRODUCTS: Product[] = [
     name: "ProSiddhi",
     category: "digital-platforms",
     capability: "Smart Applications",
-    tagline: "India's smart blue-collar hiring platform.",
+    tagline: "India’s smart blue-collar hiring platform.",
     summary:
       "ProSiddhi connects employers with skilled and semi-skilled workers across India — helpers, drivers, electricians, welders, delivery executives, security guards, machine operators, and technicians — with a pay-as-you-go model and a bilingual interface.",
     problem:

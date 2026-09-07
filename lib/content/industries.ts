@@ -52,7 +52,7 @@ export const INDUSTRIES: Industry[] = [
       "Custom Software Solutions",
       "Managed Services",
     ],
-    products: ["ethics-intelligence", "tawthiq", "community-connect", "agent-siddhi"],
+    products: ["ethics-intelligence", "tawthiq", "agent-siddhi"],
     primaryCategory: "digital-platforms",
   },
   {
@@ -68,7 +68,7 @@ export const INDUSTRIES: Industry[] = [
       "Smart Applications",
       "Automation & Quality Engineering",
     ],
-    products: ["savant-ai", "prosiddhi", "community-connect"],
+    products: ["savant-ai", "prosiddhi"],
     primaryCategory: "ai-automation",
   },
   {

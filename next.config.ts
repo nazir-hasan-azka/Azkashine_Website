@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   // Emit each route as a folder with index.html (e.g. /out/index.html) — friendlier
   // for static hosts and avoids 404s on refresh.
   trailingSlash: true,
+  // The floating dev badge overlaps the hero's bottom-left copy and gets mistaken for
+  // part of the design. It never appears in a build; this just gets it out of the way
+  // while working.
+  devIndicators: false,
 };
 
 export default nextConfig;

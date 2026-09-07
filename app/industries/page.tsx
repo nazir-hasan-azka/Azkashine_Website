@@ -1,114 +1,145 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/Container";
-import { Media } from "@/components/ui/Media";
-import { Cta } from "@/components/sections/Cta";
+import { Page, Section, SectionHead } from "@/components/site/Page";
+import { RouteHeader } from "@/components/site/RouteHeader";
+import { ProductCard } from "@/components/site/ProductCard";
+import { Cta } from "@/components/site/Cta";
 import { INDUSTRIES } from "@/lib/content/industries";
+import { CATEGORY_BY_SLUG } from "@/lib/content/taxonomy";
 import { getProduct } from "@/lib/content/products";
+import { INDUSTRIES_PAGE } from "@/lib/content/routes";
+import { CRUMB_HOME } from "@/lib/content/company-pages";
 
 export const metadata: Metadata = {
-  title: "Industries",
-  description:
-    "Telecom, public sector, manufacturing, and energy — the sectors Azkashine builds and operates software for.",
+  title: INDUSTRIES_PAGE.metaTitle,
+  description: INDUSTRIES_PAGE.metaDescription,
 };
 
+/**
+ * Industries — ONE page with four anchored sections, not four routes.
+ *
+ * The footer already links `/industries/#telecom` and the three beside it. Building
+ * these as `/industries/telecom/` would leave four dead links in the footer of every
+ * page on the site, which is exactly the failure `tests/links.mjs` exists to catch. The
+ * sections carry `.anchor` so a jump lands clear of the 5rem sticky header.
+ *
+ * THE PRACTICE IS THE EYEBROW, and that is the whole argument of the page. Azkashine
+ * does three things in equal measure, and the four sectors do not all lead with the
+ * same one — telecom and energy come in through Cloud Services & Testing, public sector
+ * through Digital Platforms, manufacturing through AI & Automation. Naming the practice
+ * above each sector's name is what makes that spread visible instead of implied; every
+ * sector otherwise reads as a variation on the same sell.
+ *
+ * The banner alternates sides and the ground alternates paper and tint, so four
+ * structurally identical sections do not read as one long one. No ghost word here —
+ * `SectionHead`'s watermark is worth at most twice on a page and there are four
+ * headings, so using it would either be noise or arbitrary.
+ */
 export default function IndustriesPage() {
   return (
-    <>
-      <PageHeader
-        title="Industries"
-        lede="Four sectors where operational complexity is high and the cost of getting software wrong is measured in more than money."
-        crumbs={[{ label: "Home", href: "/" }, { label: "Industries" }]}
+    <Page>
+      <RouteHeader
+        crumbs={[
+          { label: CRUMB_HOME, href: "/" },
+          { label: INDUSTRIES_PAGE.crumb },
+        ]}
+        title={INDUSTRIES_PAGE.title}
+        lede={INDUSTRIES_PAGE.lede}
       />
 
-      {INDUSTRIES.map((industry, index) => (
-        <section
-          key={industry.slug}
-          id={industry.slug}
-          aria-labelledby={`${industry.slug}-heading`}
-          className={
-            index % 2 === 1
-              ? "scroll-mt-24 bg-surface-2 py-16 lg:py-20"
-              : "scroll-mt-24 py-16 lg:py-20"
-          }
-        >
-          <Container>
-            {/* Image and copy swap sides on alternate rows so the four sections read as
-                a rhythm rather than four identical blocks. */}
-            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-              <Media
-                name={industry.image}
-                alt=""
-                ratio="3/2"
-                className={index % 2 === 1 ? "lg:order-2" : ""}
-                sizes="(max-width: 1024px) 100vw, 48vw"
-              />
+      {INDUSTRIES.map((industry, i) => {
+        const practice = CATEGORY_BY_SLUG[industry.primaryCategory];
+        // One pass, and no type predicate: `?? []` drops a slug with no product behind
+        // it and leaves `Product[]` without a cast.
+        const products = industry.products.flatMap(
+          (slug) => getProduct(slug) ?? [],
+        );
+        const headingId = `${industry.slug}-heading`;
 
-              <div className={index % 2 === 1 ? "min-w-0 lg:order-1" : "min-w-0"}>
-                <h2
-                  id={`${industry.slug}-heading`}
-                  className="text-3xl font-bold text-ink sm:text-4xl lg:text-[44px]"
-                >
-                  {industry.name}
-                </h2>
-                <p className="mt-3 text-lg font-medium text-brand lg:text-xl">
-                  {industry.tagline}
-                </p>
-                <p className="mt-5 text-base leading-relaxed text-muted lg:text-lg">
-                  {industry.intro}
-                </p>
+        return (
+          <Section
+            key={industry.slug}
+            id={industry.slug}
+            tone={i % 2 === 0 ? "paper" : "tint"}
+            labelledBy={headingId}
+            className="anchor"
+          >
+            <div
+              className="split"
+              data-media={i % 2 === 0 ? "left" : "right"}
+            >
+              <div className="split-media">
+                <div className="frame">
+                  {/* Decoration, so the alt is empty: the section's own heading and
+                      intro already say what the sector is. Plain `<img>` rather than
+                      `next/image` because `images.unoptimized` is set for the static
+                      export — the component would ship JavaScript and emit no srcset.
+                      The dimensions state the 16:9 the `.frame` reserves; every banner
+                      in `/public/img` is cut to it, and CSS sizes the box. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/img/${industry.image}.webp`}
+                    alt=""
+                    width={1600}
+                    height={900}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
 
-                <div className="mt-8 grid gap-8 sm:grid-cols-2">
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">
-                    Capabilities applied
+              <div className="split-body">
+                <SectionHead
+                  id={headingId}
+                  eyebrow={practice.navLabel}
+                  title={industry.name}
+                  lede={industry.tagline}
+                />
+
+                <p className="copy">{industry.intro}</p>
+
+                <div className="block">
+                  <h3 className="subhead">
+                    {INDUSTRIES_PAGE.capabilitiesHeading}
                   </h3>
-                  <ul className="mt-4 space-y-2">
-                    {industry.capabilities.map((c) => (
-                      <li key={c} className="text-base text-ink">
-                        {c}
+                  <ul className="pills">
+                    {industry.capabilities.map((capability) => (
+                      <li key={capability} className="pill">
+                        {capability}
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href={`/what-we-do/${industry.primaryCategory}/`}
-                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:text-blue-700"
-                  >
-                    Explore the practice
-                    <span aria-hidden="true">→</span>
-                  </Link>
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">
-                    Relevant products
-                  </h3>
-                  <ul className="mt-4 space-y-2">
-                    {industry.products.map((slug) => {
-                      const product = getProduct(slug);
-                      if (!product) return null;
-                      return (
-                        <li key={slug}>
-                          <Link
-                            href={`/products/${slug}/`}
-                            className="text-base text-ink underline underline-offset-4 hover:text-brand"
-                          >
-                            {product.name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
+                <div className="tlink-row">
+                  <Link
+                    href={`/what-we-do/${industry.primaryCategory}/`}
+                    className="tlink"
+                  >
+                    {INDUSTRIES_PAGE.practiceLink}
+                    <span aria-hidden="true" className="nudge">
+                      →
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>
-          </Container>
-        </section>
-      ))}
+
+            {products.length > 0 && (
+              <div className="ind-products">
+                <h3 className="subhead">{INDUSTRIES_PAGE.productsHeading}</h3>
+                <div className="pgrid">
+                  {products.map((product) => (
+                    <ProductCard key={product.slug} product={product} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </Section>
+        );
+      })}
 
       <Cta />
-    </>
+    </Page>
   );
 }

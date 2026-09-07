@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
@@ -32,23 +31,16 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menu, setMenu] = useState<MenuId>(null);
   const headerRef = useRef<HTMLElement>(null);
-  const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
 
   /**
-   * The home hero is a full-viewport dark canvas, so the header sits transparently on
-   * top of it and only takes on its solid background once the reader scrolls past.
-   * Any open menu forces the solid treatment, otherwise the panel would float on nothing.
+   * One ground on this site today — paper — so one chrome: a translucent bar with a
+   * blur, which is correct over light content everywhere.
+   *
+   * The `light` prop the nav items take is kept even though nothing passes `true` yet.
+   * It is how a dark section behind the header gets handled the day one exists, and
+   * removing it would only mean writing it again.
    */
-  const overHero = pathname === "/" && !scrolled && !menu && !mobileOpen;
-
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > 40);
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const lightChrome = false;
 
   function closeAll() {
     setMenu(null);
@@ -108,14 +100,15 @@ export function Navbar() {
       onMouseLeave={() => {
         if (canHover()) setMenu(null);
       }}
-      className={cn(
-        "sticky top-0 z-50 transition-colors duration-300",
-        overHero
-          ? "border-b border-white/10 bg-transparent"
-          : "border-b border-border/70 bg-background/95 backdrop-blur-md",
-      )}
+      /* THE OUTER BAR PAINTS NOTHING. It is a transparent 5rem rail; the white you
+         see is `.nav-pill` inside it, which contracts into a floating pill once you
+         have scrolled past the first screen. Measured off tokens.studio, which does
+         exactly this — see `.claude/TOKENS-STUDIO.md`. The styling lives in
+         `globals.css` because the shape change is a scroll-driven CSS animation and
+         there is no JavaScript in it at all. */
+      className="site-header"
     >
-      <Container>
+      <div className="nav-pill">
         <nav className="flex h-20 items-center justify-between gap-6">
           <Link
             href="/"
@@ -127,7 +120,7 @@ export function Navbar() {
                 dark hero. The light variant lifts luminance to ~206 while keeping the
                 blue/orange hues, rather than flattening to a white silhouette. */}
             <Image
-              src={overHero ? "/azkashine-logo-light.png" : "/azkashine-logo.png"}
+              src={lightChrome ? "/azkashine-logo-light.png" : "/azkashine-logo.png"}
               alt="Azkashine"
               width={133}
               height={37}
@@ -139,14 +132,14 @@ export function Navbar() {
           {/* Desktop menu */}
           <ul className="hidden items-center gap-8 lg:flex">
             <li onMouseEnter={() => canHover() && setMenu(null)}>
-              <TopLink href="/" onClick={closeAll} light={overHero}>
+              <TopLink href="/" onClick={closeAll} light={lightChrome}>
                 Home
               </TopLink>
             </li>
             <li onMouseEnter={() => hoverOpen("what-we-do")}>
               <MenuButton
                 label="What we do"
-                light={overHero}
+                light={lightChrome}
                 open={menu === "what-we-do"}
                 onToggle={() => setMenu(menu === "what-we-do" ? null : "what-we-do")}
               />
@@ -154,18 +147,18 @@ export function Navbar() {
             <li onMouseEnter={() => hoverOpen("products")}>
               <MenuButton
                 label="Products"
-                light={overHero}
+                light={lightChrome}
                 open={menu === "products"}
                 onToggle={() => setMenu(menu === "products" ? null : "products")}
               />
             </li>
             <li onMouseEnter={() => canHover() && setMenu(null)}>
-              <TopLink href="/industries/" onClick={closeAll} light={overHero}>
+              <TopLink href="/industries/" onClick={closeAll} light={lightChrome}>
                 Industries
               </TopLink>
             </li>
             <li onMouseEnter={() => canHover() && setMenu(null)}>
-              <TopLink href="/about/" onClick={closeAll} light={overHero}>
+              <TopLink href="/about/" onClick={closeAll} light={lightChrome}>
                 About
               </TopLink>
             </li>
@@ -188,7 +181,7 @@ export function Navbar() {
             onClick={() => setMobileOpen((v) => !v)}
             className={cn(
               "inline-flex h-11 w-11 items-center justify-center rounded-lg lg:hidden",
-              overHero ? "text-white" : "text-ink",
+              lightChrome ? "text-white" : "text-ink",
             )}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
@@ -196,7 +189,7 @@ export function Navbar() {
             <Hamburger open={mobileOpen} />
           </button>
         </nav>
-      </Container>
+      </div>
 
       {/* Desktop dropdown panels */}
       {menu === "what-we-do" && (

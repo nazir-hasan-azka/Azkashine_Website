@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/Container";
-import { StatsBand } from "@/components/ui/StatsBand";
-import { Media } from "@/components/ui/Media";
-import { ProductCta } from "@/components/sections/ProductCta";
+import { Page, Section, SectionHead } from "@/components/site/Page";
+import { RouteHeader } from "@/components/site/RouteHeader";
 import { ProductVisual, hasVisual } from "@/components/product-ui/ProductVisual";
-import { PRODUCTS, getProduct } from "@/lib/content/products";
+import { PRODUCTS_PAGE, PRODUCT_PAGE } from "@/lib/content/routes";
+import { PRODUCT_ROUTES } from "@/lib/content/product-pages";
 import { CATEGORY_BY_SLUG } from "@/lib/content/taxonomy";
+import { PRODUCT_SLUGS, getProduct } from "@/lib/content/products";
+import { SITE } from "@/lib/content/site";
 
 type Params = { slug: string };
 
 export function generateStaticParams(): Params[] {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
+  return PRODUCT_SLUGS.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -24,22 +24,36 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) return {};
+
   return {
     title: product.name,
     description: product.tagline,
     openGraph: {
-      title: `${product.name} | Azkashine`,
+      title: `${product.name} | ${SITE.name}`,
       description: product.tagline,
     },
   };
 }
 
 /**
- * One template for all nine products. Section order is fixed — problem, what it is,
- * capabilities, outcomes, coverage, demo CTA — so the nine pages read as a product line
- * rather than nine one-offs.
+ * One template for all eight products.
  *
- * Sections with no content are omitted rather than padded.
+ * THE SECTION ORDER IS FIXED — problem, measured, what it does, outcomes, coverage,
+ * walkthrough, provenance — so eight pages read as one product line rather than eight
+ * one-offs. A section with no content is OMITTED, never padded: three products have no
+ * business outcomes in their deck and five have no coverage, and inventing either would
+ * break the claims rule the whole site is built on.
+ *
+ * THE CODED INTERFACE GETS THE LARGER HALF OF THE BAND. `components/product-ui/` draws
+ * a real Azkashine product UI in markup, and the brief's second finding about the old
+ * site is that it was buried — one route, sidebar width, below the fold. Here it sits
+ * beside the problem it answers at roughly 680px on a 1440 screen, which is where a
+ * reader is looking when they have just read what the product is for. It is capped
+ * rather than uncapped; see the note in `app/styles/products.css` for why.
+ *
+ * THE DEEP BLUE APPEARS ONCE, on the walkthrough panel. The stats band could have taken
+ * it and does not, because only two of the eight products have a figure and a page with
+ * a number must not read as louder than the six without one.
  */
 export default async function ProductPage({
   params,
@@ -51,173 +65,207 @@ export default async function ProductPage({
   if (!product) notFound();
 
   const category = CATEGORY_BY_SLUG[product.category];
+  const stats = product.stats ?? [];
+  const coverage = product.coverage;
+
+  /**
+   * Bands alternate paper and tint in the order they ACTUALLY render. Keying the tone
+   * off a fixed section index instead would leave two identical grounds touching on the
+   * five products that skip a section.
+   */
+  const rendered: string[] = [
+    "problem",
+    ...(stats.length > 0 ? ["stats"] : []),
+    "features",
+    ...(product.outcomes.length > 0 ? ["outcomes"] : []),
+    ...(coverage ? ["coverage"] : []),
+  ];
+  const bandTone: Record<string, "paper" | "tint"> = Object.fromEntries(
+    rendered.map((name, i): [string, "paper" | "tint"] => [
+      name,
+      i % 2 === 0 ? "paper" : "tint",
+    ]),
+  );
 
   return (
-    <>
-      <PageHeader
+    <Page>
+      <RouteHeader
+        crumbs={[
+          { label: PRODUCT_ROUTES.crumbHome, href: "/" },
+          { label: PRODUCTS_PAGE.crumb, href: "/products/" },
+          { label: product.name },
+        ]}
         eyebrow={category.name}
         title={product.name}
         lede={product.tagline}
-        crumbs={[
-          { label: "Home", href: "/" },
-          { label: "Products", href: "/products/" },
-          { label: product.name },
-        ]}
       />
 
-      {product.image && (
-        <Container>
-          <Media
-            name={product.image}
-            alt=""
-            ratio="16/9"
-            priority
-            className="!aspect-[21/9] -mt-px"
-            sizes="100vw"
-          />
-        </Container>
-      )}
+      {/* The problem before the solution, and the interface beside it — so the reader
+          can see the thing being described rather than only read about it. */}
+      <Section id="problem" tone={bandTone.problem} labelledBy="problem-heading">
+        <SectionHead
+          id="problem-heading"
+          ghost={PRODUCT_ROUTES.ghostProblem}
+          title={PRODUCT_PAGE.problemHeading}
+        />
 
-      {/* The problem, before the solution — paired with the product's interface so the
-          reader can see the thing being described, not just read about it. */}
-      <section aria-labelledby="problem-heading" className="py-14 lg:py-20">
-        <Container>
-          <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
-            {/* min-w-0: grid items default to min-width:auto and will not shrink below
-                their content's min-content width, which pushes the card past the gutter
-                on narrow screens. */}
-            <div className="reveal min-w-0">
-              <h2
-                id="problem-heading"
-                className="text-sm font-semibold uppercase tracking-wider text-brand"
-              >
-                The problem
-              </h2>
-              <p className="mt-4 text-xl leading-relaxed text-ink lg:text-[26px] lg:leading-[1.45]">
-                {product.problem}
-              </p>
-              <p className="mt-8 text-base leading-relaxed text-muted lg:text-lg">
-                {product.summary}
-              </p>
-            </div>
-
-            {hasVisual(product.slug) && (
-              <div className="reveal min-w-0 lg:pt-2">
-                <ProductVisual slug={product.slug} />
-                <p className="mt-3 text-xs text-muted">
-                  Representative {product.name} interface.
-                </p>
-              </div>
-            )}
+        <div className="pp-split reveal-group">
+          <div className="pp-copy">
+            <p className="pp-lead">{product.problem}</p>
+            <p className="pp-body">{product.summary}</p>
           </div>
-        </Container>
-      </section>
 
-      {product.stats && product.stats.length > 0 && (
-        <StatsBand stats={product.stats} tone="brand" />
-      )}
+          {hasVisual(product.slug) && (
+            <figure className="pp-figure">
+              <ProductVisual slug={product.slug} />
+              {/* The frames are drawn in code, not captured. Saying so is the
+                  difference between an illustration and a false claim about a
+                  customer's live data. */}
+              <figcaption className="pp-figcap">
+                {PRODUCT_PAGE.visualCaption}
+              </figcaption>
+            </figure>
+          )}
+        </div>
+      </Section>
 
-      <section
-        aria-labelledby="capabilities-heading"
-        className="bg-surface-2 py-16 lg:py-24"
-      >
-        <Container>
-          <h2
-            id="capabilities-heading"
-            className="text-2xl font-bold text-ink sm:text-3xl lg:text-[36px]"
-          >
-            What it does
+      {stats.length > 0 && (
+        <Section
+          id="measured"
+          tone={bandTone.stats}
+          labelledBy="measured-heading"
+          className="pp-measured"
+        >
+          <h2 id="measured-heading" className="pp-kicker">
+            {PRODUCT_ROUTES.statsHeading}
           </h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:mt-10 lg:grid-cols-3">
-            {product.features.map((f) => (
-              <article
-                key={f.title}
-                className="rounded-[20px] border border-white bg-white p-7 shadow-[0_4px_24px_#E2E9F8]"
-              >
-                <h3 className="text-lg font-bold text-ink">{f.title}</h3>
-                <p className="mt-2 text-base leading-relaxed text-muted">
-                  {f.description}
-                </p>
-              </article>
+          <ul className="pp-stats reveal-group">
+            {stats.map((stat) => (
+              <li key={stat.label} className="pp-stat">
+                <p className="pp-stat-value">{stat.value}</p>
+                <p className="pp-stat-label">{stat.label}</p>
+              </li>
             ))}
-          </div>
-        </Container>
-      </section>
+          </ul>
+        </Section>
+      )}
+
+      <Section
+        id="what-it-does"
+        tone={bandTone.features}
+        labelledBy="what-it-does-heading"
+      >
+        <SectionHead
+          id="what-it-does-heading"
+          title={PRODUCT_PAGE.whatItDoesHeading}
+        />
+        <ol className="rows">
+          {product.features.map((feature, i) => (
+            <li key={feature.title} className="row">
+              <span aria-hidden="true" className="row-index">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 className="row-title">{feature.title}</h3>
+              <p className="row-desc">{feature.description}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
 
       {product.outcomes.length > 0 && (
-        <section aria-labelledby="outcomes-heading" className="py-16 lg:py-24">
-          <Container>
-            <h2
-              id="outcomes-heading"
-              className="text-2xl font-bold text-ink sm:text-3xl lg:text-[36px]"
-            >
-              Business outcomes
-            </h2>
-            <ul className="mt-8 grid gap-x-10 gap-y-7 lg:mt-10 lg:grid-cols-2">
-              {product.outcomes.map((o) => (
-                <li key={o.title} className="border-l-2 border-brand pl-5">
-                  <h3 className="text-lg font-bold text-ink">{o.title}</h3>
-                  <p className="mt-1 text-base leading-relaxed text-muted">
-                    {o.description}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      )}
-
-      {product.coverage && (
-        <section
-          aria-labelledby="coverage-heading"
-          className="border-y border-border bg-surface py-16 lg:py-24"
+        <Section
+          id="outcomes"
+          tone={bandTone.outcomes}
+          labelledBy="outcomes-heading"
         >
-          <Container>
-            <h2
-              id="coverage-heading"
-              className="text-2xl font-bold text-ink sm:text-3xl lg:text-[36px]"
-            >
-              {product.coverage.heading}
-            </h2>
-            <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-3">
-              {product.coverage.groups.map((g) => (
-                <div key={g.label}>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">
-                    {g.label}
-                  </h3>
-                  <ul className="mt-4 flex flex-wrap gap-2">
-                    {g.items.map((item) => (
-                      <li
-                        key={item}
-                        className="rounded-full border border-border-strong bg-white px-3.5 py-1.5 text-sm font-medium text-ink"
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </Container>
-        </section>
+          <SectionHead
+            id="outcomes-heading"
+            ghost={PRODUCT_ROUTES.ghostOutcomes}
+            title={PRODUCT_PAGE.outcomesHeading}
+          />
+          <ol className="rows">
+            {product.outcomes.map((outcome, i) => (
+              <li key={outcome.title} className="row">
+                <span aria-hidden="true" className="row-index">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="row-title">{outcome.title}</h3>
+                <p className="row-desc">{outcome.description}</p>
+              </li>
+            ))}
+          </ol>
+        </Section>
       )}
 
-      <ProductCta productName={product.name} demoUrl={product.demoUrl} />
+      {coverage && (
+        <Section
+          id="coverage"
+          tone={bandTone.coverage}
+          labelledBy="coverage-heading"
+        >
+          <SectionHead id="coverage-heading" title={coverage.heading} />
+          <div className="pp-groups reveal-group">
+            {coverage.groups.map((group) => (
+              <div key={group.label} className="pp-group">
+                <h3 className="pp-group-label">{group.label}</h3>
+                <ul className="pills">
+                  {group.items.map((item) => (
+                    <li key={item} className="pill">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <section className="pb-16 lg:pb-24">
-        <Container>
-          <p className="text-sm text-muted">
-            Part of{" "}
+      {/* The one saturated band on the route. `demoUrl` is null on all eight today, so
+          the second button is a code path with no page behind it yet — which is why the
+          primary action is a conversation and not a dead link to a demo. */}
+      <Section id="walkthrough" tone="deep" labelledBy="walkthrough-heading">
+        <SectionHead
+          id="walkthrough-heading"
+          title={`${product.name} ${PRODUCT_PAGE.demoHeading}`}
+          lede={PRODUCT_PAGE.demoLede}
+        />
+        <div className="pp-actions">
+          <Link href="/contact/" className="cta-btn cta-btn-solid">
+            {PRODUCT_PAGE.demoPrimary}
+            <span aria-hidden="true" className="nudge">
+              →
+            </span>
+          </Link>
+          {product.demoUrl && (
+            <a href={product.demoUrl} className="cta-btn cta-btn-ghost">
+              {PRODUCT_PAGE.demoTry}
+            </a>
+          )}
+        </div>
+      </Section>
+
+      {/* Where the page came from: the practice it belongs to, the capability it sits
+          under, and the deck page every claim above is traceable to. */}
+      <Section id="provenance" tone="paper" className="pp-prov">
+        <ul className="pp-prov-list">
+          <li className="pp-prov-item">
+            <span className="pp-prov-tag">{PRODUCT_PAGE.partOf}</span>
             <Link
               href={`/what-we-do/${category.slug}/`}
-              className="text-ink underline underline-offset-4 hover:text-brand"
+              className="pp-prov-link"
             >
               {category.name}
-            </Link>{" "}
-            &middot; {product.capability}
-          </p>
-        </Container>
-      </section>
-    </>
+            </Link>
+          </li>
+          <li className="pp-prov-item">
+            <span className="pp-prov-tag">
+              {PRODUCT_ROUTES.capabilityLabel}
+            </span>
+            <span className="pp-prov-value">{product.capability}</span>
+          </li>
+        </ul>
+      </Section>
+    </Page>
   );
 }
