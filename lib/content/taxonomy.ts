@@ -5,6 +5,23 @@
  *
  * Capability names and their one-line descriptors are taken verbatim from the deck;
  * the longer `intro` copy is written for the web.
+ *
+ * REWRITTEN 2026-09-07. The intros were accurate and read as though a machine had
+ * written them: five "not X, but Y" constructions across this file and `why.ts`, an em
+ * dash appending a qualifier to almost every sentence, and nobody performing any of the
+ * verbs — "that is where our practice operates". They now use short sentences and name
+ * things.
+ *
+ * They also carry real specifics from the deck, which was unavailable until it landed at
+ * `.claude/references/` on 2026-09-07 (extracted to `deck-text.md` beside it, so the
+ * claims can be checked without PowerPoint):
+ *
+ *   - AWS, Azure and GCP by name — deck p13.
+ *   - "infrastructure onboarding from weeks to hours" — deck p15, the Cloud
+ *     Orchestration Platform's own stated outcome, alongside 10x faster and zero drift.
+ *   - Stopping at the point a person approves — deck p14 says it plainly: "with human
+ *     approval checkpoints before critical actions". That sentence is where the site's
+ *     whole visual language comes from.
  */
 
 export type CategorySlug =
@@ -42,7 +59,7 @@ export const CATEGORIES: Category[] = [
     tagline: "Put AI to work on the decisions people still make by hand.",
     image: "ai-automation",
     intro:
-      "Most automation handles the work you can write down in advance. The effort that remains is the work where the goal is clear but the path is not — investigating exceptions, applying policy, moving between systems to reach a decision. That is where our AI and automation practice operates.",
+      "Anything you can write down in advance, ordinary automation already handles. What is left is the messy part. An exception to chase. A policy to apply. Two or three systems to open before anyone can sign anything off. We build agents that do that work and stop at the point a person has to approve it — which, in the industries we sell into, is never optional.",
     capabilities: [
       {
         title: "AI-Driven Automation",
@@ -77,7 +94,7 @@ export const CATEGORIES: Category[] = [
     tagline: "Platforms built to be run for years, not demoed once.",
     image: "digital-platforms",
     intro:
-      "We build and operate multi-sided platforms — the kind with several classes of user, real money or real compliance obligations moving through them, and an administrative surface that has to stay usable as the business grows.",
+      "Our platforms have more than one kind of user. An advertiser, a partner and an administrator, each seeing a different thing, over one engine. Real money moves through them, or real compliance does — our whistleblowing platform is built to the EU Whistleblower Directive and ISO 37002, with anonymous reporting and a complete audit trail. And somebody has to run the whole thing on a Tuesday two years from now, without calling us.",
     capabilities: [
       {
         title: "Custom Software Solutions",
@@ -112,7 +129,7 @@ export const CATEGORIES: Category[] = [
     tagline: "Provision it, run it, and prove it works.",
     image: "cloud-testing",
     intro:
-      "Cloud infrastructure engineering and quality engineering under one roof — including validation of AI systems themselves, which most engineering firms do not offer.",
+      "We provision on AWS, Azure and GCP, we run what we provision, and we test what runs on it. Our own orchestration platform takes infrastructure onboarding from weeks to hours. The testing goes as far as the AI itself: whether a prompt does what it claims, whether an answer is really grounded in the source it cites. Plenty of firms build AI. Far fewer will tell you whether it works.",
     capabilities: [
       {
         title: "DevOps",

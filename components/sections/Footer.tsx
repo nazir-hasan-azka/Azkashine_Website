@@ -33,7 +33,9 @@ export function Footer() {
             <p className="mt-3 text-sm text-muted">{SITE.landline}</p>
             <a
               href={`mailto:${SITE.email}`}
-              className="mt-1 inline-block text-sm text-ink underline underline-offset-4"
+              /* py-1 takes this to 28px tall. A standalone link has to clear 24x24 (WCAG 2.5.8);
+                 the inline exception only covers links sitting inside a sentence. */
+              className="mt-1 inline-block py-1 text-sm text-ink underline underline-offset-4"
             >
               {SITE.email}
             </a>
@@ -50,11 +52,12 @@ export function Footer() {
             ]}
           />
 
-          {/* Nine products split across two columns, both labelled — an unlabelled
-              continuation column reads as a rendering fault. */}
+          {/* Split across two labelled columns — an unlabelled continuation column
+              reads as a rendering fault. Derived from the list length rather than a
+              hard-coded 5, which silently unbalanced the row when a product left. */}
           <FooterColumn
             title="Products"
-            links={PRODUCTS.slice(0, 5).map((p) => ({
+            links={PRODUCTS.slice(0, Math.ceil(PRODUCTS.length / 2)).map((p) => ({
               label: p.name,
               href: `/products/${p.slug}/`,
             }))}
@@ -63,7 +66,7 @@ export function Footer() {
           <FooterColumn
             title="More products"
             links={[
-              ...PRODUCTS.slice(5).map((p) => ({
+              ...PRODUCTS.slice(Math.ceil(PRODUCTS.length / 2)).map((p) => ({
                 label: p.name,
                 href: `/products/${p.slug}/`,
               })),

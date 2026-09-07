@@ -1,24 +1,9 @@
 import type { Metadata } from "next";
-import { Figtree, Manrope } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { SITE } from "@/lib/content/site";
-
-const figtree = Figtree({
-  variable: "--font-figtree",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-// Used in spots the design specifies Manrope (e.g. CTA subcopy).
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
+import { figtree, heavy, mono } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Azkashine — AI products, platforms, and engineering services",
     description:
-      "Nine products across AI & automation, digital platforms, and cloud services & testing — built, run, and independently validated.",
+      "Eight products across AI & automation, digital platforms, and cloud services & testing — built, run, and independently validated.",
     url: SITE.url,
     siteName: SITE.name,
     type: "website",
@@ -46,16 +31,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${figtree.variable} ${manrope.variable} antialiased`}
+      className={`${figtree.variable} ${heavy.variable} ${mono.variable} antialiased`}
     >
       <body>
         <div className="relative">
           <Navbar />
-          {/* NOTE: cross-route View Transitions are not wired up. React 19.2 does not
-              export `unstable_ViewTransition` (it ships only on React's experimental
-              channel), and Next's `experimental.viewTransition` flag enables that
-              component rather than wrapping navigations by itself. Revisit when the API
-              lands in a stable React release. */}
           <main>{children}</main>
           <Footer />
         </div>

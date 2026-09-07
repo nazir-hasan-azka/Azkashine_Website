@@ -2,7 +2,6 @@ import {
   AgentOSVisual,
   AgentSiddhiVisual,
   CloudOrchestrationVisual,
-  CommunityConnectVisual,
   EthicsVisual,
   ProSiddhiVisual,
   SavantVisual,
@@ -18,7 +17,6 @@ const VISUALS: Record<string, () => React.JSX.Element> = {
   "agent-siddhi": AgentSiddhiVisual,
   "smart-ai-assistant": SmartAssistantVisual,
   "ethics-intelligence": EthicsVisual,
-  "community-connect": CommunityConnectVisual,
   "cloud-orchestration": CloudOrchestrationVisual,
   prosiddhi: ProSiddhiVisual,
 };

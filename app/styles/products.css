@@ -1,0 +1,247 @@
+/* ─── The product routes ─────────────────────────────────────────────────────
+   `/products/` and the eight `/products/<slug>/` pages.
+
+   Everything structural these two routes stand on — the bands, the section heads,
+   the ghost word, `.rows`, `.pills`, `.pgrid`, `.pcard`, `.cta-btn` — is
+   the shared furniture in `app/globals.css`. What follows is only what the two
+   routes need on top of it, and every rule here is prefixed `pp-` or scoped to a
+   `data-` hook so nothing in this file can reach another page.
+
+   THE CODED INTERFACES ARE THE POINT OF THE PRODUCT PAGE. `components/product-ui/`
+   draws a real Azkashine product UI in markup, and on the previous site it lived
+   on one route at sidebar width below the fold. Here it takes the larger half of
+   the band, beside the problem it answers. */
+
+/* ── The practice grids on the index ─────────────────────────────────────── */
+
+/* The three practices hold five, two and one product. `.pgrid` fills with
+   `auto-fill`, so the short ones leave empty tracks behind — and because the grid
+   draws its rules as a 1px gap over a filled background, an empty track paints as
+   a solid slab of border colour. A one-product practice would read as a lonely
+   card in a broken box, which is exactly the afterthought reading the three
+   practices must not have.
+
+   Capping the BOX to the cards it actually holds is what fixes it: the single
+   card in Cloud Services & Testing is then the same card at the same width as any
+   of the five above it. 26rem is one track of the wide grid; the cap stops
+   binding below it, so narrow screens keep the one-column stack. */
+.pgrid[data-count="1"] {
+  max-width: 26rem;
+}
+
+.pgrid[data-count="2"] {
+  max-width: 52rem;
+}
+
+.pp-more {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+/* WCAG 2.2 SC 2.5.8, which `tests/links.mjs` checks at three widths. The inline
+   exception wants `display: inline` and `.tlink` is `inline-flex`, so at 11px
+   mono its box measures about 15px tall and would fail on its own. */
+.pp-more .tlink,
+.pp-prov-link {
+  min-height: 1.5rem;
+}
+
+/* ── The problem, beside the interface ───────────────────────────────────── */
+
+.pp-split {
+  display: grid;
+  gap: clamp(2.5rem, 4vw, 4rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+/* The problem set large, then the summary under it. Large, not huge: these run to
+   four hundred characters and a display size would turn a paragraph into a wall. */
+.pp-lead {
+  max-width: 34ch;
+  font-size: var(--text-h3);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+  color: var(--color-ink);
+}
+
+.pp-body {
+  margin-top: 1.5rem;
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+.pp-figure {
+  /* Grid children default to min-width auto and the frames hold long, truncating
+     labels, so without this the interface pushes past the gutter on a phone. */
+  min-width: 0;
+}
+
+/* Nobody should read a drawn interface as a capture of live customer data. */
+.pp-figcap {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+}
+
+/* Side by side only once both halves have room. Below this the copy column would
+   be narrower than its own measure and the frame would be a thumbnail. */
+@media (min-width: 1100px) {
+  .pp-split {
+    grid-template-columns: minmax(0, 32rem) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  /* WHY IT IS CAPPED. Uncapped, the frame reaches about 930px at 1920, and the
+     visuals set their labels at 11px — past roughly 740px a dashboard stops
+     reading as a dashboard and starts reading as a stretched one. 46rem holds it
+     at 736px, which is still the larger half of the band and about triple what
+     the previous site gave it.
+
+     `justify-self: end` puts its right edge on the band's right edge, so the
+     frame lands on the gutter rather than floating in the middle of its track. */
+  .pp-figure {
+    justify-self: end;
+    width: 100%;
+    max-width: 46rem;
+  }
+}
+
+/* ── Measured ────────────────────────────────────────────────────────────── */
+
+/* Two of the eight products carry a figure their deck actually states. This band
+   is tint and not deep on purpose: `blue-900` appears once on a route, on the
+   walkthrough panel, and a page that happens to have a number must not read as
+   louder than the six that honestly have none. */
+.pp-measured > .band-inner {
+  padding-block: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+.pp-kicker {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.pp-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-top: 1.5rem;
+}
+
+.pp-stat-value {
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  color: var(--color-blue-900);
+}
+
+.pp-stat-label {
+  margin-top: 0.75rem;
+  max-width: 24ch;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── Coverage ────────────────────────────────────────────────────────────── */
+
+.pp-groups {
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.pp-group + .pp-group {
+  margin-top: 2.25rem;
+}
+
+.pp-group-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+}
+
+/* ── The walkthrough panel ───────────────────────────────────────────────── */
+
+.pp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: clamp(2rem, 4vw, 2.75rem);
+}
+
+/* ── Provenance ──────────────────────────────────────────────────────────── */
+
+/* The last thing on a product page is where the page came from. Flat and small —
+   it is a record, not a section. */
+.pp-prov > .band-inner {
+  padding-block: clamp(2rem, 3vw, 2.75rem);
+}
+
+.pp-prov-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2.5rem;
+}
+
+.pp-prov-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.pp-prov-tag {
+  color: var(--color-muted-2);
+  opacity: 0.55;
+}
+
+.pp-prov-value {
+  color: var(--color-ink);
+}
+
+.pp-prov-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-blue-700);
+  transition: color var(--dur-fast) linear;
+}
+
+.pp-prov-link:hover {
+  color: var(--color-blue-900);
+}
+
+/* On a card the deck page waits for a hover, because the card has other things to
+   say first. Here it IS the thing being said, so it is open. Two classes beat the
+   one-class rule in `globals.css` that hides it, whichever sheet lands later. */
+
+/* ── Narrow screens, after the rules they override ───────────────────────── */
+
+@media (max-width: 767px) {
+  .pp-lead {
+    font-size: var(--text-h4);
+  }
+
+  .pp-stats {
+    gap: 2rem;
+  }
+
+  .pp-prov-list {
+    gap: 0.75rem 1.5rem;
+  }
+}

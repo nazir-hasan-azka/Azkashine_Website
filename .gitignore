@@ -46,3 +46,8 @@ next-env.d.ts
 # design source — Figma exports + working/extracted images (not used at runtime;
 # the finished icons the app serves live in /public). Kept local, not in git.
 /assets
+
+# Reference material — NOT for git. The GitHub repo is public, and this folder holds
+# the corporate portfolio deck (42MB) and its extracted text. Publishing an internal
+# sales deck to the open internet is not undoable once it is in history.
+/.claude/references

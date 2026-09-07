@@ -252,45 +252,6 @@ export function EthicsVisual() {
   );
 }
 
-export function CommunityConnectVisual() {
-  return (
-    <AppFrame title="Community Connect — reception">
-      <div className="flex items-center gap-4">
-        <div
-          className="grid h-20 w-20 shrink-0 grid-cols-5 gap-0.5 rounded-lg border border-border bg-white p-1.5"
-          aria-hidden="true"
-        >
-          {Array.from({ length: 25 }).map((_, i) => (
-            <span
-              key={i}
-              className={
-                [0, 1, 2, 4, 5, 7, 9, 10, 12, 13, 16, 18, 19, 20, 22, 24].includes(i)
-                  ? "rounded-[1px] bg-ink"
-                  : "rounded-[1px] bg-transparent"
-              }
-            />
-          ))}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-bold text-ink">Visitor checked in</p>
-          <p className="mt-0.5 truncate text-xs text-muted">
-            Host notified · OTP verified · 09:41
-          </p>
-          <div className="mt-2 flex gap-1.5">
-            <Pill tone="pass">Contactless</Pill>
-            <Pill tone="brand">Badge issued</Pill>
-          </div>
-        </div>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        <Kpi label="On site now" value="128" />
-        <Kpi label="Today" value="1,204" />
-        <Kpi label="Avg. check-in" value="11s" />
-      </div>
-    </AppFrame>
-  );
-}
-
 export function CloudOrchestrationVisual() {
   const stages = [
     ["Requirements", "done"],

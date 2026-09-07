@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Container } from "@/components/ui/Container";
-import { Media } from "@/components/ui/Media";
-import { Cta } from "@/components/sections/Cta";
+import { Page, Section, SectionHead } from "@/components/site/Page";
+import { RouteHeader } from "@/components/site/RouteHeader";
+import { Cta } from "@/components/site/Cta";
+import { ABOUT } from "@/lib/content/about";
 import {
   AT_A_GLANCE,
   CHAIRMAN,
@@ -11,142 +11,159 @@ import {
   VALUES,
   VISION,
 } from "@/lib/content/site";
+import { ABOUT_GHOST, CRUMB_HOME } from "@/lib/content/company-pages";
 
 export const metadata: Metadata = {
-  title: "About",
-  description:
-    "Azkashine Software and Services Private Limited — a Bengaluru-based IT software and services company building AI products, digital platforms, and cloud engineering services.",
+  title: ABOUT.metaTitle,
+  description: ABOUT.metaDescription,
 };
 
+/**
+ * About.
+ *
+ * Four bands: the executive summary, the vision and mission pair, the values, and the
+ * Chairman's note. Every fact on the page comes out of `site.ts`, where each block
+ * carries the deck page it was taken from — nothing here is written for the web.
+ *
+ * TWO NOTES CARRIED ACROSS from `lib/content/about.ts`, because they are decisions and
+ * would be lost the moment somebody looked only at this file:
+ *
+ *   - The `about-meeting` banner under the Chairman's note is deliberately
+ *     ARCHITECTURE, NOT A PERSON. What belongs in that slot is a portrait of the
+ *     Chairman. It is a placeholder waiting on one being supplied, not a design choice
+ *     to preserve.
+ *   - `VALUES` titles are Title Case ("Trusted Team", "Customer Centric") against the
+ *     site's sentence-case rule. They are verbatim from deck p3 and are treated as
+ *     names rather than headings. Worth a word from Nazir; not worth silently editing
+ *     a deck.
+ *
+ * The ghost watermark is used exactly twice, on values and on the note — the two bands
+ * with no banner. `SectionHead`'s ghost is texture, and a page that runs it on every
+ * heading has no texture, only noise.
+ */
 export default function AboutPage() {
   return (
-    <>
-      <PageHeader
-        title="About Azkashine"
-        lede={`${SITE.legalName} is a Bengaluru-based software and services company building AI products, digital platforms, and the cloud engineering to run them.`}
-        crumbs={[{ label: "Home", href: "/" }, { label: "About" }]}
+    <Page>
+      <RouteHeader
+        crumbs={[{ label: CRUMB_HOME, href: "/" }, { label: ABOUT.crumb }]}
+        title={ABOUT.title}
+        lede={ABOUT.lede}
       />
 
-      <section aria-labelledby="glance-heading" className="py-16 lg:py-20">
-        <Container>
-          <Media
-            name="corporate"
-            alt=""
-            ratio="16/9"
-            priority
-            className="mb-14 !aspect-[21/9]"
-            sizes="100vw"
-          />
-          <h2
-            id="glance-heading"
-            className="text-2xl font-bold text-ink sm:text-3xl lg:text-[36px]"
-          >
-            At a glance
-          </h2>
-          <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {AT_A_GLANCE.map((item) => (
-              <li
-                key={item}
-                className="border-t-2 border-brand pt-4 text-base leading-relaxed text-ink"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      <section
-        aria-labelledby="vision-heading"
-        className="bg-surface-2 py-16 lg:py-20"
-      >
-        <Container>
-          <h2 id="vision-heading" className="sr-only">
-            Vision and mission
-          </h2>
-          <div className="grid gap-8 lg:grid-cols-2">
-            <article className="rounded-[20px] border border-white bg-white p-8 shadow-[0_4px_24px_#E2E9F8] lg:p-10">
-              <h3 className="text-xl font-bold text-brand lg:text-2xl">Our vision</h3>
-              <p className="mt-4 text-lg leading-relaxed text-ink lg:text-xl">
-                {VISION}
-              </p>
-            </article>
-            <article className="rounded-[20px] border border-white bg-white p-8 shadow-[0_4px_24px_#E2E9F8] lg:p-10">
-              <h3 className="text-xl font-bold text-brand lg:text-2xl">Our mission</h3>
-              <p className="mt-4 text-lg leading-relaxed text-ink lg:text-xl">
-                {MISSION}
-              </p>
-            </article>
+      <Section tone="paper" labelledBy="glance-heading">
+        <div className="split" data-media="right">
+          <div className="split-media">
+            <div className="frame">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/img/corporate.webp"
+                alt=""
+                width={1600}
+                height={900}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
           </div>
-        </Container>
-      </section>
 
-      <section aria-labelledby="values-heading" className="py-16 lg:py-20">
-        <Container>
-          <h2
-            id="values-heading"
-            className="text-2xl font-bold text-ink sm:text-3xl lg:text-[36px]"
-          >
-            What we value
-          </h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:mt-10 lg:grid-cols-5">
-            {VALUES.map((v) => (
-              <article key={v.title}>
-                <h3 className="text-lg font-bold text-ink">{v.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
-                  {v.description}
-                </p>
-              </article>
-            ))}
+          <div className="split-body">
+            <SectionHead id="glance-heading" title={ABOUT.glanceHeading} />
+            <ul className="glance reveal-group">
+              {AT_A_GLANCE.map((line, i) => (
+                <li key={line}>
+                  <span aria-hidden="true" className="glance-index">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </Container>
-      </section>
+        </div>
+      </Section>
 
-      <section
-        aria-labelledby="chairman-heading"
-        className="border-y border-border bg-surface py-16 lg:py-24"
-      >
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
-          <div className="min-w-0">
-            <h2
+      {/* The visible headings here are the two h3s. "Vision and mission" is a heading
+          for the outline and for the section's accessible name, and saying it on screen
+          above two labels that already say it would be the third time in four lines. */}
+      <Section tone="tint" labelledBy="vision-mission-heading">
+        <h2 id="vision-mission-heading" className="sr-only">
+          {ABOUT.visionMissionHeading}
+        </h2>
+        <div className="vm reveal-group">
+          <div className="vm-item">
+            <h3 className="vm-title">{ABOUT.visionHeading}</h3>
+            <p className="vm-text">{VISION}</p>
+          </div>
+          <div className="vm-item">
+            <h3 className="vm-title">{ABOUT.missionHeading}</h3>
+            <p className="vm-text">{MISSION}</p>
+          </div>
+        </div>
+      </Section>
+
+      <Section tone="paper" labelledBy="values-heading">
+        <SectionHead
+          id="values-heading"
+          ghost={ABOUT_GHOST.values}
+          title={ABOUT.valuesHeading}
+        />
+        <div className="rows reveal-group">
+          {VALUES.map((value, i) => (
+            <div key={value.title} className="row">
+              <span aria-hidden="true" className="row-index">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 className="row-title">{value.title}</h3>
+              <p className="row-desc">{value.description}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section tone="tint" labelledBy="chairman-heading">
+        <div className="split" data-media="right">
+          <div className="split-media">
+            {/* PLACEHOLDER, and deliberately architecture rather than a person — see the
+                note at the top of this file and in `lib/content/about.ts`. A portrait of
+                the Chairman is what belongs here once one is supplied. */}
+            <div className="frame">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/img/about-meeting.webp"
+                alt=""
+                width={1600}
+                height={900}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+
+          <div className="split-body">
+            <SectionHead
               id="chairman-heading"
-              className="text-2xl font-bold text-ink sm:text-3xl lg:text-[36px]"
-            >
-              A note from our Chairman
-            </h2>
-            <div className="mt-8 space-y-5">
-              {CHAIRMAN.note.map((para) => (
-                <p key={para} className="text-lg leading-relaxed text-ink lg:text-xl">
-                  {para}
-                </p>
+              ghost={ABOUT_GHOST.chairman}
+              title={ABOUT.chairmanHeading}
+            />
+            <div className="copy note">
+              {CHAIRMAN.note.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
-            <p className="mt-8 text-lg font-semibold italic text-brand">
-              {CHAIRMAN.tagline}
-            </p>
-            <div className="mt-6 border-t border-border-strong pt-6">
-              <p className="text-base font-bold text-ink">{CHAIRMAN.name}</p>
-              <p className="text-sm text-muted">{CHAIRMAN.title}</p>
-              <p className="text-sm text-muted">{SITE.legalName}</p>
-              <p className="text-sm text-muted">{CHAIRMAN.location}</p>
+            <p className="note-tagline">{CHAIRMAN.tagline}</p>
+            <div className="note-by">
+              <p className="note-name">{CHAIRMAN.name}</p>
+              {/* Two lines rather than one joined by a separator: a punctuation mark
+                  invented in a route is still a route inventing copy. */}
+              <p className="note-role">{CHAIRMAN.title}</p>
+              <p className="note-role">{CHAIRMAN.location}</p>
+              <p className="note-org">{SITE.legalName}</p>
             </div>
           </div>
-          {/* Deliberately architecture rather than a person: any photographed individual
-              beside this letter reads as the Chairman himself. A portrait of Ishaq Shaik
-              is what belongs here once one is supplied. */}
-          <Media
-            name="about-meeting"
-            alt=""
-            ratio="3/2"
-            className="lg:mt-2"
-            sizes="(max-width: 1024px) 100vw, 35vw"
-          />
-          </div>
-        </Container>
-      </section>
+        </div>
+      </Section>
 
       <Cta />
-    </>
+    </Page>
   );
 }
