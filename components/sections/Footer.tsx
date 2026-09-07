@@ -30,7 +30,20 @@ export function Footer() {
                 </span>
               ))}
             </address>
-            <p className="mt-3 text-sm text-muted">{SITE.landline}</p>
+            {/* Callable. The numbers were already here as text, which is no use to
+                somebody reading this on a phone. `tel:` strips the spaces because a
+                dialler will not. */}
+            <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted">
+              {[SITE.landline, ...SITE.phones].map((number) => (
+                <a
+                  key={number}
+                  href={`tel:${number.replace(/[^+\d]/g, "")}`}
+                  className="py-1 hover:text-ink"
+                >
+                  {number}
+                </a>
+              ))}
+            </p>
             <a
               href={`mailto:${SITE.email}`}
               /* py-1 takes this to 28px tall. A standalone link has to clear 24x24 (WCAG 2.5.8);

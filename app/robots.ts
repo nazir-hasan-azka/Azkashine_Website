@@ -1,24 +1,26 @@
 import type { MetadataRoute } from "next";
+import { SITE } from "@/lib/content/site";
 
 /**
  * robots.txt.
  *
- * ⚠️ THIS DISALLOWS EVERYTHING, ON PURPOSE. `.github/workflows/deploy.yml` FTPs the
- * build into Hostinger's `test/` folder, which is served at https://test.azkashine.com/
- * — a public URL holding a staging copy of the real site. Left indexable, it competes
- * with azkashine.com for its own content and Google picks a winner on its own terms.
+ * ⚠️ THIS NOW ALLOWS CRAWLING, WHICH IS ONLY CORRECT ON THE PRODUCTION HOST.
  *
- * BEFORE THIS REPO EVER DEPLOYS TO PRODUCTION, this file has to change: allow "/", and
- * point `sitemap` at the real host. A staging disallow shipped to production is the
- * quietest way to remove a site from search results.
+ * It disallowed everything until 2026-09-07, because the deploy target was
+ * `test/` on Hostinger — a public staging URL, and a staging copy competing with
+ * azkashine.com for its own content is worse than no staging at all.
+ *
+ * The two settings have to move together. `server-dir` in
+ * `.github/workflows/deploy.yml` and this file are a pair: allowing crawling while
+ * still deploying to `test/` gets the staging copy indexed, and disallowing while
+ * deploying to production removes the real site from search. Change one, change
+ * the other, in the same commit.
  */
-/* `output: "export"` has no server to ask at request time, so a metadata route has to
-   say plainly that it is static. Without this the build fails rather than shipping a
-   robots.txt that never gets generated — which is the better failure of the two. */
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", disallow: "/" },
+    rules: { userAgent: "*", allow: "/" },
+    sitemap: `${SITE.url}/sitemap.xml`,
   };
 }

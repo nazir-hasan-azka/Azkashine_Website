@@ -111,3 +111,22 @@ export const WHY_SECTION = {
   evidenceLabel: "Evidenced by",
   productsLabel: "Proved by",
 } as const;
+
+/**
+ * The 404 page.
+ *
+ * A lost visitor wants somewhere to go, not an apology. These are the three places
+ * that are actually useful from a dead end, and "home" is not one of them — somebody
+ * who mistyped a product URL wants the product list, not the front door.
+ */
+export const NOT_FOUND = {
+  metaTitle: "Page not found",
+  code: "404",
+  title: "That page is not here",
+  lede: "The link may be old, or the address slightly off. These are the places worth trying.",
+  links: [
+    { label: "All products", href: "/products/" },
+    { label: "What we do", href: "/what-we-do/" },
+    { label: "Talk to us", href: "/contact/" },
+  ],
+} as const;

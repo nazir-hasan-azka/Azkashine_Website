@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { SITE } from "@/lib/content/site";
+import { CATEGORIES } from "@/lib/content/taxonomy";
 import { figtree, heavy, mono } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -34,6 +35,33 @@ export default function RootLayout({
       className={`${figtree.variable} ${heavy.variable} ${mono.variable} antialiased`}
     >
       <body>
+        {/* Organization schema. Every field comes from `site.ts` or `taxonomy.ts` —
+            the legal name, the real address, the real numbers, the three practices.
+            Nothing here is written for search engines that is not already true on the
+            page, which is the same rule the copy follows. */}
+        <script
+          type="application/ld+json"
+          // The content is ours and built from typed constants, not user input.
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: SITE.legalName,
+              alternateName: SITE.name,
+              url: SITE.url,
+              email: SITE.email,
+              telephone: [SITE.landline, ...SITE.phones],
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: SITE.address.lines.join(", "),
+                addressLocality: "Bengaluru",
+                addressRegion: "Karnataka",
+                addressCountry: "IN",
+              },
+              knowsAbout: CATEGORIES.map((c) => c.name),
+            }),
+          }}
+        />
         <div className="relative">
           <Navbar />
           <main>{children}</main>
