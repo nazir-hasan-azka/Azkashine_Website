@@ -10,8 +10,10 @@ diagnosis it all comes from — read it once. `.claude/DIRECTION.md` is where th
 going: **the trace**, and the reading of the reference sites it came from. The language is
 approved; individual chapters are not. It carries the implementation brief — read it
 before building anything on the home page. **`.claude/BUILD-BRIEF.md` is the current
-instruction**: build the whole site in one run, with the content sources, the route
-inventory and what must not go wrong.
+instruction** for the site as a whole: content sources, route inventory, and what must
+not go wrong. `.claude/ECOSYSTEM-BRIEF.md` is the next piece of work — a new
+`/ecosystem/` route, the spatial product floor, reasoned from lusion.co without copying
+it.
 
 Content sources beyond `lib/content/`: the previous app at `../new-azkashine-website/`
 (copy and structure only — its visual system is what this project replaces) and the live
