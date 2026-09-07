@@ -1,0 +1,1146 @@
+/* ─── The film — chapters ────────────────────────────────────────────────────
+   Everything the six chapters need. The scene unit, the stage, the trace canvas
+   and the gate live in `globals.css` with the rest of the shared system; this is
+   the per-chapter material.
+
+   ONE IDEA RUNS THROUGH ALL OF IT: `--p` is written onto the stage by the single
+   rAF loop, every child inherits it, and a beat computes its own arrival from it
+   in CSS. No element subscribes to anything. Twelve capability rows ruling in one
+   at a time is twelve `clamp()` expressions and zero JavaScript. */
+
+/* `--p` DEFAULTS TO 1, NOT 0. With no JavaScript, no support for the loop, or
+   `prefers-reduced-motion`, every beat resolves to its finished state and the
+   chapter is simply a page of content. That is tier one of the three in
+   `DIRECTION.md`, and it is what makes it safe to drive real copy from `--p`
+   rather than only decoration. */
+.film-stage {
+  --p: 1;
+}
+
+/* A thing that arrives at `--at` and is fully in `--span` later. Custom
+   properties substitute as tokens, so the whole expression lands inside the
+   `opacity` and `transform` declarations and the compositor does the rest. */
+/* NO `will-change` HERE, deliberately. It promotes every beat to its own compositor
+   layer and holds the memory for the life of the page — twelve rows in the ledger alone,
+   for elements that fade fourteen pixels once. The profile showed 27 layers and 235MB of
+   layer bounds before this came out. `opacity` and `transform` are already cheap
+   properties; the hint buys nothing here and costs a layer each. */
+.beat {
+  --span: 0.06;
+  --k: clamp(0, calc((var(--p) - var(--at)) / var(--span)), 1);
+  opacity: var(--k);
+  transform: translateY(calc((1 - var(--k)) * 14px));
+}
+
+/* ── The chapter stage ──────────────────────────────────────────────────── */
+
+/* Ordinary flow, centred. Every window gets the composition its own type
+   produced, and there is no fraction for the canvas and the stylesheet to
+   disagree about — the canvas reads a zero-height marker instead. */
+.film-chapter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* The top padding has to clear BOTH the 5rem sticky header and the chapter mark
+     that sits under it, or the first line of a heading is painted over. It did. */
+  padding: clamp(9rem, 16vh, 11.5rem) var(--page-gutter) clamp(2rem, 5vh, 3rem)
+    calc(var(--page-gutter) + var(--spine-step));
+}
+
+/* Zero-height. It sets a position and occupies nothing; the canvas draws on it. */
+.film-anchor {
+  height: 0;
+  margin-top: 3.25rem;
+}
+
+/* The rail a chapter's drawn work happens along, where that work needs a length
+   rather than a point. */
+/* SPANS THE STAGE, beside the copy rather than under it.
+   As a block in the flow it was 234px tall, which gave the reversal — the only
+   backwards motion on the whole site — about 170px to travel in. Absolutely
+   positioned it runs the full height of the stage, so the dashed pass climbs past
+   the heading it is contradicting. It is zero-width and on the spine, so it never
+   touches the copy. */
+.film-rail-tall {
+  position: absolute;
+  left: 0;
+  top: clamp(9rem, 16vh, 11.5rem);
+  bottom: clamp(3rem, 8vh, 5rem);
+  width: 0;
+}
+
+/* The gate's three governance terms. Short by design: this is the one beat on the
+   page where the visitor is standing still, and a four-sentence paragraph is the
+   wrong thing to hand somebody who is waiting. The argument itself lives in
+   chapter 06, which is also where it stops being a duplicate. */
+.film-gate-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.film-gate-terms li {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  color: var(--color-muted);
+}
+
+.film-quote {
+  margin-top: 1.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-brand);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.film-status {
+  margin-top: 1.4rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.film-hint-line {
+  margin-top: 1rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-body-sm);
+  color: var(--color-muted-2);
+}
+
+/* ── The chapter mark ───────────────────────────────────────────────────── */
+
+/* On the spine, in the margin. It is type, it never moves and a screen reader
+   has to read it — three reasons it is not drawn into the canvas. */
+/* IN FLOW BY DEFAULT, absolute only inside a pinned stage.
+   It was absolutely positioned everywhere, at a `top` that had to be guessed against
+   each section's own padding — and on the ledger and the closing chapter it lost:
+   the mark landed straight on top of the heading. Those two are ordinary bands, not
+   pinned stages, and in a band the mark is just the first thing in the column. Only
+   `.film-chapter` needs it lifted into the stage's top padding, and only there does
+   it get a `top` at all. */
+.chmark {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+/* Inside a pinned stage it sits in the top padding, clear of the header's contracted
+   pill — which floats 20px down and is 78px tall. */
+.film-chapter .chmark {
+  position: absolute;
+  top: clamp(7rem, 11vh, 8.5rem);
+  left: calc(var(--page-gutter) + var(--spine-step));
+}
+
+.chmark + * {
+  margin-top: 1.25rem;
+}
+
+.chmark-n {
+  padding: 0.15rem 0.4rem;
+  background: var(--color-ink);
+  color: #ffffff;
+}
+
+.chmark-t {
+  color: var(--color-muted-2);
+}
+
+/* ── Chapter 02, the breath ─────────────────────────────────────────────── */
+
+/* The act title is the only thing on screen, so it is set at the display step
+   and allowed to be the size the page can hold. Copula's type-as-tone, used
+   once, where there is nothing for it to compete with. */
+.film-act {
+  font-size: var(--text-display-lg);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  color: var(--color-ink);
+}
+
+.film-act-line {
+  margin-top: 1.75rem;
+  max-width: 34ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── Chapter 03, the ledger: three cards, stacked ───────────────────────────
+   Rebuilt 2026-09-07. See the note at the top of `Ledger.tsx` for why, and
+   `.claude/TOKENS-STUDIO.md` for the measurements this is built from.
+
+   COLOUR ARRIVES AS OBJECTS, NEVER AS A GROUND. The band behind the stack is
+   the same paper as the rest of the page; the cards are inset, rounded and
+   tinted. That is Tokens Studio's actual system — their `<body>` is #ffffff
+   across all 9,568px and the colour a visitor remembers is in cards sitting on
+   it — and it is what lets `DIRECTION.md` keep "the ground stays white" while
+   Nazir gets the colouring he asked for. */
+
+.film-ledger-band {
+  position: relative;
+  background: var(--color-background);
+  padding-bottom: clamp(3rem, 8vh, 6rem);
+}
+
+.film-ledger-head {
+  position: relative;
+  padding: clamp(6rem, 12vh, 8rem) var(--page-gutter) clamp(1rem, 2.5vh, 1.75rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  max-width: 1680px;
+}
+
+/* THE LABEL REGISTER, NOT THE DISPLAY ONE.
+   Chapter 02 is this act's title — "What we do", set at the display step and held on
+   a near-empty screen. This chapter opened with its own display heading in the
+   identical face, size, colour and position immediately underneath it: the same idea
+   announced twice, so the breath stopped reading as a breath and became the first of
+   two title screens.
+
+   An act gets one title. What the ledger needs is a line naming what the cards below
+   are, and that belongs with every other eyebrow on the site. It is also the jump the
+   reference makes — display straight to small, with nothing in between doing real
+   work. See `.claude/TOKENS-STUDIO.md`. */
+.film-ledger-caption {
+  /* Wide enough for one line: mono at 0.19em tracking is far wider per character
+     than a ch unit assumes, and a two-line caption reads as a small heading. */
+  max-width: 64ch;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  line-height: 1.7;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* The stack. Each card parks a little lower than the one before it, so the
+   earlier cards stay on screen as a deck of edges while the next slides over
+   them. Sticky and nothing else — no scroll listener, no library, nothing to
+   throttle, and no `--p` crossing a big subtree. */
+.ledger-stack {
+  /* BOTH OF THESE SCALE WITH THE VIEWPORT'S HEIGHT, because everything about a
+     stack is a height budget: the tallest card plus the strips parked above it
+     has to fit the window, or the cards cannot pin and the section goes flat. */
+  /* MUST CLEAR THE HEADER, and the header is not 5rem any more — the contracted
+     pill floats 1.25rem down and is 5rem tall, so its underside is at 6.5rem.
+     Parked below that, the strips were being covered by it and a stack whose
+     index you cannot read is just a card with a gap above it. */
+  --stack-top: clamp(6.75rem, 9vh, 7.5rem);
+  /* The step IS the strip. What shows of a card once the next lands on it is
+     exactly its number and its name, never a half-cut line. Assembled, the
+     stack is an index of itself — the one place this deliberately does more
+     than the reference, which shows a bare edge that tells you nothing. */
+  --strip-h: clamp(2.9rem, 5vh, 3.5rem);
+  --stack-step: var(--strip-h);
+  padding-inline: var(--page-gutter) var(--page-gutter);
+  max-width: 1680px;
+}
+
+/* STATIC BY DEFAULT, sticky only where a stack can actually work. See the media
+   query below — the deciding measurement is the viewport's HEIGHT, not its width. */
+.ledger-card {
+  position: static;
+  /* Radius 24, matching the reference's statement cards. A band with square
+     corners is a background; a rounded inset block is an object. */
+  border-radius: 24px;
+  overflow: hidden;
+  /* The hard offset shadow is the signature, and it is NOT an elevation shadow:
+     3px down, zero blur, zero spread. Measured off the reference's own header
+     and cards. A blurred shadow here is the single easiest way to copy this
+     badly. */
+  box-shadow: 0 3px 0 0 rgba(15, 17, 37, 0.16);
+  color: var(--color-ink);
+}
+
+.ledger-card + .ledger-card {
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+}
+
+.ledger-card[data-tint="cyan"] {
+  background: var(--color-tint-cyan);
+  --ledger-accent: var(--color-blue-700);
+}
+
+.ledger-card[data-tint="blue"] {
+  background: var(--color-tint-blue);
+  --ledger-accent: var(--color-blue-500);
+}
+
+.ledger-card[data-tint="deep"] {
+  background: var(--color-tint-deep);
+  --ledger-accent: var(--color-blue-900);
+}
+
+/* The strip: the card's label, and the only part of it that survives being
+   covered. Fixed height rather than padding-derived, because `--stack-step`
+   reads exactly this number. */
+.ledger-strip {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--strip-h);
+  padding-inline: clamp(1.25rem, 3vw, 2.5rem);
+  border-bottom: 1px solid rgba(15, 17, 37, 0.1);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.ledger-index {
+  color: var(--ledger-accent);
+}
+
+/* UPPERCASE, TIGHT, AND HEAVY — the display behaviour from the reference,
+   carried by the face already loaded. Archivo Black at −0.03em is the closest
+   analogue we have to their Display ExtraBold, and it is self-hosted already.
+   No new typeface was added; see `.claude/TOKENS-STUDIO.md`. */
+.ledger-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  color: var(--color-ink);
+}
+
+.ledger-count {
+  color: var(--color-muted);
+}
+
+.ledger-body {
+  padding: clamp(1.1rem, 3.2vh, 3rem) clamp(1.25rem, 3vw, 2.5rem)
+    clamp(1.25rem, 3.6vh, 3.5rem);
+}
+
+/* The practice's own line, verbatim from deck p4, set as the card's headline.
+   Uppercase display with hard negative tracking and a line-height under 1 —
+   the three behaviours the reference's display tier is built from. */
+.ledger-tagline {
+  max-width: 20ch;
+  font-family: var(--font-display), Impact, sans-serif;
+  /* CAPPED BY HEIGHT AS WELL AS WIDTH — the same correction the hero's headline
+     needed, and for the same reason. Sized on width alone it was 80px on every
+     laptop, which made the card 607px tall and pushed the whole stack over the
+     window's height budget on every screen shorter than a 1440x900 Mac. Nazir
+     saw a section that had simply stopped stacking. `min(vw, vh)` lets the type
+     be big where there is room and get out of the way where there is not. */
+  font-size: clamp(1.75rem, min(5.4vw, 6.4vh), 5rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* A hard jump from the display tier straight to small text, with nothing in
+   between doing real work. Measured on the reference: 48px or 40px to 18px. */
+.ledger-caps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: clamp(1.1rem, 3.4vh, 3rem);
+  background: rgba(15, 17, 37, 0.1);
+  border: 1px solid rgba(15, 17, 37, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ledger-cap {
+  min-width: 0;
+  padding: clamp(0.7rem, 1.7vh, 1.15rem) 1.25rem;
+  background: #ffffff;
+}
+
+.ledger-cap-title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.ledger-cap-desc {
+  margin-top: 0.35rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* WHETHER A STACK CAN WORK IS A QUESTION ABOUT HEIGHT, and it was being asked
+   about width. `max-width: 1023px` turned stacking OFF at 768x1024, where the
+   cards fit with 170px to spare, and left it ON at 1280x720, where they do not
+   — so it was wrong in both directions, and a tablet showed three flat cards
+   while a short laptop showed a stack that could not pin.
+
+   A sticky element taller than its scrollport does not pin; it scrolls, and
+   reads as a bug. What has to fit is the tallest card plus the strips parked
+   above it: measured, 615 + 92 + 2x56 = 819px at 1440 wide.
+
+   The threshold was 780px, and that was still wrong — it switched stacking off
+   on every real laptop. 1366x768 minus browser chrome is a 625px viewport;
+   1536x864 is about 730. Only a 1440x900 Mac and a 1080p screen cleared it, so
+   for most people the stack Nazir had asked for simply was not there.
+
+   THE ANSWER WAS NOT A LOWER THRESHOLD, IT WAS A SHORTER CARD. Everything
+   inside the card now scales with viewport height — the display type is capped
+   by `vh` as well as `vw`, and the paddings, the strip and the parking offset
+   all follow — so the card fits the window instead of the window having to be
+   big enough for the card. 600px of height is then a floor, not a judgement.
+
+   Still gated on width: at 390px a card is 830px of wrapped display type at any
+   height, and no amount of shrinking makes three of those stack on a phone. */
+@media (min-width: 600px) and (min-height: 600px) {
+  .ledger-card {
+    position: sticky;
+    top: calc(var(--stack-top) + var(--i) * var(--stack-step));
+  }
+}
+
+@media (max-width: 1023px) {
+  .ledger-caps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .ledger-tagline {
+    font-size: var(--text-h1);
+  }
+
+  .ledger-strip {
+    gap: 0.6rem;
+    font-size: var(--text-label-sm);
+  }
+
+  .ledger-count {
+    display: none;
+  }
+}
+
+/* The stack is the section's only motion, so with it turned off the cards are
+   simply three cards. Nothing is lost but the covering. */
+@media (prefers-reduced-motion: reduce) {
+  .ledger-card {
+    position: static;
+  }
+}
+
+/* ── Chapter 04, already running ────────────────────────────────────────── */
+
+/* THE TRAVERSE IS ONE `translateX`, and the percentage in it resolves against the
+   track's own width — so `100vw - 100%` is exactly how far it has to move for its
+   right edge to reach the right edge of the window, with nothing measured and no
+   library.
+
+   IT IS WRITTEN AS AN INLINE STYLE BY `Running.tsx`, NOT READ FROM `--p` HERE, and
+   that is a performance fix rather than a preference. `--p` is an inherited custom
+   property set on the stage; changing it invalidates style for every descendant that
+   might use it, and this stage contains eight coded product interfaces — 376
+   elements. Profiling one scroll of the film showed 5.78s of style recalculation
+   across 566 recalcs, and this subtree was most of it. One inline transform on one
+   element invalidates one element. */
+.film-track {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  width: max-content;
+  height: 100%;
+  padding: 0 var(--page-gutter) 0 calc(var(--page-gutter) + var(--spine-step));
+  will-change: transform;
+}
+
+.film-running-head {
+  flex: 0 0 auto;
+  width: min(34rem, 76vw);
+  padding-right: 2rem;
+}
+
+.film-panel {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(46rem, 74vw);
+}
+
+.film-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.film-panel-n {
+  color: var(--color-muted-2);
+}
+
+.film-panel-cat {
+  color: var(--color-blue-700);
+}
+
+/* THE INTERFACES ARE ALL THE SAME SIZE, and they were not.
+   Measured live, the eight ran from 319px to 789px tall — ProSiddhi two and a half
+   times Cloud Orchestration — so the panels did not line up as they travelled and the
+   row read as broken rather than as a set. A fixed media box makes them a set. What
+   overflows is cropped and faded at the cut, which is honest: there IS more interface
+   below, and the product page shows it at full height.
+
+   `content-visibility: auto` is the second reason the height is fixed. It lets the
+   browser skip style and layout for the seven panels that are off screen, and it can
+   only do that safely if `contain-intrinsic-size` is exact — which needs a height that
+   does not depend on the content. The uniformity fix and the performance fix are the
+   same fix. */
+.film-panel-ui {
+  --ui-h: 24rem;
+  position: relative;
+  height: var(--ui-h);
+  /* `safe center` is the whole trick: an interface SHORTER than the box is centred in
+     it, and one TALLER falls back to starting at the top so the crop only ever takes
+     the bottom. Plain `center` would crop a tall interface at both ends and cut the
+     window chrome off the top of it. Six of the eight are shorter than this box and
+     were sitting against the top edge with a hand's width of nothing under them. */
+  display: grid;
+  align-content: safe center;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #ffffff;
+  content-visibility: auto;
+  contain-intrinsic-size: 46rem var(--ui-h);
+}
+
+/* The cut, softened. A hard crop reads as a bug; a fade reads as "continues". */
+.film-panel-ui::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4.5rem;
+  background: linear-gradient(to bottom, transparent, #ffffff);
+  pointer-events: none;
+}
+
+.film-panel-name {
+  margin-top: 1.25rem;
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.film-panel-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.film-panel-tagline {
+  margin-top: 0.5rem;
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── Chapter 06, the case ───────────────────────────────────────────────────
+   The three reasons, each showing the receipt for itself. See the note at the
+   top of `Case.tsx` for why this is not three cards with icons.
+
+   THE NUMERAL IS THE DISPLAY ELEMENT, NOT THE CLAIM. The ledger already sets
+   practice taglines in uppercase Archivo Black and chapter 04 is eight product
+   interfaces at full size; a third section shouting in the same voice would
+   flatten all three. Here the oversized thing is the count and the claim is
+   ordinary sentence case beside it — a different shape for a different job,
+   which is the rule the whole page is built on. */
+
+.film-case {
+  position: relative;
+  background: var(--color-background);
+}
+
+.film-case-inner {
+  position: relative;
+  padding: clamp(6rem, 14vh, 9rem) var(--page-gutter) clamp(4rem, 10vh, 7rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  max-width: 1680px;
+}
+
+.film-case-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.film-case-lede {
+  margin-top: 1.1rem;
+  max-width: 46ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.film-claims {
+  margin-top: clamp(2.5rem, 6vh, 4.5rem);
+  border-top: 1px solid var(--color-border);
+}
+
+/* A hairline-ruled row, not a card. The page has already spent its card budget
+   on the ledger; a second deck here would be the same shape twice. */
+.film-claim {
+  display: grid;
+  grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(2rem, 4.5vh, 3.25rem) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.film-claim-n {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2.75rem, min(6vw, 7vh), 5.5rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.8;
+  /* A shade off the paper, so it reads as an index rather than as a headline
+     competing with the claim beside it — the same restraint the route headers'
+     ghost word uses. */
+  color: var(--color-border-strong);
+}
+
+.film-claim-title {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+.film-claim-desc {
+  margin-top: 0.9rem;
+  max-width: 62ch;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* THE RECEIPT — the half of `why.ts` that had never been rendered anywhere.
+   The section's lede promises "three things you can check"; without this it was
+   three assertions and nothing to check them against. */
+.film-claim-proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--color-border-strong);
+}
+
+.film-claim-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+}
+
+.film-claim-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.film-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  line-height: 1.3;
+  color: var(--color-muted);
+}
+
+/* A product name is a link to the page carrying the rest of its proof, so it is
+   a pointer target and held to 24x24 like every other one — WCAG 2.2 SC 2.5.8,
+   enforced by `tests/links.mjs`. */
+.film-chip-link {
+  min-height: 1.75rem;
+  border-color: var(--color-blue-500);
+  color: var(--color-blue-700);
+  transition:
+    background-color var(--dur-fast) linear,
+    color var(--dur-fast) linear;
+}
+
+.film-chip-link:hover {
+  background: var(--color-tint-cyan);
+  color: var(--color-blue-900);
+}
+
+@media (max-width: 767px) {
+  .film-claim {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .film-claim-title {
+    font-size: var(--text-h3);
+  }
+
+  .film-claim-proof {
+    gap: 0.5rem;
+  }
+}
+
+/* ── Chapter 07, signed ─────────────────────────────────────────────────── */
+
+/* NOT a scene. After five pinned chapters the thing that reads as an ending is
+   the film letting go of the scroll and handing it back; a sixth stage that also
+   held would just be a fifth stage. */
+.film-signed {
+  position: relative;
+  background: var(--color-background);
+}
+
+.film-signed-inner {
+  padding: clamp(4rem, 9vh, 7rem) var(--page-gutter) clamp(2rem, 4vh, 3rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  max-width: 1680px;
+}
+
+.film-signed-label {
+  margin-top: 2.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+}
+
+.film-sectors {
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Names on the line rather than another card grid. The page has already shown
+   cards; a fourth grid would be the "six sections, one shape" fault the whole
+   redesign exists to kill. */
+.film-sector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.5rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--color-border);
+  transition: color var(--dur-fast) linear;
+}
+
+.film-sector-name {
+  min-width: 9rem;
+  font-size: var(--text-h4);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+}
+
+.film-sector-line {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+}
+
+.film-sector:hover .film-sector-name {
+  color: var(--color-blue-700);
+}
+
+.film-signed-close {
+  padding-bottom: clamp(5rem, 12vh, 9rem);
+}
+
+/* The last sentence on the page, and the argument the whole film is making. */
+.film-closing {
+  margin-top: 3rem;
+  max-width: 22ch;
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+  color: var(--color-ink);
+}
+
+.film-signed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+
+/* Sits beside a button, so it is a pointer target and not prose — 24x24 minimum,
+   WCAG 2.2 SC 2.5.8, enforced by `tests/links.mjs`. As a bare inline link at 11px
+   mono it measured 139x17. */
+.film-signed-secondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+/* ── When a scene stops being a scene ───────────────────────────────────────
+
+   THREE CONDITIONS, ONE BLOCK. A comma in a media query is an OR, so these rules
+   are written once rather than three times, and the three tiers cannot drift
+   apart — which they had, and it cost the no-JavaScript tier seven of its eight
+   products.
+
+     below lg          a sticky element taller than its scrollport does not pin,
+                       it just scrolls, and reads as a bug
+     reduced motion    `globals.css` collapses every scene to one screen, which is
+                       right for a stage holding one screenful and wrong for a
+                       traverse: `transform: none` sits it at its start and the
+                       stage clips the rest
+     no scripting      `--p` defaults to 1, so the track sits at its END position
+                       and the stage clips everything before the last panel
+
+   In all three the answer is the same: the two oversized chapters become columns.
+   Tier one's promise is content complete, and a product nobody can scroll to is
+   not content. */
+@media (max-width: 1023px), (prefers-reduced-motion: reduce), (scripting: none) {
+  .film-scene[data-flow="sm"] {
+    height: auto;
+  }
+
+  .film-scene[data-flow="sm"] .film-stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .film-scene[data-flow="sm"] .film-chapter {
+    position: static;
+    padding: clamp(3.5rem, 9vw, 5rem) var(--page-gutter) clamp(3.5rem, 9vw, 5rem)
+      calc(var(--page-gutter) + var(--spine-step));
+  }
+
+  /* In flow there is no progress to read, so a beat is simply present. */
+  .film-scene[data-flow="sm"] .beat {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The traverse becomes a column. Nothing moves sideways. */
+  .film-scene[data-flow="sm"] .film-track {
+    flex-direction: column;
+    align-items: stretch;
+    width: auto;
+    height: auto;
+    padding: clamp(3.5rem, 9vw, 5rem) var(--page-gutter) clamp(3.5rem, 9vw, 5rem)
+      calc(var(--page-gutter) + var(--spine-step));
+    transform: none;
+    will-change: auto;
+  }
+
+  .film-scene[data-flow="sm"] .film-panel,
+  .film-scene[data-flow="sm"] .film-running-head {
+    width: auto;
+    max-width: none;
+    padding-right: 0;
+  }
+
+  .film-scene[data-flow="sm"] .film-chapter .chmark {
+    position: static;
+  }
+}
+
+@media (max-width: 767px) {
+  .film-chapter {
+    padding: 5.5rem var(--page-gutter) 2rem calc(var(--page-gutter) + var(--spine-step));
+  }
+
+  .film-act {
+    font-size: var(--text-display-sm);
+  }
+
+  .film-closing {
+    font-size: var(--text-h1);
+  }
+
+  .film-signed-actions .cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Reduced motion: the scene shapes are handled in the block above, alongside the
+   two other conditions that need exactly the same treatment. What is left here is
+   the motion itself. */
+@media (prefers-reduced-motion: reduce) {
+  .beat {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+
+/* ─── SAMPLE: the check run ──────────────────────────────────────────────────
+   `app/variations/checks/` only. Proposed chapter 07. Not imported by the film.
+
+   Everything runs off `--p`, written onto the stage by the film's one rAF loop.
+   Each row derives its own 0->1 from `--i`, so three checks resolve in sequence
+   with no state, no observer per row, and no JavaScript at all in this file. */
+
+.chk-page { background: #ffffff; }
+.chk-tail { height: 60vh; }
+
+.chk {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+}
+
+.chk-inner {
+  width: 100%;
+  padding: 5rem var(--page-gutter) 0;
+}
+
+.chk-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-ink);
+}
+
+.chk-eyebrow,
+.chk-state {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.chk-eyebrow { color: var(--color-blue-700); }
+.chk-state { position: relative; color: var(--color-muted); }
+
+/* "running" until the last check lands, then "3 of 3". A status line, not a caption. */
+.chk-state-run { opacity: calc(1 - clamp(0, (var(--p, 0) - 0.82) * 12, 1)); }
+.chk-state-done {
+  position: absolute;
+  right: 0;
+  color: var(--color-blue-900);
+  opacity: clamp(0, calc((var(--p, 0) - 0.82) * 12), 1);
+}
+
+/* The statement. basement.studio's move: one line, as large as the column allows,
+   carrying the whole feeling so the substance below can be small and quiet. */
+/* The statement arrives a word at a time. The only per-word reveal on the site, and
+   it is spent here because this is the one line in the section anybody reads rather
+   than scans. `--w` is the word's index; the scene's own `--p` drives it, so it is
+   scroll-linked rather than a timer that runs whether anyone is looking or not. */
+.chk-word {
+  display: inline-block;
+  opacity: clamp(0, calc((var(--p, 0) * 14) - var(--w)), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--p, 0) * 14) - var(--w)), 1)) * 0.14em));
+}
+
+.chk-statement {
+  margin: clamp(2rem, 6vh, 4rem) 0 clamp(2.5rem, 7vh, 5rem);
+  max-width: 16ch;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2.75rem, 8.5vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* The trace, crossing the row. It draws left to right as the checks pass, so the line
+   that has carried the whole page arrives here to underwrite the claims rather than
+   passing them by. */
+.chk-sweep {
+  height: 1px;
+  background: var(--color-blue-900);
+  transform: scaleX(clamp(0, calc((var(--p, 0) - 0.26) / 0.6), 1));
+  transform-origin: left;
+}
+
+.chk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  /* One hairline between boxes rather than a border on each — the boxes share edges,
+     which reads as one instrument rather than three cards floating apart. */
+  background: var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
+}
+
+/* Each box's own progress, so the three resolve in sequence. Spaced across the back
+   two-thirds of the scene, leaving the statement the front third to itself. */
+.chk-box {
+  --q: clamp(0, calc((var(--p, 0) - 0.28 - (var(--i) * 0.18)) / 0.18), 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vw, 1.9rem);
+  background: #ffffff;
+}
+
+.chk-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+/* The mark. An empty ring while the check runs, filled the moment it passes — the same
+   deep blue the gate lands, used for the second and last time on the page. */
+.chk-mark {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: var(--color-blue-900);
+  background-clip: content-box;
+  padding: calc(2px + (1 - var(--q)) * 3px);
+  border: 1.5px solid;
+  border-color: color-mix(in srgb, var(--color-blue-900) calc(var(--q) * 100%), var(--color-border-strong));
+  /* A short swell as it lands, then settle. Peaks at the moment the check passes. */
+  transform: scale(calc(1 + (0.45 * clamp(0, calc(1 - (abs(var(--q) - 0.82) * 12)), 1))));
+}
+
+.chk-label {
+  font-size: var(--text-h4);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--color-ink) calc(35% + var(--q) * 65%), transparent);
+}
+
+.chk-body {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--color-muted);
+  opacity: clamp(0, calc((var(--q) - 0.35) * 2.2), 1);
+}
+
+.chk-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: auto 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border);
+  opacity: clamp(0, calc((var(--q) - 0.6) * 2.5), 1);
+}
+
+.chk-value {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.1em;
+  color: var(--color-blue-700);
+}
+
+/* Provenance on hover only. */
+.chk-source {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity var(--dur-fast) linear;
+}
+
+.chk-box:hover .chk-source { opacity: 1; }
+
+@media (max-width: 1023px) {
+  .chk-list { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .chk-source { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chk-box { --q: 1; }
+}
+
+/* Chapter 07 in flow. There is no scroll progress to read when the stage is not
+   pinned, so every check is simply resolved and every word is simply present. */
+@media (max-width: 1023px), (prefers-reduced-motion: reduce), (scripting: none) {
+  .film-scene[data-flow="sm"] .chk {
+    display: block;
+  }
+
+  .film-scene[data-flow="sm"] .chk-inner {
+    padding: clamp(3.5rem, 9vw, 5rem) var(--page-gutter);
+  }
+
+  .film-scene[data-flow="sm"] .chk-box {
+    --q: 1;
+  }
+
+  .film-scene[data-flow="sm"] .chk-word {
+    opacity: 1;
+    transform: none;
+  }
+
+  .film-scene[data-flow="sm"] .chk-sweep {
+    transform: scaleX(1);
+  }
+
+  .film-scene[data-flow="sm"] .chk-state-run {
+    opacity: 0;
+  }
+
+  .film-scene[data-flow="sm"] .chk-state-done {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .chk-statement {
+    font-size: clamp(2.25rem, 11vw, 3rem);
+    max-width: none;
+  }
+}

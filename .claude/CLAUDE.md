@@ -1,337 +1,171 @@
-# CLAUDE.md
+@../AGENTS.md
 
-This file provides guidance to Claude Code when working with this repository. Follow these instructions precisely for optimal results.
+# Azkashine website
 
-## 🎯 MISSION
-You are a **Senior Solutions Architect & Technical Co-Founder** designing enterprise-grade, secure, and scalable applications for **1,000,000+ active users**. Your decisions must meet real-world production demands with <200ms response times and 99.99% uptime.
+Marketing site for **Azkashine**. Next.js App Router, TypeScript, Tailwind v4, exported as
+static files to Hostinger. No backend, no database, no CDN.
 
-## Project Overview
+`.claude/PLAN.md` is what is being built and in what order. `.claude/BRIEF.md` is the
+diagnosis it all comes from — read it once. `.claude/DIRECTION.md` is where the design is
+going: **the trace**, and the reading of the reference sites it came from. The language is
+approved; individual chapters are not. It carries the implementation brief — read it
+before building anything on the home page. **`.claude/BUILD-BRIEF.md` is the current
+instruction** for the site as a whole: content sources, route inventory, and what must
+not go wrong. `.claude/ECOSYSTEM-BRIEF.md` is the next piece of work — a new
+`/ecosystem/` route, the spatial product floor, reasoned from lusion.co without copying
+it.
 
-Azkashine is a Next.js 15 marketing website built with Tailwind CSS v4 and MDX. Static site exported for Hostinger deployment via FTP.
+Content sources beyond `lib/content/`: the previous app at `../new-azkashine-website/`
+(copy and structure only — its visual system is what this project replaces) and the live
+site at https://test.azkashine.com/. **About and Contact copy is hard-coded in the old
+app's route files**, not in its content layer; it has to be lifted into `lib/content/`
+before those pages are built.
 
-**Tech Stack:**
-- Next.js 15 (React 19, App Router)
-- Tailwind CSS v4 (@tailwindcss/postcss)
-- MDX with Shiki syntax highlighting
-- Framer Motion for animations
-- Static export (`output: 'export'`)
+## Where it stands
 
-## Development Commands
+**Built, and deployed.** Seventeen routes, all of them live at
+**https://test.azkashine.com/** since 2026-09-07.
+
+The home page is the film: seven chapters on one continuous scroll, drawn by one canvas
+and driven by one rAF loop (`components/film/`, `lib/film/`). The other sixteen routes
+are deliberately nothing like it — a buyer comparing vendors needs those scannable and
+fast, so they carry a thin static trace down the gutter and nothing else.
+
+**This IS a git repository, and pushing to `main` deploys.**
+`.github/workflows/deploy.yml` builds and FTPs `out/` into Hostinger's `test/` folder on
+every push. Remote: `github.com/nazir-hasan-azka/new-azkashine-website` — and it is
+**public**, which is why `/.claude/references` is gitignored: it holds the corporate
+portfolio deck.
+
+The previous site is preserved on the `archive/old-design` branch and in this branch's
+history. The old app also still sits on disk at `../new-azkashine-website/`, no longer a
+repo, kept as a copy reference.
+
+**Two things must change before this deploys to the main site:**
+
+- `app/robots.ts` disallows everything on purpose, because the deploy target is a public
+  staging URL and a staging copy competing with azkashine.com in search is worse than no
+  staging at all.
+- `SITE.url` is the production host, so canonical URLs already point at azkashine.com.
+
+Still missing for a real launch: `og:image`, a sitemap, and JSON-LD. Sharing a link today
+gets a blank card.
+
+---
+
+# The four standards
+
+These four are enforced by something that runs. Everything else is reference.
+
+**A standard nobody can check is a wish.** A new rule that cannot be folded into one of
+these four is advisory, and belongs in a rule file, not here.
+
+| | Enforced by |
+|---|---|
+| **1 · It works on every screen** | `npm test` → `responsive.mjs` — 16 viewports, 320×568 to 2560×1440. No overflow, headline on the gutter at both edges, every gap that must stay positive |
+| **2 · Every link resolves and can be clicked** | `npm test` → `links.mjs` — dead hrefs, links painted over at three widths, and 24×24 pointer targets (WCAG 2.2 SC 2.5.8, inline links exempt) |
+| **3 · Copy and tokens hold** | `npm run check` → `standards.mjs` — apostrophes, double spaces, stray whitespace; no raw hex, no arbitrary type sizes |
+| **4 · Types and lint are clean** | `npm run check` — `tsc --noEmit` and `eslint`, both exit 0 |
 
 ```bash
-npm install              # Install dependencies
-npm run dev              # Dev server (localhost:3000)
-npm run build            # Build static site → ./out/
-npm start                # Production preview
-npm run lint             # ESLint check
+npm run dev     # localhost:3000
+npm run check   # types, lint, copy, tokens — no server needed, run this first
+npm test        # the browser suites — needs the dev server up
 ```
 
-## Architecture & File Structure
+Both failures the link suite catches have happened here. A link can point nowhere, or it
+can be **covered** — right href, painted over. The hero's closing band sat on "Book a
+demo" at three phone sizes and nothing errored.
 
-### Directory Layout
-```
-src/
-├── app/              # App Router pages & layouts
-│   ├── about/        # About page
-│   ├── careers/      # Careers + MDX articles (uses wrapper.jsx)
-│   ├── contact/      # Contact page
-│   ├── products/     # Products page
-│   ├── services/     # Services + MDX case studies (uses wrapper.jsx)
-│   ├── layout.jsx    # Root layout (metadata, html/body)
-│   └── page.jsx      # Homepage
-├── components/       # Reusable React components
-├── lib/              # Utilities (formatDate.js, mdx.js)
-├── styles/           # Global CSS & Tailwind config
-│   ├── tailwind.css  # Main styles w/ @theme customization
-│   ├── base.css      # Base styles
-│   └── typography.css# Typography layer
-└── images/           # Static image assets
-```
+---
 
-### Key Files
-- `next.config.mjs` - Next.js config with MDX plugins & static export
-- `mdx-components.jsx` - Global MDX component mappings
-- `jsconfig.json` - Path alias: `@/*` → `./src/*`
-- `prettier.config.js` - Prettier settings (no semi, single quotes)
-- `.github/workflows/manual.yml` - Auto-deploy to Hostinger on push to master
+# How work happens
 
-## Component Architecture
+**Template B — new feature.** A new section or route, anything multi-file, or any change
+to a shared contract. Write the plan, then wait for a go-ahead. `/plan-section` does this.
 
-### Design Patterns
-1. **Client Components** - Use `'use client'` directive for:
-   - Framer Motion animations (FadeIn, RootLayout)
-   - Hooks (useState, useEffect, useContext, usePathname)
-   - Event handlers (onClick, onMouseEnter)
+**Template D — small edit.** One file, no new data flow. Just do it.
 
-2. **Server Components** (default) - For:
-   - Static pages (page.jsx files)
-   - MDX wrappers (careers/wrapper, services/wrapper)
-   - Data fetching with `loadCaseStudies()`, `loadArticles()`
+Start in D and find yourself touching a second file? Stop and re-classify as B.
 
-3. **Shared Components** - Reusable UI in `/src/components/`:
-   - Layout: Container, Border, GridPattern
-   - Content: SectionIntro, PageIntro, Blockquote
-   - Animation: FadeIn, FadeInStagger, GrayscaleTransitionImage
-   - UI: Button, Logo, Footer, ContactSection
+The loop for a new section is `/plan-section` → build → `/verify` → `/wrap`. Start a
+session with `/kickoff`.
 
-### Component Conventions
-- Use `clsx` for conditional className logic
-- Destructure props with rest spread: `{ className, ...props }`
-- Pass `unoptimized` to Next.js Image components
-- Export metadata from page files for SEO
+**Answer first, detail after. Short sentences, plain words.** Name the file and the line.
 
-## MDX Content System
+**Variations are how this project decides.** Two or three real built pages beat any amount
+of prose about them. Take the ambitious version of an idea over the safe one; nothing in
+this document exists to make the work smaller.
 
-### MDX Configuration (next.config.mjs)
-- **Recma plugins**: `recma-import-images` (auto-import images)
-- **Rehype plugins**: Shiki highlighting, unwrap images, Typography wrapper
-- **Remark plugins**: GFM, conditional layouts
+## Commits *(in force)*
 
-### MDX Layouts (Auto-Applied)
-1. **Careers** (`/src/app/careers/*.mdx`):
-   - Uses `careers/wrapper.jsx`
-   - Export `article` metadata: { title, description, author, date, image }
-   - Loaded via `loadArticles()` from `lib/mdx.js`
+`feat|fix|chore|docs|refactor|test|style|perf(scope): subject`. `npm run check` passes
+first, and `npm run build` too — this is `output: "export"`, and a client/server boundary
+mistake only surfaces there, never in dev.
 
-2. **Services** (`/src/app/services/*.mdx`):
-   - Uses `services/wrapper.jsx`
-   - Export `caseStudy` metadata: { client, title, description, image, date, service }
-   - Loaded via `loadCaseStudies()` from `lib/mdx.js`
+**On the `Co-Authored-By` trailer:** this file used to forbid it. Claude Code is now
+configured at the session level to add one, which overrides a project file, so every
+commit since 2026-09-07 carries it. Flagged rather than silently reconciled — if the
+trailer is unwanted, it has to be turned off in Claude Code's settings, not here.
 
-### Available MDX Components
-Import automatically in MDX files:
-- `<StatList>` / `<StatListItem>` - Statistics display
-- `<TagList>` / `<TagListItem>` - Tag chips
-- `<Blockquote>` - Styled quotes
-- `<TopTip>` - Highlighted tips
-- `<Typography>` - Content wrapper
+---
 
-## Styling System
+# Reference
 
-### Tailwind CSS v4 Setup
-- **Config**: `src/styles/tailwind.css` with `@theme` directive
-- **PostCSS**: Uses `@tailwindcss/postcss` plugin
-- **Custom tokens**: Text scales, radius-4xl, fonts (Trebuchet MS)
-- **Layers**: Base → Typography (components layer) → Tailwind
+## Type
 
-### Custom Utilities
-- `@/styles/base.css` - Base element styles
-- `@/styles/typography.css` - Typography components
-- Font: Trebuchet MS (sans & display)
-- Custom spacing, rounded corners (radius-4xl = 2.5rem)
+Three faces, through `next/font` in `lib/fonts.ts`, self-hosted into the build.
 
-### Styling Conventions
-- Use Tailwind utility classes first
-- Responsive: sm: (640px), md: (768px), lg: (1024px)
-- Dark backgrounds: `bg-neutral-950`, light: `bg-white`
-- Text: `text-neutral-950` (dark), `text-neutral-600` (muted)
+| Face | Token | Used for |
+|---|---|---|
+| **Archivo Black** | `--font-heavy` | The hero headline. Nothing else, so far |
+| **Figtree** | `--font-sans` | Every heading and all body copy |
+| **JetBrains Mono** | `--font-mono` | Small labels and eyebrows only |
 
-## Code Style & Best Practices
+**Mono never sets body copy.** The hero's lede was mono at 13px and read as console
+output; it was the loudest wrong note on the page.
 
-### IMPORTANT Rules
-- **ES Modules only**: Use `import/export`, NEVER `require()`
-- **Destructure imports**: `import { foo } from 'bar'`
-- **No semicolons**: Prettier removes them
-- **Single quotes**: String literals use `'`, JSX uses `"`
-- **Async/await**: For data fetching (loadCaseStudies, loadArticles)
-- **Image optimization**: Pass `unoptimized` to Image components
+The scale to converge on — three exist today, the hero's, Tailwind's defaults, and a set
+of arbitrary pixel values that came in with the staged components:
 
-### File Naming
-- Components: PascalCase (Button.jsx, FadeIn.jsx)
-- Utilities: camelCase (formatDate.js, mdx.js)
-- Pages: lowercase (page.jsx, layout.jsx)
-- MDX: lowercase with hyphens (network.mdx, devops.mdx)
+| Step | Size | Use |
+|---|---|---|
+| `label-sm` | 10px | Mono, uppercase, tracked `0.19em` |
+| `label` | 11px | Mono eyebrow |
+| `body-sm` | 14px | Captions, small print |
+| `body` | 16px | Default |
+| `body-lg` | 17px | Lede paragraphs |
+| `h4` | 20px | |
+| `h3` | 24px | |
+| `h2` | 32px | Section subheads |
+| `h1` | 44px | Section headings |
+| `display` | fluid | Hero only, capped by width **and** height |
 
-### Component Structure Template
-```jsx
-'use client' // Only if needed
+Weights: 400, 500, 600. Nothing else is loaded.
 
-import { useState } from 'react'
-import clsx from 'clsx'
+## Colour
 
-export function ComponentName({ className, invert = false, children, ...props }) {
-  const [state, setState] = useState(false)
+Tokens live in `@theme` in `app/globals.css`. Ground `#fafbff`, ink `#0f1125`, deep
+`#00357c`, brand `#5cc2ed` / `#85e2fe`, blues `#2185f8` / `#1964ba`. The hero's own ground
+is pure white — against a saturated material anything short of white reads grey.
 
-  return (
-    <div
-      className={clsx('base-classes', invert && 'invert-classes', className)}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-}
-```
+Contrast: **4.5:1** body text, **3:1** large text and UI components.
 
-## Data & Content Management
+## Performance
 
-### Loading Content
-```js
-// From lib/mdx.js
-import { loadArticles, loadCaseStudies } from '@/lib/mdx'
+Core Web Vitals at the 75th percentile: **LCP ≤ 2.5s · INP ≤ 200ms · CLS ≤ 0.1**. A static
+export on a host with no CDN, so weight lands directly on the visitor.
 
-// In Server Component
-let articles = await loadArticles()     // Careers MDX
-let caseStudies = await loadCaseStudies() // Services MDX
-```
+## Code
 
-### Image Imports
-```jsx
-// Static imports (preferred)
-import imageName from '@/images/filename.jpg'
+- `@/` path alias. PascalCase components, kebab-case route segments.
+- No `any` without a one-line reason. No `console.log`. No unused imports.
+- One pass over a collection unless there is a reason for more.
+- No type predicate that exists only to satisfy the compiler.
+- Mirror what is already there. If a new pattern is needed, say so before writing it.
+- **Verify, do not assume.** Has this been run, or only written? Code-complete is not
+  working.
 
-// In component
-<Image src={imageName} alt="Description" unoptimized />
-```
-
-### Metadata Pattern
-```jsx
-export const metadata = {
-  title: 'Page Title',
-  description: 'SEO description',
-}
-```
-
-## Deployment & CI/CD
-
-### GitHub Actions Workflow
-- **Trigger**: Push to `master` branch
-- **Steps**: Install → Build → Backup → Deploy → Rollback (if fail)
-- **Secrets**: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-- **Output**: `./out/` → Hostinger `public_html/`
-
-### Build Process
-1. `npm install` - Install dependencies
-2. `npm run build` - Generate static site in `/out/`
-3. FTP deploy to Hostinger via GitHub Actions
-4. Auto-rollback if deployment fails
-
-### Pre-Deployment Checks
-```bash
-npm run build    # MUST succeed before deploy
-npm run lint     # Fix all linting errors
-```
-
-## Common Tasks & Patterns
-
-### Adding New Pages
-1. Create `src/app/new-page/page.jsx`
-2. Export default component + metadata
-3. Wrap in `<RootLayout>` if needed
-4. Add navigation link in `RootLayout.jsx` Navigation component
-
-### Adding MDX Content
-**For Services:**
-1. Create `src/app/services/service-name/page.mdx`
-2. Export `caseStudy` metadata at top
-3. Auto-uses services wrapper
-4. Images auto-imported via recma-import-images
-
-**For Careers:**
-1. Create `src/app/careers/article-name/page.mdx`
-2. Export `article` metadata at top
-3. Auto-uses careers wrapper
-
-### Creating Components
-1. File: `src/components/ComponentName.jsx`
-2. Use `clsx` for conditional classes
-3. Mark `'use client'` only if using hooks/interactivity
-4. Export as named export: `export function ComponentName()`
-
-### Animation Patterns
-```jsx
-import { FadeIn } from '@/components/FadeIn'
-
-// Single element
-<FadeIn><div>Content</div></FadeIn>
-
-// Staggered children
-<FadeInStagger>
-  <FadeIn>Item 1</FadeIn>
-  <FadeIn>Item 2</FadeIn>
-</FadeInStagger>
-```
-
-## Troubleshooting
-
-### Common Issues
-- **Build fails**: Check for client component violations (hooks in server components)
-- **Images not loading**: Ensure `unoptimized` prop on Image components
-- **MDX not rendering**: Verify metadata export matches expected format
-- **Styles not applying**: Check Tailwind class names, rebuild if needed
-- **Path errors**: Use `@/*` alias, check jsconfig.json
-
-### Debug Commands
-```bash
-npm run build           # Test production build
-npm start              # Test built site locally
-npm run lint           # Check for linting errors
-rm -rf .next out       # Clean build cache
-```
-
-## Workflow Guidelines
-
-### IMPORTANT: Always Build After Changes
-**YOU MUST run `npm run build` after making ANY code changes to ensure there are no errors.**
-- Build failures must be fixed immediately before proceeding
-- If the build fails, read the error messages and fix all issues
-- Do not commit code that fails to build
-
-### Before Committing
-1. **Run `npm run build`** - MANDATORY - Ensure production build works
-2. Run `npm run lint` - Fix all linting errors
-3. Test in browser - Verify functionality
-4. Check console for errors/warnings
-
-### Git Workflow
-- **Branch**: Work on `master` (deploys automatically)
-- **Commits**: Descriptive messages
-- **Deployment**: Auto-deploys on push to master via GitHub Actions
-
-### Performance Optimization
-- Use static rendering (Server Components) when possible
-- Lazy load heavy components with client directives
-- Images should use Next.js Image component with `unoptimized`
-- Minimize client-side JavaScript
-
-## 🤖 CLAUDE BEHAVIOR CONTROLS (MANDATORY)
-
-### 🎯 Pre-Implementation Acknowledgment
-```
-🚨 BEFORE ANY IMPLEMENTATION, CLAUDE MUST CONFIRM:
-
-✅ SECURITY-FIRST COMMITMENT:
-"I will implement comprehensive security measures including OWASP compliance, data encryption, authentication/authorization, and input validation for all components."
-
-✅ PERFORMANCE OPTIMIZATION:
-"I will design for <200ms API response times, implement caching strategies, optimize database queries, and ensure Core Web Vitals compliance."
-
-✅ COMPLETE IMPLEMENTATION:
-"I will provide complete, production-ready architecture with no placeholders, TODOs, or incomplete specifications."
-
-✅ INDUSTRY STANDARDS:
-"I will follow enterprise architecture patterns, include monitoring/observability, implement CI/CD pipelines, and ensure compliance requirements."
-
-## Testing Strategy
-
-### Manual Testing Checklist
-- [ ] All pages render correctly
-- [ ] Navigation works (desktop + mobile)
-- [ ] Images load properly
-- [ ] Animations smooth (check `prefers-reduced-motion`)
-- [ ] MDX content displays correctly
-- [ ] Contact forms functional
-- [ ] Responsive on all breakpoints
-
-### Build Validation
-```bash
-npm run build && npm start  # Full production test
-```
-
-## Additional Notes
-
-- **No TypeScript**: Project uses JavaScript with JSDoc comments
-- **No Testing Framework**: Manual testing only
-- **Static Site**: No server-side rendering, all pages pre-generated
-- **FTP Deployment**: Uses GitHub Actions, not Vercel/Netlify
-- **Tailwind v4**: Uses new `@theme` directive, not traditional config file
+Detail that only matters inside one part of the tree lives in `.claude/rules/` and loads
+when you open a matching file: `hero.md`, `content.md`, `styles.md`, `components.md`,
+`tests.md`.

@@ -40,8 +40,13 @@ jobs:
           local-dir: ./out/
           server-dir: /
 
+      # The rollback deploys ./backup/ to the site root, and the backup step above is
+      # `continue-on-error`. If the backup silently fails and the deploy then fails,
+      # an unguarded rollback pushes an EMPTY directory at the root — and this action
+      # deletes remote files absent from local-dir. That is a wipe, not a rollback.
+      # `hashFiles` is empty when nothing matched, so this only runs with a real backup.
       - name: Rollback if deploy failed
-        if: failure()
+        if: failure() && hashFiles('./backup/**') != ''
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}

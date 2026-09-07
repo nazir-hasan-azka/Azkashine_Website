@@ -1,5 +1,0 @@
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteCond %{HTTP_HOST} !^www\.azkashine\.com$ [NC]
-RewriteRule ^(.*)$ https://www.azkashine.com/$1 [R=301,L]
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

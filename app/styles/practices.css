@@ -1,0 +1,244 @@
+/* ─── The practice routes ────────────────────────────────────────────────────
+   `/what-we-do/` and the three practice pages under it. Everything structural —
+   the spine, the bands, the gutter, the section heads, the product grid, the
+   rows, the pills, the closing block — is the shared furniture in globals.css.
+   What is here is only what those two routes need on top of it.
+
+   NOTHING IN THIS FILE VARIES BY PRACTICE. No accent colour keyed to a category,
+   no size that reads how many products a practice has. The line is 5 / 2 / 1 and
+   it is a fact about the product line, not a ranking of the three practices; a
+   stylesheet is the easiest place for that distinction to quietly disappear. */
+
+/* ── The practice's own copy block ──────────────────────────────────────────
+   Name, then tagline, then intro. Three steps, and the middle one has to be
+   readable as a step: the section head's lede is 17px and the intro below it is
+   16px, so on size alone they would read as one paragraph broken in half. Ink
+   against muted is what actually separates them. */
+
+.practice .sh-lede {
+  color: var(--color-ink);
+}
+
+.practice-intro {
+  margin-top: 1.25rem;
+  /* Wider than the 48ch lede above it, because it is the paragraph that carries
+     the argument and a lede-width column makes it look like a second lede. */
+  max-width: 68ch;
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+/* ── Block labels ───────────────────────────────────────────────────────────
+   "Capabilities" and "Products" inside a practice section. Headings in the
+   document, labels on the page: the practice name is the only large type in its
+   band, and a second 44px heading under it would compete with the thing the
+   whole band is named after. Mono at label size is how the rest of the site
+   marks a block off. */
+
+.block-label {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* `.rows` and `.pgrid` both set a generous top margin for the case where they
+   follow a section head. Directly under a label that names them, that margin is
+   the label floating away from its own list. */
+.block-label + .rows,
+.block-label + .pgrid,
+.block-label + .practice-note {
+  margin-top: 1rem;
+}
+
+.practice-more {
+  margin-top: 1.75rem;
+}
+
+/* Honest rather than padded. A practice with no product of its own says so, and
+   it says so in the same slot where another practice shows a grid. */
+.practice-note {
+  /* Matches `.pgrid`, because it stands in the same slot as one. */
+  margin-top: clamp(2rem, 4vw, 3rem);
+  max-width: 52ch;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+/* ── The banner ─────────────────────────────────────────────────────────────
+   The ratio is the file's own 1300 × 731, so the box the browser reserves is
+   exactly the box the image fills and no crop decision has to be made per
+   screen. The reservation is the point: this host has no CDN in front of it, and
+   an image that arrives late and pushes the page down is a CLS number the
+   visitor pays for. */
+
+.banner {
+  aspect-ratio: 1300 / 731;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.banner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner + .sh {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+/* ── Capabilities in full ───────────────────────────────────────────────────
+   The practice page is the only place `detail` is printed. The index shows the
+   name and the deck's one-line descriptor; here that pair stays and the
+   paragraph goes under it, so a visitor arriving from the index finds the line
+   they clicked on rather than a different one. */
+
+.rows-detail .row {
+  /* A block that runs six lines cannot share a baseline with its own title —
+     the title ends up pinned to the first line and reads as a caption. */
+  align-items: start;
+  padding: 1.9rem 0;
+}
+
+.cap-descriptor {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.cap-detail {
+  margin-top: 0.65rem;
+  max-width: 62ch;
+}
+
+/* ── Delivered client platforms ─────────────────────────────────────────────
+   Same hairline grid as the product cards, on purpose: these sit next to
+   products on the page and a second card treatment would suggest a second class
+   of thing. The heading above them already says they are client work and not
+   ours to sell. */
+
+.works {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: 1px;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+}
+
+.work {
+  /* Grid items default to min-width auto and will not shrink below their
+     content's min-content width. See `.claude/rules/components.md`. */
+  min-width: 0;
+  padding: 1.75rem;
+  background: var(--color-background);
+}
+
+.work-title {
+  font-size: var(--text-h4);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.work-desc {
+  margin-top: 0.85rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+
+.work-includes {
+  margin-top: 1.5rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* ── The other two practices ────────────────────────────────────────────────
+   The three are a set, and a visitor who landed on one from a search should be
+   able to reach the other two without going back up to the index. Same card
+   mechanics as `.pcard`: the whole block is the target via an overlay on the
+   title's anchor, so the pointer target is the card rather than a strip of text,
+   and the tagline is not read out as part of the link's name. */
+
+.sibs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1px;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+}
+
+.sib {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.75rem;
+  background: var(--color-background);
+  transition: background-color var(--dur-base) var(--ease-out-soft);
+}
+
+.sib:hover,
+.sib:focus-within {
+  background: #ffffff;
+}
+
+.sib-name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-ink);
+}
+
+.sib-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.sib-tagline {
+  margin-top: 0.7rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.sib-more {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+/* ── Narrow screens, after the rules they override ──────────────────────────
+   A media query loses to a later rule of the same specificity, so these sit at
+   the end of the file rather than beside what they change. */
+
+@media (max-width: 767px) {
+  .practice-intro {
+    line-height: 1.6;
+  }
+
+  .rows-detail .row {
+    padding: 1.5rem 0;
+  }
+
+  .work,
+  .sib {
+    padding: 1.5rem;
+  }
+}
