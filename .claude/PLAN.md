@@ -362,9 +362,9 @@ reported green having never opened a page that was not the home page.
 
 - **`components/ui/`** — `Media`, `PageHeader`, `StatsBand`, `Breadcrumb`, `GridPattern`,
   `CountUp` — is now dead: the new routes use the `components/site/` furniture and plain
-  `<img>`. `Container` is still used by the Navbar and Footer. Nothing was deleted, because
-  this folder is not in git and deleting unused-looking code with no undo is not a trade
-  worth making on the last day of a build.
+  `<img>`. `Container` is still used by the Navbar and Footer. Nothing was deleted at the
+  time because there was no undo; there is now, so removing it is a safe piece of
+  housekeeping whenever someone wants it.
 - **`Navbar` and `Footer` are still the carried-over versions**, exempt from the token rule
   by name in `standards.mjs`. They work, they link correctly to all seventeen routes, and
   rebuilding them was not in the brief.
@@ -377,6 +377,62 @@ reported green having never opened a page that was not the home page.
 - **Two product taglines in `products.ts` already contain "AI-powered"** (Tawthiq, Ethics
   Intelligence). They are deck copy and were left alone, but they cut against the
   equal-measure point and are worth a word from Nazir.
+
+---
+
+### "The text is very AI-AI" — diagnosed and partly fixed, 2026-09-07
+
+Nazir's read was right. Measured on the rendered page rather than argued about: **43
+mentions of AI / agent / GenAI in 1,184 words, one every 28.** But the density is not
+spread evenly and it is not the film's own writing.
+
+| Zone | Density before | Where it comes from |
+|---|---|---|
+| **Hero** | **1 per 10** | signed off. `HOME_HERO` |
+| **Ledger** | 1 per 12 | deck p4 — four of the twelve capability names literally begin with "AI" |
+| **Products** | 1 per 11 | four of eight product NAMES contain AI or Agent, plus the taglines |
+| The case | 1 per 121 | written for the film |
+| The gate | **0** | written for the film |
+| The failure | 1 per 43 | written for the film |
+
+The chapters written for this page are the cleanest text on it. The concentration is in
+copy that is either signed off or verbatim from the deck.
+
+**Fixed: four product taglines.** They opened "AI-powered …" or "Agentic AI …", which says
+nothing a competitor could not equally print, and product taglines run under every card in
+the traverse — so the phrase landed four times in one screenful. Each is now what the
+product's own `summary` already said it does. No new claim; the abstraction removed and the
+checkable half kept. Products zone went **1 per 11 → 1 per 18**, page total 43 → 38.
+
+**Fixed: the traverse order, which was a real fault.** Round-robin over the three practices
+spends the two small buckets immediately — five AI, two Platforms, one Cloud & Testing — so
+Cloud Orchestration landed third with nothing of its practice left afterwards, and the run
+finished **AI, AI, AI**. The balance was all at the front and the impression was all at the
+back. The order is set by hand now, the two Platforms products space the run, and the single
+Cloud product goes **last**: in a horizontal traverse the final panel is where the scroll
+comes to rest, and it is the only one of the eight that can end the chapter on a practice
+other than AI. Rule encoded on `PANEL_ORDER` for whoever adds a ninth: never more than two
+of one practice in a row, never end on the practice that has the most.
+
+**Not fixed, and needs Nazir's word — the hero.** It is the densest text on the page at one
+AI word per ten, it is the largest type on the site, and it is the first thing anybody
+reads. Three specific problems:
+
+- **"AI-powered intelligence" is a tautology** — intelligence powered by intelligence.
+- **"AI-powered" is the ACCENT line**, so the single most emphasised word on the whole site
+  is the one being objected to.
+- **"streamline operations, reduce costs, and unlock exponential growth"** are three
+  abstractions any competitor could print, which is exactly what
+  `.claude/rules/content.md` forbids: *say something checkable*.
+
+`PLAN.md` records the hero copy as signed off — "the words and their order may not"
+change — so it is not mine to rewrite. A proposal is with Nazir.
+
+**Also worth knowing:** the three practice intros in `taxonomy.ts` were rewritten by
+somebody between sessions, into a markedly more human register ("Anything you can write
+down in advance, ordinary automation already handles. What is left is the messy part.").
+That is the register the rest of the copy should be judged against, and the four tagline
+rewrites above were written to match it.
 
 ---
 
@@ -702,16 +758,54 @@ trail applied to the website's own marketing copy.
 Never done on the old site either: `og:image`, sitemap, robots, JSON-LD, a 404 page,
 favicons.
 
-### 5 · Deploy
+### 5 · Deploy — done 2026-09-07
 
-`.github/workflows/deploy.yml` is here but **inert** — this folder is not a git
-repository, by decision on 2026-09-04. Before anything ships, either fold this app into
-the existing repo (`github.com/nazir-hasan-azka/new-azkashine-website`) or give it its
-own and bring the secrets across.
+**Live at https://test.azkashine.com/.** All seventeen routes return 200, `robots.txt`
+and the favicon ship, and the served HTML carries all six film chapters.
 
-**Note what that workflow does before pointing it at this app:** every push to `main`
-FTPs `out/` into Hostinger's `test/` folder. Aimed here today it would replace the live
-test site with a single-page hero.
+**This folder is now the git repository.** Rather than copying the new app into the old
+repo, `.git` was moved onto this folder — so every path written in `.claude/` stays
+true and the working directory does not change. Remote and workflow came with it. The
+old app is still on disk at `../new-azkashine-website/`, no longer a repo, kept as a
+copy reference.
+
+Nothing was lost. The previous app's 35 uncommitted files — `app/directions/`,
+`components/v3/`, `HANDOFF.md`, `REDESIGN-BRIEF.md` — were committed to
+**`archive/old-design`** and pushed before anything was replaced.
+
+**The repo is PUBLIC**, so `/.claude/references` is gitignored: it holds the 42MB
+corporate portfolio deck and its extracted text. Verified with `git check-ignore` before
+the first commit. Publishing an internal sales deck is not undoable once it is in
+history.
+
+#### Three things the deploy taught, worth not relearning
+
+- **`npm ci` cannot work here.** Two deploys failed at it in ten seconds each. The Linux
+  runner wants `@emnapi/core` and `@emnapi/runtime` hoisted to the top level for
+  `@tailwindcss/oxide-wasm32-wasi`; npm on Windows will not write them there. Regenerating
+  the lock file, forcing `--os=linux --cpu=x64`, and deleting it and starting over all
+  produced the same tree. The mismatch is structural — developed on Windows, deployed on
+  Linux — so the workflow uses `npm install`, which still honours every pinned version.
+  The reasoning is in `deploy.yml`; do not "fix" it back.
+- **`npm run build` catches what dev never will.** `app/robots.ts` failed the build
+  because `output: "export"` needs `export const dynamic = "force-static"` on a metadata
+  route. Dev was perfectly happy. Run the build before every push.
+- **Both failures happened before the FTP step**, so the live site was never left broken.
+  That is the shape of this pipeline: install, build, then publish. A failure early is
+  free.
+
+#### Before the MAIN site
+
+The current target is the `test/` folder. Pointing this at production needs, at minimum:
+
+1. **`app/robots.ts` reversed.** It disallows everything on purpose — a staging copy
+   competing with azkashine.com in search is worse than no staging at all. Production
+   needs `allow: "/"` and a sitemap.
+2. **A sitemap and `og:image`.** Neither exists. Sharing a link today gets a blank card.
+3. **JSON-LD**, still never done.
+4. **The `server-dir` in `deploy.yml` changed** from `test/` to the production root — and
+   note the FTP account is chrooted to `public_html`, so the `test/` leaf is currently
+   what stops a deploy writing into the main site. Removing it removes that guard.
 
 ## Waiting on Nazir
 

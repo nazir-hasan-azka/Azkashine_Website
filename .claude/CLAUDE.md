@@ -21,18 +21,33 @@ before those pages are built.
 
 ## Where it stands
 
-**One page: the home hero, the partner logo row, and "What we do" — three practices as a
-stacking deck of white cards on a `blue-900` band.** Products, why-us, industries and the
-closing CTA are still to build. Header and footer are carried over finished; their links
-point at routes that do not exist yet, which is expected, not a bug.
+**Built, and deployed.** Seventeen routes, all of them live at
+**https://test.azkashine.com/** since 2026-09-07.
 
-Two prototypes exist that must not reach production: `app/variations/horizontal/` (the
-site as a deck that does not scroll) and the trace prototype. Both are `noindex` and
-nothing links to them.
+The home page is the film: seven chapters on one continuous scroll, drawn by one canvas
+and driven by one rAF loop (`components/film/`, `lib/film/`). The other sixteen routes
+are deliberately nothing like it — a buyer comparing vendors needs those scannable and
+fast, so they carry a thin static trace down the gutter and nothing else.
 
-Not in git yet, by decision. That makes the commit rules below **written but not in
-force**. Never run a destructive command in this folder without saying so first — there
-is no undo here.
+**This IS a git repository, and pushing to `main` deploys.**
+`.github/workflows/deploy.yml` builds and FTPs `out/` into Hostinger's `test/` folder on
+every push. Remote: `github.com/nazir-hasan-azka/new-azkashine-website` — and it is
+**public**, which is why `/.claude/references` is gitignored: it holds the corporate
+portfolio deck.
+
+The previous site is preserved on the `archive/old-design` branch and in this branch's
+history. The old app also still sits on disk at `../new-azkashine-website/`, no longer a
+repo, kept as a copy reference.
+
+**Two things must change before this deploys to the main site:**
+
+- `app/robots.ts` disallows everything on purpose, because the deploy target is a public
+  staging URL and a staging copy competing with azkashine.com in search is worse than no
+  staging at all.
+- `SITE.url` is the production host, so canonical URLs already point at azkashine.com.
+
+Still missing for a real launch: `og:image`, a sitemap, and JSON-LD. Sharing a link today
+gets a blank card.
 
 ---
 
@@ -80,10 +95,16 @@ session with `/kickoff`.
 of prose about them. Take the ambitious version of an idea over the safe one; nothing in
 this document exists to make the work smaller.
 
-## Commits *(not in force — no repo yet)*
+## Commits *(in force)*
 
-`feat|fix|chore|docs|refactor|test|style|perf(scope): subject`. **No `Co-Authored-By`
-trailer.** `npm run check` passes first.
+`feat|fix|chore|docs|refactor|test|style|perf(scope): subject`. `npm run check` passes
+first, and `npm run build` too — this is `output: "export"`, and a client/server boundary
+mistake only surfaces there, never in dev.
+
+**On the `Co-Authored-By` trailer:** this file used to forbid it. Claude Code is now
+configured at the session level to add one, which overrides a project file, so every
+commit since 2026-09-07 carries it. Flagged rather than silently reconciled — if the
+trailer is unwanted, it has to be turned off in Claude Code's settings, not here.
 
 ---
 

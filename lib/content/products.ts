@@ -8,6 +8,13 @@
  *
  * No client names, logos, or outcome numbers are invented here. If it is not in a deck,
  * it is not on the site.
+ *
+ * TAGLINES, REWRITTEN 2026-09-07. Four of them opened "AI-powered ..." or "Agentic AI
+ * ...", which says nothing a competitor could not equally print and was the phrase the
+ * home page repeated most — the product taglines run under every card in the product
+ * traverse, so it landed four times in one screenful. Each is now what the product's own
+ * `summary` already said it does. Nothing new is claimed; the abstraction was removed and
+ * the checkable half kept. `.claude/rules/content.md`: say something checkable.
  */
 
 import type { CategorySlug } from "./taxonomy";
@@ -121,7 +128,7 @@ export const PRODUCTS: Product[] = [
     category: "ai-automation",
     capability: "AI-Driven Automation",
     tagline:
-      "AI-powered financial compliance and XBRL automation, built Arabic-first.",
+      "Financial filings from raw document to regulator-ready submission, Arabic-first.",
     summary:
       "Tawthiq automates the entire financial reporting lifecycle — document validation, data extraction, taxonomy mapping, XBRL generation, and regulator-ready submission — with page-level evidence traceability at every step.",
     problem:
@@ -283,7 +290,7 @@ export const PRODUCTS: Product[] = [
     name: "Smart AI Assistant",
     category: "ai-automation",
     capability: "AI-Integrated Ecosystem",
-    tagline: "An AI-powered conversational platform for the enterprise.",
+    tagline: "Answers pulled from the systems you already run, in plain language.",
     summary:
       "A conversational platform that handles multi-turn guidance, extracts data from documents, retrieves from connected systems, and classifies business activity for compliance — with protection and moderation built in rather than bolted on.",
     problem:
@@ -339,7 +346,7 @@ export const PRODUCTS: Product[] = [
     category: "digital-platforms",
     capability: "AI Enabled Platforms",
     tagline:
-      "AI-powered whistleblowing and ethics intelligence — anonymous by design.",
+      "Whistleblowing that stays anonymous, with the audit trail regulators ask for.",
     summary:
       "A whistleblowing and ethics platform built for privacy, security, and trust. Reports are fully anonymous, communication stays encrypted in both directions, and AI handles risk detection, case analysis, and prioritisation from the first signal.",
     problem:
@@ -443,7 +450,7 @@ export const PRODUCTS: Product[] = [
     category: "cloud-testing",
     capability: "DevOps",
     tagline:
-      "Agentic AI work-order automation for the full infrastructure lifecycle.",
+      "Infrastructure onboarding from weeks to hours, with a person signing before deploy.",
     summary:
       "Complete infrastructure lifecycle automation — from requirements and architecture design through policy validation, infrastructure-as-code, deployment, and audit generation. Each phase is handled by a specialised agent, with human approval checkpoints before critical actions.",
     problem:
