@@ -275,11 +275,21 @@ export function Gate() {
         <div className="film-copy">
           <p className="film-eyebrow">{FILM_GATE.eyebrow}</p>
           <h2 className="film-heading">{FILM_GATE.heading}</h2>
-          {/* `why.ts`, verbatim: approval checkpoints and audit trails as defaults,
-              because the buyers answer to regulators. That sentence is what this beat
-              is a picture of, and it belongs to all three practices rather than to the
-              AI one — which is why it replaced the paragraph that used to be here. */}
-          <p className="film-lede">{GOVERNED?.description}</p>
+          {/* THE THREE THINGS, NOT THE PARAGRAPH ABOUT THEM.
+              This rendered `GOVERNED.description` in full — and chapter 06 renders every
+              reason in `why.ts`, including that one, so a visitor read the identical
+              paragraph twice on one page. Nobody notices the first time and everybody
+              notices the second.
+
+              `evidence` is the same claim in three words instead of four sentences,
+              which is also the right length for a beat whose whole point is that you
+              are standing still waiting for it. The paragraph stays where it argues:
+              chapter 06. */}
+          <ul className="film-gate-terms">
+            {(GOVERNED?.evidence ?? []).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         </div>
 
         {/* Zero-height, and the only thing that says where the checkpoint is. The bar

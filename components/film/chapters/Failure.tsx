@@ -169,9 +169,6 @@ export function Failure() {
         <ChapterMark number={FILM_FAILURE.chapter} title={FILM_FAILURE.title} />
 
         <div className="film-copy">
-          <Beat at={0.02} as="p" className="film-eyebrow">
-            {practice.name}
-          </Beat>
           <Beat at={0.05} as="p" className="film-heading">
             {practice.tagline}
           </Beat>

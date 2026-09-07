@@ -59,7 +59,7 @@ export const CATEGORIES: Category[] = [
     tagline: "Put AI to work on the decisions people still make by hand.",
     image: "ai-automation",
     intro:
-      "Anything you can write down in advance, ordinary automation already handles. What is left is the messy part. An exception to chase. A policy to apply. Two or three systems to open before anyone can sign anything off. We build agents that do that work and stop at the point a person has to approve it — which, in the industries we sell into, is never optional.",
+      "Anything you can write down in advance, ordinary automation already handles. What is left is the messy part. An exception to chase. A policy to apply. Two or three systems to open before anyone can sign anything off. We build the software that does that work, and stops at the point where a person has to approve it.",
     capabilities: [
       {
         title: "AI-Driven Automation",
@@ -91,7 +91,7 @@ export const CATEGORIES: Category[] = [
     slug: "digital-platforms",
     name: "Digital Platforms",
     navLabel: "Digital Platforms",
-    tagline: "Platforms built to be run for years, not demoed once.",
+    tagline: "Platforms built to be run for years.",
     image: "digital-platforms",
     intro:
       "Our platforms have more than one kind of user. An advertiser, a partner and an administrator, each seeing a different thing, over one engine. Real money moves through them, or real compliance does — our whistleblowing platform is built to the EU Whistleblower Directive and ISO 37002, with anonymous reporting and a complete audit trail. And somebody has to run the whole thing on a Tuesday two years from now, without calling us.",
@@ -129,7 +129,7 @@ export const CATEGORIES: Category[] = [
     tagline: "Provision it, run it, and prove it works.",
     image: "cloud-testing",
     intro:
-      "We provision on AWS, Azure and GCP, we run what we provision, and we test what runs on it. Our own orchestration platform takes infrastructure onboarding from weeks to hours. The testing goes as far as the AI itself: whether a prompt does what it claims, whether an answer is really grounded in the source it cites. Plenty of firms build AI. Far fewer will tell you whether it works.",
+      "We provision on AWS, Azure and GCP, we run what we provision, and we test what runs on it. Our own orchestration platform takes infrastructure onboarding from weeks to hours. The testing goes as far as the AI itself — whether a prompt does what it claims, and whether an answer is really grounded in the source it cites.",
     capabilities: [
       {
         title: "DevOps",

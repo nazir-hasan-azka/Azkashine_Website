@@ -2318,3 +2318,205 @@ body:has([data-hdeck]) > div > footer {
     height: 100svh;
   }
 }
+
+/* ─── SAMPLE: the record ─────────────────────────────────────────────────────
+   `app/variations/record/` only. The proposed chapter 07, built to be scrolled
+   before it is approved. Not imported by the film.
+
+   The whole thing runs off ONE number: `--p`, written onto the stage by the film's
+   single rAF loop. Each claim turns that into its own 0->1 with `--from` and
+   `--span`, so three claims verify in sequence without three observers, three
+   pieces of state, or a line of JavaScript per claim. */
+
+.rec-page {
+  background: #ffffff;
+}
+
+/* Somewhere to scroll to after the scene lets go, so the release is visible. */
+.rec-tail {
+  height: 60vh;
+}
+
+.rec {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+}
+
+.rec-inner {
+  width: 100%;
+  /* Clears the 5rem sticky header. A centred stage puts its own top edge under the
+     chrome, and the heading was being sat on. */
+  padding: 5rem var(--page-gutter) 0;
+}
+
+.rec-head {
+  max-width: 46ch;
+  margin-bottom: clamp(2.5rem, 5vh, 4rem);
+}
+
+.rec-eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+}
+
+.rec-heading {
+  margin-top: 0.9rem;
+  font-size: var(--text-h1);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.rec-lede {
+  margin-top: 0.8rem;
+  font-size: var(--text-body-lg);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── The record ─────────────────────────────────────────────────────────────
+   No numerals. These are three independent claims, not a sequence, and the ledger
+   forty screens up is already a numbered list. */
+.rec-record {
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.rec-claim {
+  /* The claim's own progress, clamped out of the scene's. */
+  --q: clamp(0, calc((var(--p, 0) - var(--from)) / var(--span)), 1);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding: clamp(1.25rem, 2.5vh, 2rem) 0;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+/* The line entering the content. In the real chapter this is the shared trace
+   canvas — the same line that came out of the hero — rather than a border. It is
+   the only chapter where the trace leaves the gutter and delivers into the copy. */
+.rec-rule {
+  position: absolute;
+  left: calc(var(--page-gutter) * -1);
+  top: 50%;
+  height: 1px;
+  width: calc(var(--page-gutter) + (100% * 0.06));
+  background: var(--color-blue-700);
+  transform: scaleX(var(--q));
+  transform-origin: left;
+}
+
+.rec-claim-body {
+  min-width: 0;
+}
+
+.rec-claim-title {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  /* Unverified claims sit back; the checked one comes forward. Tone, not movement. */
+  color: color-mix(in srgb, var(--color-ink) calc(45% + var(--q) * 55%), transparent);
+}
+
+.rec-claim-text {
+  margin-top: 0.6rem;
+  max-width: 54ch;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+
+.rec-proof {
+  min-width: 0;
+  align-self: center;
+}
+
+.rec-proof-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+  /* The label only exists once the claim is checked. */
+  opacity: clamp(0, calc((var(--q) - 0.75) * 4), 1);
+}
+
+/* The mark. The same one the gate lands, used for the second and last time on the
+   page — there, a person signs the work; here, the claim itself is signed. */
+.rec-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--color-blue-900);
+  transform: scale(clamp(0, calc((var(--q) - 0.75) * 4), 1));
+}
+
+.rec-entries {
+  list-style: none;
+  padding: 0;
+  margin: 0.7rem 0 0;
+}
+
+/* Entries rule in one at a time, like lines arriving in a log. `--n` staggers them
+   inside the claim's own progress, so the sequence is driven by scroll rather than
+   by a timer that would run whether anyone was looking or not. */
+.rec-entry {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--color-border);
+  opacity: clamp(0, calc((var(--q) * 5) - var(--n)), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--q) * 5) - var(--n)), 1)) * 6px));
+}
+
+.rec-entry-kind {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.rec-entry-text {
+  min-width: 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-ink);
+}
+
+@media (max-width: 767px) {
+  .rec-claim {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .rec-heading {
+    font-size: var(--text-h2);
+  }
+
+  .rec-entry {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.15rem;
+  }
+}
+
+/* Reduced motion resolves every claim to checked. The content is the point; the
+   sequencing is the flourish. */
+@media (prefers-reduced-motion: reduce) {
+  .rec-claim {
+    --q: 1;
+  }
+}

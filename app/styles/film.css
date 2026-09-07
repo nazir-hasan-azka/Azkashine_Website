@@ -71,6 +71,25 @@
   width: 0;
 }
 
+/* The gate's three governance terms. Short by design: this is the one beat on the
+   page where the visitor is standing still, and a four-sentence paragraph is the
+   wrong thing to hand somebody who is waiting. The argument itself lives in
+   chapter 06, which is also where it stops being a duplicate. */
+.film-gate-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.film-gate-terms li {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  color: var(--color-muted);
+}
+
 .film-quote {
   margin-top: 1.5rem;
   padding-left: 1rem;
@@ -891,5 +910,237 @@
     opacity: 1;
     transform: none;
     will-change: auto;
+  }
+}
+
+
+/* ─── SAMPLE: the check run ──────────────────────────────────────────────────
+   `app/variations/checks/` only. Proposed chapter 07. Not imported by the film.
+
+   Everything runs off `--p`, written onto the stage by the film's one rAF loop.
+   Each row derives its own 0->1 from `--i`, so three checks resolve in sequence
+   with no state, no observer per row, and no JavaScript at all in this file. */
+
+.chk-page { background: #ffffff; }
+.chk-tail { height: 60vh; }
+
+.chk {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+}
+
+.chk-inner {
+  width: 100%;
+  padding: 5rem var(--page-gutter) 0;
+}
+
+.chk-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--color-ink);
+}
+
+.chk-eyebrow,
+.chk-state {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.chk-eyebrow { color: var(--color-blue-700); }
+.chk-state { position: relative; color: var(--color-muted); }
+
+/* "running" until the last check lands, then "3 of 3". A status line, not a caption. */
+.chk-state-run { opacity: calc(1 - clamp(0, (var(--p, 0) - 0.82) * 12, 1)); }
+.chk-state-done {
+  position: absolute;
+  right: 0;
+  color: var(--color-blue-900);
+  opacity: clamp(0, calc((var(--p, 0) - 0.82) * 12), 1);
+}
+
+/* The statement. basement.studio's move: one line, as large as the column allows,
+   carrying the whole feeling so the substance below can be small and quiet. */
+/* The statement arrives a word at a time. The only per-word reveal on the site, and
+   it is spent here because this is the one line in the section anybody reads rather
+   than scans. `--w` is the word's index; the scene's own `--p` drives it, so it is
+   scroll-linked rather than a timer that runs whether anyone is looking or not. */
+.chk-word {
+  display: inline-block;
+  opacity: clamp(0, calc((var(--p, 0) * 14) - var(--w)), 1);
+  transform: translateY(calc((1 - clamp(0, calc((var(--p, 0) * 14) - var(--w)), 1)) * 0.14em));
+}
+
+.chk-statement {
+  margin: clamp(2rem, 6vh, 4rem) 0 clamp(2.5rem, 7vh, 5rem);
+  max-width: 16ch;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2.75rem, 8.5vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* The trace, crossing the row. It draws left to right as the checks pass, so the line
+   that has carried the whole page arrives here to underwrite the claims rather than
+   passing them by. */
+.chk-sweep {
+  height: 1px;
+  background: var(--color-blue-900);
+  transform: scaleX(clamp(0, calc((var(--p, 0) - 0.26) / 0.6), 1));
+  transform-origin: left;
+}
+
+.chk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  /* One hairline between boxes rather than a border on each — the boxes share edges,
+     which reads as one instrument rather than three cards floating apart. */
+  background: var(--color-border-strong);
+  border: 1px solid var(--color-border-strong);
+}
+
+/* Each box's own progress, so the three resolve in sequence. Spaced across the back
+   two-thirds of the scene, leaving the statement the front third to itself. */
+.chk-box {
+  --q: clamp(0, calc((var(--p, 0) - 0.28 - (var(--i) * 0.18)) / 0.18), 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vw, 1.9rem);
+  background: #ffffff;
+}
+
+.chk-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+/* The mark. An empty ring while the check runs, filled the moment it passes — the same
+   deep blue the gate lands, used for the second and last time on the page. */
+.chk-mark {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: var(--color-blue-900);
+  background-clip: content-box;
+  padding: calc(2px + (1 - var(--q)) * 3px);
+  border: 1.5px solid;
+  border-color: color-mix(in srgb, var(--color-blue-900) calc(var(--q) * 100%), var(--color-border-strong));
+  /* A short swell as it lands, then settle. Peaks at the moment the check passes. */
+  transform: scale(calc(1 + (0.45 * clamp(0, calc(1 - (abs(var(--q) - 0.82) * 12)), 1))));
+}
+
+.chk-label {
+  font-size: var(--text-h4);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--color-ink) calc(35% + var(--q) * 65%), transparent);
+}
+
+.chk-body {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: var(--color-muted);
+  opacity: clamp(0, calc((var(--q) - 0.35) * 2.2), 1);
+}
+
+.chk-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: auto 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border);
+  opacity: clamp(0, calc((var(--q) - 0.6) * 2.5), 1);
+}
+
+.chk-value {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.1em;
+  color: var(--color-blue-700);
+}
+
+/* Provenance on hover only. */
+.chk-source {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity var(--dur-fast) linear;
+}
+
+.chk-box:hover .chk-source { opacity: 1; }
+
+@media (max-width: 1023px) {
+  .chk-list { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 767px) {
+  .chk-source { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chk-box { --q: 1; }
+}
+
+/* Chapter 07 in flow. There is no scroll progress to read when the stage is not
+   pinned, so every check is simply resolved and every word is simply present. */
+@media (max-width: 1023px), (prefers-reduced-motion: reduce), (scripting: none) {
+  .film-scene[data-flow="sm"] .chk {
+    display: block;
+  }
+
+  .film-scene[data-flow="sm"] .chk-inner {
+    padding: clamp(3.5rem, 9vw, 5rem) var(--page-gutter);
+  }
+
+  .film-scene[data-flow="sm"] .chk-box {
+    --q: 1;
+  }
+
+  .film-scene[data-flow="sm"] .chk-word {
+    opacity: 1;
+    transform: none;
+  }
+
+  .film-scene[data-flow="sm"] .chk-sweep {
+    transform: scaleX(1);
+  }
+
+  .film-scene[data-flow="sm"] .chk-state-run {
+    opacity: 0;
+  }
+
+  .film-scene[data-flow="sm"] .chk-state-done {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .chk-statement {
+    font-size: clamp(2.25rem, 11vw, 3rem);
+    max-width: none;
   }
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Page, Section, SectionHead } from "@/components/site/Page";
 import { RouteHeader } from "@/components/site/RouteHeader";
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProductReel } from "@/components/site/ProductReel";
 import { Cta } from "@/components/site/Cta";
 import { PRODUCTS_PAGE, WHAT_WE_DO_PAGE } from "@/lib/content/routes";
 import { PRODUCT_ROUTES } from "@/lib/content/product-pages";
@@ -41,6 +42,13 @@ export default function ProductsPage() {
         title={PRODUCTS_PAGE.title}
         lede={PRODUCTS_PAGE.lede}
       />
+
+      {/* The reel first: eight interfaces, one at a time, before the scannable index
+          below it. The page showed none of them until 2026-09-07. */}
+      <Section tone="paper" labelledBy="reel-heading">
+        <SectionHead id="reel-heading" title="Eight, running" lede="One at a time." />
+        <ProductReel />
+      </Section>
 
       {CATEGORIES.map((category, index) => {
         const products = productsByCategory(category.slug);

@@ -5,6 +5,13 @@
  * layer with everything else, and so the redesign directions can render the same three
  * reasons in a different shape without the strings being duplicated.
  *
+ * NO COMPARISONS, from 2026-09-07. These carried three: "Most firms do one of the
+ * three", "That last part is the one almost nobody else offers", and a practice tagline
+ * ending "not demoed once". A reader cannot check what somebody else does or does not
+ * do, so a comparison is the one kind of sentence that can never be evidence — and it
+ * makes the page sound like it is arguing with someone who is not in the room. What we
+ * do is more convincing than what anybody else does not.
+ *
  * Each is checkable rather than asserted. The previous copy ("We align every solution
  * with your goals and challenges") asserted nothing a reader could verify or a competitor
  * could not equally claim. These point at things Azkashine demonstrably does: eight
@@ -46,7 +53,7 @@ export const REASONS: Reason[] = [
     id: "build-run-test",
     title: "We build it, run it, and test it",
     description:
-      "Most firms do one of the three. We build the product, run the cloud underneath it on AWS, Azure or GCP, and test both. Testing goes all the way to the AI: prompt validation, RAG groundedness, model and data-quality checks, alongside the ordinary functional, performance, security and penetration work. That last part is the one almost nobody else offers.",
+      "We build the product, run the cloud underneath it on AWS, Azure or GCP, and test both. The testing goes as far as the AI itself — prompt validation, RAG groundedness, model and data-quality checks — alongside the usual functional, performance, security and penetration work.",
     icon: "/why/ai-powered.png",
     iconWidth: 485,
     iconHeight: 390,

@@ -380,6 +380,70 @@ reported green having never opened a page that was not the home page.
 
 ---
 
+### The words on the home page, plain pass — 2026-09-07
+
+Nazir: *"What does 'the decision', 'Awaiting approval', 'the ledger' etc and the paragraphs
+below it mean, I feel its very AI and does not make sense… It's okay if it is not so
+paragraphy and judgy about different companies."*
+
+**The chapter labels were names from the design document, not from the site.** "The
+decision", "The ledger", "The case", "Signed" describe the beats of the trace and they read
+perfectly well *if you have read `DIRECTION.md`*. A visitor has not. To anyone else they are
+abstract nouns floating over a section, and the effect is arty rather than clear. A label on
+a section is navigation, not a title card.
+
+| Was | Now |
+|---|---|
+| 01 The decision | 01 **AI & Automation** |
+| 03 The ledger | 03 **Three practices** |
+| 04 Already running | 04 **Eight products** |
+| 05 The failure | 05 **Cloud & Testing** |
+| 06 The case | 06 **Why us** |
+| 07 Signed | 07 **Industries & partners** |
+
+Beat labels went the same way: "Work arrives / Options considered / Options discarded / One
+path taken" → "A request comes in / Ways to handle it / Ruled out / The one that works".
+"Approved, and on the record" → "Approved and logged".
+
+**Three comparisons removed.** "Most firms do one of the three", "That last part is the one
+almost nobody else offers", and a practice tagline ending "not demoed once". A reader cannot
+check what somebody else does or does not do, so a comparison is the one kind of sentence
+that can never be evidence — and it makes the page sound like it is arguing with someone who
+is not in the room. Also gone: "which, in the industries we sell into, is never optional",
+which is us describing our sales process to a reader who wants to know what happens.
+
+**Three duplications the plain labels exposed, all invisible while the labels were abstract:**
+
+- **The same paragraph twice on one page.** The gate rendered `why.ts`'s governed
+  description in full, and chapter 06 renders every reason including that one. Nobody
+  notices the first time and everybody notices the second. The gate shows the three terms
+  instead — *approval checkpoints, audit trails, role-based access* — which is the same
+  claim in three words, and the right length for the one beat where the visitor is standing
+  still waiting.
+- **Chapter 06 said "Why us" twice**, mark and eyebrow. Eyebrow gone.
+- **Chapter 07 said it three times** — "Who we build for", "Who we build for", "Sectors we
+  build for". The mark names the section, the heading asks the question, and the four sector
+  names need no label because they are self-evidently the answer.
+
+Page total: **43 → 37** AI mentions, and 1,184 → 1,098 words. The tightening came from
+removing repetition, not from removing content.
+
+**The hero: raised, and CLOSED — it stays exactly as it is.** Put to Nazir on 2026-09-07
+with two rewrites offered and declined. **Do not reopen this.**
+
+The case that was made and rejected, recorded so nobody has to make it again: the hero is
+one AI word per ten, the largest type on the site and the first thing read; "AI-powered
+intelligence" is a tautology; "AI-powered" is the *accent* line, so the most emphasised
+word on the site is the one the rest of this pass was spent reducing; and "streamline
+operations, reduce costs, and unlock exponential growth" is three abstractions any
+competitor could print, which `rules/content.md` forbids.
+
+Nazir's answer was to leave it. It is signed-off client copy and that outranks the
+argument. The consequence is known and accepted: with the rest of the page now much
+plainer, the hero is the loudest AI moment on the site **by choice, not by oversight**.
+
+---
+
 ### "The text is very AI-AI" — diagnosed and partly fixed, 2026-09-07
 
 Nazir's read was right. Measured on the rendered page rather than argued about: **43

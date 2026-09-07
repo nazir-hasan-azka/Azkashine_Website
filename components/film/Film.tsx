@@ -7,7 +7,7 @@ import { Ledger } from "@/components/film/chapters/Ledger";
 import { Running } from "@/components/film/chapters/Running";
 import { RunningPanels } from "@/components/film/chapters/RunningPanels";
 import { Failure } from "@/components/film/chapters/Failure";
-import { Case } from "@/components/film/chapters/Case";
+import { Why } from "@/components/film/chapters/Why";
 import { Signed } from "@/components/film/chapters/Signed";
 
 /**
@@ -60,7 +60,7 @@ export function Film() {
         <RunningPanels />
       </Running>
       <Failure />
-      <Case />
+      <Why />
       <Signed />
     </div>
   );
