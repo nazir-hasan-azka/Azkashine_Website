@@ -137,7 +137,8 @@ export function Navbar() {
               </TopLink>
             </li>
             <li onMouseEnter={() => hoverOpen("what-we-do")}>
-              <MenuButton
+              <MenuLink
+                href="/what-we-do/"
                 label="What we do"
                 light={lightChrome}
                 open={menu === "what-we-do"}
@@ -145,7 +146,8 @@ export function Navbar() {
               />
             </li>
             <li onMouseEnter={() => hoverOpen("products")}>
-              <MenuButton
+              <MenuLink
+                href="/products/"
                 label="Products"
                 light={lightChrome}
                 open={menu === "products"}
@@ -342,7 +344,12 @@ function TopLink({
       href={href}
       onClick={onClick}
       className={cn(
-        "underline-wipe text-[17px] font-medium transition-colors hover:text-brand",
+        /* `min-h-6` for WCAG 2.2 SC 2.5.8. The text alone is 20px tall, and
+           `tests/links.mjs` lets it through only because its inline exception matches
+           any anchor inside an `li` — which is meant for a link in a sentence, not for
+           the main navigation. The row is 80px tall and the items are centred, so this
+           changes nothing anybody can see. */
+        "underline-wipe inline-flex min-h-6 items-center text-[17px] font-medium transition-colors hover:text-brand",
         light ? "text-white" : "text-ink",
       )}
     >
@@ -351,39 +358,70 @@ function TopLink({
   );
 }
 
-function MenuButton({
+/**
+ * A top-level item that BOTH navigates and opens a menu.
+ *
+ * It used to be a bare `<button>`, so "Products" and "What we do" went nowhere: clicking
+ * either opened a panel, and the only route to the page itself was a 97x20 link at the
+ * bottom of that panel. Nazir could not get to `/products/` from the menu bar, which is
+ * exactly right — there was no link in it.
+ *
+ * TWO CONTROLS, NOT ONE, because they are two different jobs. The word is a link and goes
+ * to the page. The chevron beside it is a button that discloses the panel and carries the
+ * `aria-expanded`. Collapsing both into one control means picking which one to break: a
+ * link cannot announce expanded state, and a button cannot be opened in a new tab or
+ * followed by a crawler. The panel still opens on hover for a fine pointer, so nothing
+ * changes for a visitor with a mouse.
+ *
+ * The chevron is 24x24 rather than the 12px glyph it draws, because WCAG 2.2 SC 2.5.8
+ * measures the target and `tests/links.mjs` enforces it.
+ */
+function MenuLink({
+  href,
   label,
   open,
   onToggle,
   light,
 }: {
+  href: string;
   label: string;
   open: boolean;
   onToggle: () => void;
   light?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-expanded={open}
-      className={cn(
-        "inline-flex items-center gap-1.5 text-[17px] font-medium transition-colors hover:text-brand",
-        light ? "text-white" : "text-ink",
-      )}
-    >
-      {label}
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="none"
-        aria-hidden="true"
-        className={cn("transition-transform", open && "rotate-180")}
+    <span className="inline-flex items-center gap-0.5">
+      <Link
+        href={href}
+        className={cn(
+          "underline-wipe inline-flex min-h-6 items-center text-[17px] font-medium transition-colors hover:text-brand",
+          light ? "text-white" : "text-ink",
+        )}
       >
-        <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-      </svg>
-    </button>
+        {label}
+      </Link>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-label={`${label} menu`}
+        className={cn(
+          "inline-flex h-6 w-6 items-center justify-center transition-colors hover:text-brand",
+          light ? "text-white" : "text-ink",
+        )}
+      >
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+          className={cn("transition-transform", open && "rotate-180")}
+        >
+          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        </svg>
+      </button>
+    </span>
   );
 }
 
@@ -414,7 +452,10 @@ function PanelFooter({
       <Link
         href={href}
         onClick={onNavigate}
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:text-blue-700"
+        /* min-h-6 for SC 2.5.8: the text alone measures 20px tall, and this link is
+           only ever on screen with the panel open, which is the one state
+           `tests/links.mjs` never sees. */
+        className="inline-flex min-h-6 items-center gap-1.5 text-sm font-semibold text-brand hover:text-blue-700"
       >
         {label}
         <span aria-hidden="true">→</span>
@@ -444,7 +485,7 @@ function MobileGroup({
         <Link
           href={seeAll.href}
           onClick={onNavigate}
-          className="mt-2 inline-block px-2 text-sm font-semibold text-brand"
+          className="mt-2 inline-flex min-h-6 items-center px-2 text-sm font-semibold text-brand"
         >
           {seeAll.label} →
         </Link>

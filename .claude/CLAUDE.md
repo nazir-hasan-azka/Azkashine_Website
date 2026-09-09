@@ -11,9 +11,10 @@ going: **the trace**, and the reading of the reference sites it came from. The l
 approved; individual chapters are not. It carries the implementation brief — read it
 before building anything on the home page. **`.claude/BUILD-BRIEF.md` is the current
 instruction** for the site as a whole: content sources, route inventory, and what must
-not go wrong. `.claude/ECOSYSTEM-BRIEF.md` is the next piece of work — a new
-`/ecosystem/` route, the spatial product floor, reasoned from lusion.co without copying
-it.
+not go wrong. `.claude/ECOSYSTEM-BRIEF.md` is the design for the spatial product floor, reasoned from
+lusion.co without copying it. It names a route, `/ecosystem/`, that no longer exists — the
+floor lives at the top of `/products/`. The reading of the reference still holds; see
+`PLAN.md` for where it ended up and why.
 
 Content sources beyond `lib/content/`: the previous app at `../new-azkashine-website/`
 (copy and structure only — its visual system is what this project replaces) and the live
@@ -23,13 +24,22 @@ before those pages are built.
 
 ## Where it stands
 
-**Built, and deployed.** Seventeen routes, all of them live at
-**https://test.azkashine.com/** since 2026-09-07.
+**Built, and deployed.** Seventeen routes, live at **https://test.azkashine.com/**.
 
 The home page is the film: seven chapters on one continuous scroll, drawn by one canvas
-and driven by one rAF loop (`components/film/`, `lib/film/`). The other sixteen routes
-are deliberately nothing like it — a buyer comparing vendors needs those scannable and
-fast, so they carry a thin static trace down the gutter and nothing else.
+and driven by one rAF loop (`components/film/`, `lib/film/`).
+
+**`/products/` is the one other route that moves.** The floor opens it — eight coded
+product interfaces standing in a dark room, turned by scroll, on the same rAF loop
+(`components/floor/`, `lib/floor/`) — and the three practice bands follow it unchanged.
+It was its own route, `/ecosystem/`, for two days; that route was deleted on 2026-09-09
+because it was carrying a second copy of the product index while `/products/` showed none
+of the products. `PLAN.md` has the reasoning.
+
+The remaining fifteen routes are deliberately nothing like either: a buyer comparing
+vendors needs those scannable and fast, so they carry a thin static trace down the gutter
+and nothing else. **Do not spread the spatial treatment further** — that contrast is what
+makes it land.
 
 **This IS a git repository, and pushing to `main` deploys.**
 `.github/workflows/deploy.yml` builds and FTPs `out/` into Hostinger's `test/` folder on
@@ -62,7 +72,7 @@ these four is advisory, and belongs in a rule file, not here.
 
 | | Enforced by |
 |---|---|
-| **1 · It works on every screen** | `npm test` → `responsive.mjs` — 16 viewports, 320×568 to 2560×1440. No overflow, headline on the gutter at both edges, every gap that must stay positive |
+| **1 · It works on every screen** | `npm test` → `responsive.mjs` — 17 routes × 16 viewports, 320×568 to 2560×1440. No overflow, headline on the gutter at both edges, every gap that must stay positive |
 | **2 · Every link resolves and can be clicked** | `npm test` → `links.mjs` — dead hrefs, links painted over at three widths, and 24×24 pointer targets (WCAG 2.2 SC 2.5.8, inline links exempt) |
 | **3 · Copy and tokens hold** | `npm run check` → `standards.mjs` — apostrophes, double spaces, stray whitespace; no raw hex, no arbitrary type sizes |
 | **4 · Types and lint are clean** | `npm run check` — `tsc --noEmit` and `eslint`, both exit 0 |

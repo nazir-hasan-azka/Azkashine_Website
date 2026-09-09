@@ -26,6 +26,12 @@ const BASE = process.env.BASE_URL || "http://localhost:3000";
  *
  * Seventeen. If that number changes, this list and `ROUTES.length` below both have to
  * change with it, which is the point.
+ *
+ * It was eighteen for two days: `/ecosystem/` was added on 2026-09-07 and deleted on
+ * 2026-09-09, when its scene moved to the top of `/products/` and the route it had been
+ * on turned out to be carrying a second copy of the product index. The count came back
+ * down in the same change that removed the route — which is the discipline this list
+ * exists for, in both directions.
  */
 const ROUTES = [
   "/",

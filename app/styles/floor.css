@@ -1,0 +1,519 @@
+/* ─── The floor ──────────────────────────────────────────────────────────────
+   The spatial scene at the top of `/products/`: eight coded product interfaces standing
+   in a room, turned by scroll. `components/floor/Room.tsx` drives it and
+   `lib/floor/room.ts` is the geometry.
+
+   IT WAS A ROUTE OF ITS OWN AND IT IS NOT ANY MORE. `/ecosystem/` was deleted on
+   2026-09-09: a page whose entire content was "the eight products" was carrying a second
+   copy of the product index, and the strongest asset in the repo was sitting behind a word
+   nobody would navigate to. The floor opens the page a buyer actually goes to, and the
+   comparison grid follows it unchanged.
+
+   TWO GROUNDS ARE STILL DEFINED, `dark` and `paper`, and dark is what ships. The pair
+   existed as two routes to be scrolled side by side; keeping both is a few custom
+   properties and it is how the choice gets revisited without rebuilding anything.
+   THE DARK GROUND ON AN INTERIOR ROUTE IS A DEPARTURE from `DIRECTION.md`'s "the ground
+   stays white throughout", made deliberately and with the client in the room.
+
+   TWO RULES RUN THROUGH ALL OF IT, and both came out of measurement rather than taste:
+
+     NOTHING THAT TURNS MAY BE EXPENSIVE TO RASTERISE. A 3D plane inside the rotating room
+     has a screen projection that changes every frame, so the browser redraws it every
+     frame. Profiled at 1440x900 while scrolling, the floor cost 16ms of a 16.7ms budget —
+     and the cost was the SAME at 5200px as at 1000px, so shrinking it was never going to
+     be the answer. The floor is outside the room now, with a transform written once per
+     resize. `filter: blur()` and a 120px glow on the panels went for the same reason: both
+     force a whole coded interface to be redrawn every time its projected scale moves.
+     Depth is carried by scale and by haze, which are free.
+     Median frame time went 333ms -> 16.7ms.
+
+     THE PANEL'S WIDTH IS THE ONLY LENGTH THE ROOM IS BUILT FROM. `radiusFor` in `room.ts`
+     takes the width these rules give a panel and returns the ring that fits eight of them
+     without their planes intersecting; the standoff, the floor's depth and the height
+     scatter are all ratios of that. One rule decides the composition at every window, so
+     the geometry cannot disagree with the stylesheet — which is exactly how the first
+     build ended up composed for 1440x900 and broken everywhere else. */
+
+.room {
+  position: relative;
+  z-index: 2;
+}
+
+.room-scene {
+  position: relative;
+  height: calc(var(--screens) * 100svh);
+}
+
+@media (max-width: 1023px) {
+  .room-scene {
+    height: calc(var(--screens-sm) * 100svh);
+  }
+}
+
+.room-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  /* A room wants a wider lens than a portrait does, and it has to scale: a fixed 1150px
+     is a different room on a 390px phone than on a 2560px display. */
+  perspective: clamp(680px, 78vw, 1300px);
+  perspective-origin: 50% 46%;
+  /* THE AIR IS PART OF THE GROUND, not an element on top of it. A vertical wash so the
+     floor has somewhere to go — and it was a full-viewport `::before`, which is one more
+     screen-sized layer for the compositor to blend on every frame. Measured at about 4ms
+     at 1440x900, which is the difference between landing on one vsync interval and two.
+     Two backgrounds on one element cost nothing. */
+  background: var(--room-air), var(--room-ground);
+}
+
+/* Zero width, no children, and the only element `--p` is written onto — an inherited
+   custom property above eight coded interfaces is the 5.78s of style recalculation
+   `.claude/PLAN.md` records from the home page. */
+.room-probe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── The floor ───────────────────────────────────────────────────────────────
+   STATIC. Its transform is written once per resize by `Room.tsx` and never again, which is
+   the single biggest performance decision on this page — see the note at the top. It sits
+   outside `.room-space`, so the room turns above it; the camera's resting tilt is baked
+   into its own transform so the two agree about which way is down. */
+.room-floor {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Big enough that the mask fades it out before its own edge, small enough not to be a
+     seven-megapixel texture the compositor blends every frame. The mask reaches nothing
+     by 44% of this, so 1900px of plane is about 840px of visible floor in each direction
+     — more than the room is wide. */
+  width: 1900px;
+  height: 1900px;
+  margin: -950px 0 0 -950px;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+
+.room-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      to right,
+      var(--room-rule) 0 1px,
+      transparent 1px var(--room-cell)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--room-rule) 0 1px,
+      transparent 1px var(--room-cell)
+    );
+  /* Fades out well inside its own edge, so the plane has no visible border — a ruled
+     square with a hard edge reads as a rug, not as a floor. A mask is expensive per
+     raster and free here, because this element is rasterised once. */
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 0%,
+    #000 20%,
+    transparent 44%
+  );
+  mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 20%, transparent 44%);
+}
+
+/* A pool of light under the ring, so the middle of the room is where the eye goes. */
+.room-pool {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, var(--room-pool) 0%, transparent 36%);
+}
+
+.room-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: var(--room-ground);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── The camera, and the grid everything stacks in ───────────────────────────
+   One transform carries the turn, the height, the look-down and the distance. Every child
+   is `grid-area: 1 / 1`, so each starts at the middle of the room and its own transform is
+   a pure offset from there, with no width or height in the arithmetic. */
+.room-space {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  /* SPELLED OUT, because an implicit `auto` track sizes to the widest item — and the
+     widest items here are display-type signs with `white-space: nowrap`. Left implicit,
+     the track came out wider than the stage and `place-items: center` centred the
+     readable panel outside the middle of the screen. Found by looking at a screenshot. */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  /* THE VERTICAL CENTRING, AND IT IS THE WHOLE OF IT. Padding-top shifts a content box's
+     centre down by half itself, so 6.5rem puts the room's middle exactly halfway between
+     the underside of the floating header and the bottom of the window — at ANY height.
+     The first build used a pixel constant nudged by window height, and an 820x1180 tablet
+     got the whole composition crammed into its lower third with the top half empty. */
+  /* THE SECOND TERM IS FOR SHORT WINDOWS AND IT IS NOT A MAGIC NUMBER — it is zero at
+     760px of height and grows as the window shrinks below it. A 1600x600 laptop has 600px
+     of window, the floating header takes the first 104, and the tilt and the vanishing
+     point together lift the front panel further than the arithmetic above accounts for:
+     it measured 29px UNDER the header there while it was comfortable at 1440x900. Height,
+     not width — the same lesson the card stack cost two passes. */
+  padding: calc(6.5rem + clamp(0px, (760px - 100svh) * 0.9, 148px)) 0 0;
+  transform-style: preserve-3d;
+}
+
+/* ── A panel ─────────────────────────────────────────────────────────────────
+   THE ONE ABSOLUTE LENGTH IN THE ROOM. `radiusFor` reads this width and sizes everything
+   else from it, so changing this rule moves the whole composition coherently. */
+.room-panel {
+  grid-area: 1 / 1;
+  width: min(32rem, 46vw);
+  transform: var(--tf0, none);
+  /* FLAT, not `preserve-3d`. It was preserve-3d so the caption could be pushed forward out
+     of a neighbour's way — but a `filter` on a child inside a preserve-3d parent flattens
+     that subtree and takes it out of the depth sort anyway, so it never worked. Flat, the
+     panel is one plane and its caption sorts with it, which is what was wanted. */
+  transform-style: flat;
+}
+
+/* THE CULL. See `Band` in `room.ts`: a panel this far round is behind the one being read
+   and mostly covered by haze, and not drawing it is what puts a 2560x1440 window inside
+   the frame budget. `visibility` rather than `display`, so nothing is laid out again and
+   the panel keeps its place in the room. */
+.room-panel[data-band="back"] {
+  visibility: hidden;
+}
+
+@media (max-width: 1023px) {
+  .room-panel {
+    /* Scaled for legibility rather than composition — the brief's own words for what a
+       phone gets instead of a shrunken desktop. */
+    width: min(26rem, 82vw);
+  }
+}
+
+.room-panel-ui {
+  /* Sized from the WINDOW'S HEIGHT, because that is what the panel has to fit inside. A
+     box sized on width alone is the same height in a 600px window as in a 1440px one,
+     which is the fault the hero headline had and the card stack had after it. */
+  --ui-h: clamp(9rem, 30vh, 21rem);
+  position: relative;
+  height: var(--ui-h);
+  display: grid;
+  /* `safe center`: an interface shorter than the box is centred, one taller starts at the
+     top so the crop only ever takes the bottom. */
+  align-content: safe center;
+  overflow: hidden;
+  border: 1px solid var(--room-edge);
+  border-radius: 14px;
+  background: #ffffff;
+  /* ZERO BLUR RADIUS, AND THAT IS THE WHOLE POINT. Any blurred shadow is a blur pass,
+     and a blur pass on eight panels whose projected scale changes every frame is eight
+     blur passes a frame: it measured 16ms of a 16.7ms budget on its own, even after the
+     original 120px glow had already been cut to 34px. What is left is the offset the site
+     already uses — `--shadow-hard`, the printed-sticker offset taken from Tokens Studio,
+     which has no blur and no spread and therefore no pass. On the dark ground a white
+     interface separates on its own and there is nothing to draw at all. */
+  box-shadow: var(--room-lift);
+}
+
+.room-panel-ui::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 0 0;
+  height: 3.5rem;
+  background: linear-gradient(to bottom, transparent, #ffffff);
+  pointer-events: none;
+}
+
+/* DEPTH AS HAZE, NOT AS TRANSPARENCY. The room's own ground laid over an opaque panel and
+   clipped by its rounded corners. Taking depth out of the panel's opacity made a white
+   interface see-through: on the dark ground you read the panel behind through the one in
+   front, and on the white one two panels merged into a single grey shape. */
+.room-haze {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--room-ground);
+  opacity: var(--haze0, 0);
+  pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+  .room-haze {
+    opacity: var(--haze0-sm, 0);
+  }
+}
+
+/* ── The caption ─────────────────────────────────────────────────────────────
+   EXACTLY ONE IS EVER ON SCREEN. Two adjacent panels sit in almost the same place through
+   a handover, so anything that fades a caption by distance prints two product names on top
+   of each other — which the first version did, at four tenths of an opacity each. `room.ts`
+   gives a caption only to the panel holding the front, at nothing on both sides of the
+   swap. */
+.room-cap {
+  /* Enough clearance that the eyebrow clears the bottom edge of the panels either side. */
+  margin-top: 1.6rem;
+  /* AND INSET FROM THE PANEL'S OWN LEFT EDGE, which is exactly where the panel one slot
+     round lands. Turned side-on it arrives as a narrow sliver right over the first
+     characters of the eyebrow — and it cannot be sorted out of the way, because two
+     planes that intersect in 3D are sorted per fragment, not per element. Moving the type
+     inboard of the collision is the reliable fix. */
+  padding-left: 9%;
+  opacity: var(--cap0, 1);
+}
+
+.room-cap-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.room-cap-cat {
+  color: var(--room-accent);
+}
+
+.room-cap-count {
+  color: var(--room-dim);
+}
+
+.room-cap-name {
+  margin-top: 0.5rem;
+  font-size: var(--text-h2);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--room-ink);
+}
+
+.room-cap-line {
+  margin-top: 0.5rem;
+  /* NEVER WIDER THAN THE PANEL IT BELONGS TO. `46ch` alone is about 370px, which is wider
+     than the panel on a 390px phone — so the tagline ran out past the right edge of the
+     screen. The stage clips, so the route sweep could not see it; it was found by looking
+     at a screenshot, which is now the third time that has been true on this page. */
+  max-width: min(46ch, 100%);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--room-body);
+}
+
+/* Two classes, not one: `.tlink` is defined in `globals.css`, which imports this file at
+   the top, so every rule there comes later in the cascade and beats a single class here.
+   And 2.25rem rather than 1.5, because this link sits inside a 3D transform — what a
+   finger gets is 24px times the perspective scale. */
+.room-cap .room-cap-link {
+  margin-top: 0.55rem;
+  /* 2.75rem is 44px of LAYOUT, and it has to be that big because this link lives inside a
+     perspective: what a finger gets is 44px times the projected scale. At 2.25rem it
+     measured 23px on a phone at the moment the panel was still turning into place — just
+     under the 24 WCAG 2.2 SC 2.5.8 asks for, and just under what `tests/links.mjs`
+     enforces. 44px is the ordinary touch-target size anyway. */
+  min-height: 2.75rem;
+  color: var(--room-accent);
+}
+
+/* The shortest windows of all — a 320x568 phone has 464px of usable height once the
+   header has taken its share, and the interface box plus a caption that wraps to three
+   lines does not fit in it. The box gives way first. */
+@media (max-height: 620px) {
+  .room-panel-ui {
+    --ui-h: clamp(7rem, 24vh, 11rem);
+  }
+}
+
+/* Short windows: the caption gives way, or the panel in focus is painted over by the
+   header. Height, not width — the same lesson the card stack cost two passes. */
+@media (max-height: 760px) {
+  .room-cap {
+    margin-top: 1.1rem;
+  }
+
+  .room-cap-name {
+    font-size: var(--text-h3);
+  }
+
+  .room-cap-line {
+    font-size: var(--text-body-sm);
+  }
+}
+
+/* ── The signage ─────────────────────────────────────────────────────────────
+   Practice and industry names on the walls, offset half a slot from the products so a word
+   is never directly behind the panel being read.
+
+   `backface-visibility: hidden` is not optional. These are radial and not billboarded, so
+   the ones on the far side face away — and a word seen from behind is mirror-reversed. */
+.room-sign {
+  grid-area: 1 / 1;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 5vw, 5.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--room-sign);
+  transform: var(--tf0, none);
+  backface-visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 1023px) {
+  .room-sign {
+    transform: var(--tf0-sm, none);
+  }
+}
+
+/* ── The two grounds ─────────────────────────────────────────────────────────
+   Everything above is shared. This is the whole of the difference. */
+
+/* A LIT HALL. The coded interfaces are white, so on a dark ground they stop being paper
+   and start being SCREENS — the metaphor the brief is built on, and the thing the
+   reference gets from real lighting that we cannot get any other way. It breaks
+   `DIRECTION.md`'s "the ground stays white throughout", deliberately, on one cuttable
+   route. */
+.room[data-look="dark"] {
+  --room-ground: #070a16;
+  --room-air: linear-gradient(
+    to bottom,
+    rgba(7, 10, 22, 0) 0%,
+    rgba(7, 10, 22, 0) 46%,
+    rgba(4, 6, 14, 0.85) 100%
+  );
+  --room-rule: rgba(133, 226, 254, 0.13);
+  --room-cell: 104px;
+  --room-pool: rgba(92, 194, 237, 0.13);
+  --room-edge: rgba(133, 226, 254, 0.24);
+  /* Nothing. A white interface on near-black is already separated from it, and a shadow
+     on a dark ground is invisible anyway. */
+  --room-lift: none;
+  --room-ink: #f2f6ff;
+  --room-body: rgba(238, 244, 255, 0.68);
+  --room-accent: var(--color-brand-light);
+  --room-dim: rgba(238, 244, 255, 0.42);
+  --room-sign: rgba(238, 244, 255, 0.055);
+}
+
+/* PAPER. `DIRECTION.md`'s colour rule kept: the ground stays white and the room is built
+   from a ruled floor, a pool of light and real shadow instead. */
+.room[data-look="paper"] {
+  --room-ground: var(--color-background);
+  --room-air: linear-gradient(
+    to bottom,
+    rgba(250, 251, 255, 0) 0%,
+    rgba(250, 251, 255, 0) 52%,
+    rgba(226, 233, 248, 0.55) 100%
+  );
+  --room-rule: rgba(0, 53, 124, 0.1);
+  --room-cell: 104px;
+  --room-pool: rgba(33, 133, 248, 0.07);
+  --room-edge: rgba(0, 53, 124, 0.22);
+  /* White on white needs SOMETHING, and it has to be free: a hard offset, no blur, no
+     spread. It is the same move `--shadow-hard` makes for the header and the cards. */
+  --room-lift: 0 4px 0 0 rgba(0, 53, 124, 0.1);
+  --room-ink: var(--color-ink);
+  --room-body: var(--color-muted);
+  --room-accent: var(--color-blue-700);
+  --room-dim: var(--color-muted-2);
+  --room-sign: rgba(0, 53, 124, 0.055);
+}
+
+/* ── The line above the room ─────────────────────────────────────────────── */
+
+.room-hint {
+  position: relative;
+  z-index: 2;
+  padding: 0 var(--page-gutter) clamp(1.25rem, 2.5vw, 2rem)
+    calc(var(--page-gutter) + var(--spine-step));
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--color-muted-2);
+}
+
+/* ── When the room stops being a room ────────────────────────────────────────
+   Two conditions, one block, the way `film.css` writes the same idea — a comma in a media
+   query is an OR, so the tiers cannot drift apart. Reduced motion wants a static
+   composition with every product legible; with no scripting nothing will ever write a
+   transform, so twelve screens of sticky stage would be eleven screens of one panel. Both
+   get a column of complete articles.
+
+   `Room.tsx` takes the third case — reduced motion switched on mid-session, after the
+   painter has written inline transforms — by removing them, because a stylesheet cannot
+   beat an inline style. */
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .room-scene {
+    height: auto;
+  }
+
+  .room-stage {
+    position: static;
+    height: auto;
+    overflow: visible;
+    perspective: none;
+  }
+
+  .room-probe,
+  .room-veil,
+  .room-floor,
+  .room-sign {
+    display: none;
+  }
+
+  .room-space {
+    position: static;
+    display: grid;
+    grid-template: none;
+    grid-template-columns: repeat(auto-fit, minmax(min(24rem, 100%), 1fr));
+    gap: clamp(2.5rem, 5vw, 4rem);
+    place-items: start;
+    padding: clamp(2rem, 5vw, 3.5rem) var(--page-gutter) clamp(3rem, 7vw, 5rem)
+      calc(var(--page-gutter) + var(--spine-step));
+    transform: none;
+    transform-style: flat;
+  }
+
+  .room-panel {
+    grid-area: auto;
+    width: auto;
+    max-width: none;
+    transform: none;
+  }
+
+  /* THE CULL IS OFF HERE, and it has to be written with the attribute or it loses. One
+     panel is server-rendered in the `back` band, so without this it stays
+     `visibility: hidden` in a tier whose whole promise is that every product is legible —
+     seven of eight, the same fault reduced motion had on chapter 04. A bare
+     `.room-panel` reset was the first attempt and it changed nothing: an attribute
+     selector is one specificity step above a class, whatever the order. */
+  .room-panel[data-band="back"] {
+    visibility: visible;
+  }
+
+  .room-haze {
+    opacity: 0;
+  }
+
+  .room-cap {
+    opacity: 1;
+  }
+}

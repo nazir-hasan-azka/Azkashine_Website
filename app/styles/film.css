@@ -202,7 +202,14 @@
   position: relative;
   padding: clamp(6rem, 12vh, 8rem) var(--page-gutter) clamp(1rem, 2.5vh, 1.75rem)
     calc(var(--page-gutter) + var(--spine-step));
-  max-width: 1680px;
+  /* NO `max-width` HERE, and it must not come back. `--page-gutter` is
+     `max(4.5rem, (100% - 1440px) / 2)`, so a FULL-WIDTH box already resolves to a 1440px
+     column centred on any screen — the cap is redundant. Worse, it is actively wrong:
+     a percentage padding resolves against the CONTAINING BLOCK, not the element, so a box
+     capped at 1680 inside a 2560 window still padded itself by (2560 - 1440) / 2 = 560 a
+     side. The content came out 560px wide, hard against the left edge, with half the
+     window empty. `max-width: 1680px` was on six blocks and broke every one of them above
+     1680px of viewport. Found on a 2560 screen; invisible at 1440. */
 }
 
 /* THE LABEL REGISTER, NOT THE DISPLAY ONE.
@@ -249,7 +256,6 @@
   --strip-h: clamp(2.9rem, 5vh, 3.5rem);
   --stack-step: var(--strip-h);
   padding-inline: var(--page-gutter) var(--page-gutter);
-  max-width: 1680px;
 }
 
 /* STATIC BY DEFAULT, sticky only where a stack can actually work. See the media
@@ -463,7 +469,14 @@
   gap: clamp(1.5rem, 3vw, 3rem);
   width: max-content;
   height: 100%;
-  padding: 0 var(--page-gutter) 0 calc(var(--page-gutter) + var(--spine-step));
+  /* THE BOTTOM PADDING KEEPS THE PANELS OFF THE TRACE. The canvas draws this chapter's
+     horizontal run 64px above the track's bottom edge, and the panels are centred in the
+     track — so on a short window the tagline grew down into the line and the line was
+     struck through the product's own copy. Measured at 1512x620: 3px of clearance with a
+     one-line tagline, and through the text with a two-line one.
+     Padding does not move the track's border box, which is what the canvas measures, so
+     the line stays where it is and the panels move up off it. */
+  padding: 0 var(--page-gutter) 3rem calc(var(--page-gutter) + var(--spine-step));
   will-change: transform;
 }
 
@@ -512,7 +525,12 @@
    does not depend on the content. The uniformity fix and the performance fix are the
    same fix. */
 .film-panel-ui {
-  --ui-h: 24rem;
+  /* SIZED BY THE WINDOW'S HEIGHT, capped at what it always was. It was a flat 24rem, so
+     the panel was the same 384px tall in a 620px window as in a 1440px one — and at 620
+     the copy underneath it ran into the trace. Height, not width: the same correction the
+     hero headline needed and the card stack needed after it. Above about 915px of
+     viewport this resolves to 24rem and nothing changes. */
+  --ui-h: max(11rem, min(24rem, 42vh));
   position: relative;
   height: var(--ui-h);
   /* `safe center` is the whole trick: an interface SHORTER than the box is centred in
@@ -562,6 +580,86 @@
   color: var(--color-muted);
 }
 
+/* ── The way out of chapter 04 ───────────────────────────────────────────────
+   The last thing on the track, and the only item on it that is not a product: the
+   link into `/products/`, where the same eight stand in one room at three depths.
+
+   THE PLATES ARE THE WHOLE ILLUSTRATION AND THEY COST NOTHING. Three empty spans in
+   one `perspective`, at three `translateZ` values — the idea of the floor, still, in
+   about a dozen declarations. It is deliberately NOT a second implementation of the
+   floor: chapter 04 is the most performance-sensitive stage on the home page, and the
+   route it points at is where the real thing lives. */
+.film-onward {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.film-onward-depth {
+  /* ONE GRID CELL, EXPLICITLY SIZED, and all three plates stacked in it. Centring
+     three absolutely positioned boxes with percentage margins does not work: a
+     percentage margin resolves against the containing block's WIDTH, including the
+     vertical one, so `margin-top: -19%` centred nothing and two of the three plates
+     ended up outside the frame. A grid needs no arithmetic at all. */
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  height: 22rem;
+  /* CLIPS, AND IT HAS TO. The plates are translated by a percentage of their own size,
+     so on a phone — where the track is a column and the panel is the full content
+     width — the back plate reached 148px outside the frame and the whole document
+     scrolled sideways at every width from 320 to 768. `responsive.mjs` caught it, which
+     is the one thing standard 1 exists for. Clipping is also the honest answer: this is
+     a window onto a floor, and a floor runs past its frame. */
+  overflow: hidden;
+  perspective: 900px;
+  perspective-origin: 50% 46%;
+}
+
+.film-onward-plate {
+  grid-area: 1 / 1;
+  width: min(22rem, 72%);
+  height: 62%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  /* A title strip and a few ruled rows, which is all it takes to read as an interface
+     rather than as a blank card. Three layers, one declaration, and the tint is a
+     custom property so the two plates behind can change colour without redefining the
+     whole stack. */
+  --plate: #ffffff;
+  background:
+    linear-gradient(to bottom, var(--color-surface) 0 18%, transparent 18%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 1.75rem,
+      var(--color-border) 1.75rem calc(1.75rem + 1px)
+    ),
+    var(--plate);
+}
+
+.film-onward-plate[data-depth="near"] {
+  transform: translate3d(0, 0, 0);
+  box-shadow: 0 22px 50px -26px rgba(15, 17, 37, 0.38);
+}
+
+/* Spread far enough apart that all three read. The first pass put the two back plates
+   behind the front one, which is a picture of one card, not of a floor. */
+.film-onward-plate[data-depth="mid"] {
+  transform: translate3d(58%, 26%, -230px) rotateY(-11deg);
+  --plate: var(--color-surface-2);
+  opacity: 0.88;
+}
+
+.film-onward-plate[data-depth="far"] {
+  transform: translate3d(-70%, -30%, -470px) rotateY(15deg);
+  --plate: var(--color-surface);
+  opacity: 0.66;
+}
+
+.film-onward-more {
+  margin-top: 1.1rem;
+}
+
 /* ── Chapter 06, the case ───────────────────────────────────────────────────
    The three reasons, each showing the receipt for itself. See the note at the
    top of `Case.tsx` for why this is not three cards with icons.
@@ -582,7 +680,6 @@
   position: relative;
   padding: clamp(6rem, 14vh, 9rem) var(--page-gutter) clamp(4rem, 10vh, 7rem)
     calc(var(--page-gutter) + var(--spine-step));
-  max-width: 1680px;
 }
 
 .film-case-eyebrow {
@@ -730,7 +827,6 @@
 .film-signed-inner {
   padding: clamp(4rem, 9vh, 7rem) var(--page-gutter) clamp(2rem, 4vh, 3rem)
     calc(var(--page-gutter) + var(--spine-step));
-  max-width: 1680px;
 }
 
 .film-signed-label {

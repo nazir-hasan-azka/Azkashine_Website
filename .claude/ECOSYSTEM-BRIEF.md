@@ -1,4 +1,14 @@
-# Build brief — the ecosystem page
+# Build brief — the product floor
+
+> **WHERE THIS ENDED UP, 2026-09-09.** This document designs a route called `/ecosystem/`.
+> That route was built, rebuilt once, and then deleted: the floor now opens `/products/`
+> and the practice bands follow it. The route went because its own second half was a plain
+> list of the eight products — the thing `/products/` already is — while `/products/`
+> showed none of the eight interfaces. **Everything below about lusion.co, about what to
+> borrow and what not to, and about motion, depth and mobile still governs the floor.**
+> What is stale is the routing: the section "Why this is its own route" argued against
+> Products and was overturned. `PLAN.md` carries that decision.
+
 
 **Written 2026-09-07.** A new route, `/ecosystem/`. Read `CLAUDE.md`, `DIRECTION.md` and
 `PLAN.md` first — this assumes the trace, the scene primitive and the one rAF loop.

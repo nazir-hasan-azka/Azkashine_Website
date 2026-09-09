@@ -871,6 +871,491 @@ The current target is the `test/` folder. Pointing this at production needs, at 
    note the FTP account is chrooted to `public_html`, so the `test/` leaf is currently
    what stops a deploy writing into the main site. Removing it removes that guard.
 
+## `/ecosystem/` — the spatial product floor, built 2026-09-07
+
+`ECOSYSTEM-BRIEF.md` was the instruction. The eighteenth route: the eight coded product
+interfaces as DOM panels in CSS 3D, at three depth bands, driven by the rAF loop that
+already runs the film. No WebGL, no animation library, no virtual scroll.
+
+### What it is
+
+Twelve screens on desktop, eleven on a phone. One `perspective` on the stage, one
+transform on a camera element, and eight `translate3d`s under it. `lib/ecosystem/field.ts`
+is the whole geometry and it is pure arithmetic; `components/ecosystem/Floor.tsx` is the
+rAF subscription, `FloorPanels.tsx` is what stands on the floor, and both halves of that
+split exist so `components/product-ui/` never reaches the browser as JavaScript.
+
+The choreography the brief asks for, in one number: enter and settle (p 0 → 0.05), eight
+products taking the near band in turn (0.05 → 0.80), the pull-back where all eight are
+visible at once (0.80 → 0.90), and the exit (0.955 → 1).
+
+**Position selects, velocity animates.** Scroll POSITION chooses which product is in
+focus — a pure function of `--p`, no state. Scroll VELOCITY feeds a spring per panel, and
+that spring is the only thing on the page with memory. `mass` is hashed per slug, so eight
+panels settle at eight different moments; the separation is why the same scroll distance
+feels different fast and slow.
+
+**The variation is hashed, never random.** FNV-1a over the slug into an xorshift stream.
+`Math.random()` at module scope would give the server one floor and the browser another,
+and this is a static export — but the reason it had to be deterministic goes further than
+avoiding a mismatch: **each panel's opening pose is rendered into the HTML** as `--tf0`,
+so the floor is composed in the markup before hydration. Without it the eight stack dead
+centre until JavaScript arrives, and the enter beat is the one thing that cannot be re-run.
+
+### Decisions made where the brief left room
+
+1. **It does not use `ScrollScene`, and that is a performance decision, not a preference.**
+   `ScrollScene` writes `--p` onto the element it pins; `--p` is an inherited custom
+   property, so changing it invalidates style for every descendant — and the descendants
+   here are the same eight product interfaces that cost 5.78s of style recalculation on
+   the home page until chapter 04 stopped reading `--p` in CSS. The scene is registered by
+   hand against a zero-width probe with no children. Every per-frame write is a
+   non-inherited property (`transform`, `opacity`, `filter`) on one element.
+2. **The page is the floor PLUS a plain index.** The index is not a fallback. A visitor
+   comparing eight products needs a list, a keyboard user needs eight links in order, and
+   a crawler needs eight hrefs — none of which a depth field can honestly offer while one
+   panel at a time is the readable one. The floor makes the argument; the index is the
+   argument written down.
+3. **Off-band panels are `inert`, which the brief asks for, and the index is what makes
+   that defensible.** A panel out in the field is turned, shrunk, dimmed and blurred;
+   offering its link to a pointer or a keyboard is offering something nobody can read.
+   `tests/links.mjs` skips anything under `[inert]` for the same reason, so its coverage
+   check tests the one link actually on offer rather than eight that are not. Without the
+   index below it, this would be a hole in standard 2 rather than a design.
+4. **`content-visibility: auto` was left OFF the panels**, against the brief's performance
+   note. It decides what to skip from an element's on-screen bounds, and those bounds come
+   from a 3D transform — the case where a wrong answer paints a blank white rectangle in
+   the middle of the composition. Eight panels is a trivial DOM and the budget is fine.
+5. **`PANEL_ORDER` moved out of `RunningPanels.tsx` and into `products.ts` as
+   `PRODUCTS_IN_RUN_ORDER`.** Two pages now run the same eight products past you one at a
+   time, and two copies of an order that carries an argument is two copies that can
+   disagree. The argument is unchanged and now lives on the export.
+6. **The link out of chapter 04 is a panel, not a re-choreographed ending.** The brief
+   asks for about two screens there — the traverse decelerating, the frame dissolving, the
+   eight settling at different depths at once. What is built is the link with a CSS still
+   of that idea behind it: three plates at three depths in one `perspective`, at the end of
+   the track. Chapter 04 is the most performance-sensitive stage on a page that was
+   profiled from 32.3ms a frame down to 3.5ms, and a second implementation of the floor on
+   it is a real risk for a beat the route itself delivers in full. **This is the one thing
+   the brief asks for that is not built as described**, and it is a scope call rather than
+   an oversight.
+7. **Mobile is two bands, no blur, no cursor, drift halved** — the brief's own list. The
+   blur is off rather than reduced: a filter re-rasterises the subtree under it whenever
+   its value changes, and a phone is the machine that can least afford that for an effect
+   that reads as softness on a 390px screen. Depth is carried by scale and dim there.
+8. **The floor claims the fragment.** `registerScene` means the loop writes `#floor` as you
+   pass it, the same contract the film's chapters carry.
+
+### Three faults found by LOOKING, which nothing would have caught
+
+The brief warned about exactly this: the route sweep skips text an ancestor clips, and
+`.eco-stage` is `overflow: hidden` by design — so **the sweep cannot see anything on the
+floor at all.** It reported green on `/ecosystem/` at all sixteen viewports while all three
+of these were live.
+
+- **The signage was inflating the grid track and pushing the focused panel off-centre.**
+  `.eco-field` had no `grid-template`, so the implicit track sized to its widest item, and
+  the widest items are the practice and industry names, set in display type with
+  `white-space: nowrap`. On a 390px window the column came out 483px wide and
+  `place-items: center` duly centred the panel in *that*: the one readable interface sat
+  47px right of the middle of the screen with its right edge cut off. `grid-template:
+  minmax(0, 1fr) / minmax(0, 1fr)` fixes it. Same class of bug as chapter 07's, found the
+  same way.
+- **The outgoing caption hung across three other panels through the pull-back.** It faded
+  on the same curve as the geometry, so at a third of an opacity a product name and
+  tagline floated over the interfaces behind it. The caption belongs to focus and the
+  pull-back has no focus, so it goes first now, and faster.
+- **The pull-back was pinned to the ceiling with a third of the frame empty.** A panel's
+  box is its interface plus its caption, but out there the caption is faded to nothing, so
+  the visible mass sits in the top half of a box being centred as a whole. The gather ring
+  is biased downward by the difference.
+
+**And one the suite caught, on the home page rather than the new route.** The chapter 04
+exit panel translates its three plates by a percentage of their own size, and below `lg`
+the track is a column where a panel is the full content width — so the back plate reached
+148px outside the frame and `/` scrolled sideways at every width from 320 to 768.
+`responsive.mjs` reported it at six viewports, which is the one thing standard 1 exists
+for. `.film-onward-depth` clips now, which is also the honest answer: it is a window onto
+a floor, and a floor runs past its frame.
+
+Two more were arithmetic rather than looking. `lane`, `spread` and `rise` are distances in
+the floor's own space, and a fixed distance is a different composition at 1024 than at
+2560 — `tuningFor` scales the room to the window now. And the signage was hashed for
+position as well as for jitter, which put five of seven words in one corner: a hash is
+uniform over many samples and seven is not many. It is an even ring with a hashed wobble.
+
+### Where it is linked from
+
+The end of chapter 04's track, the footer's product column, the Products dropdown, and the
+mobile Products group. The brief's definition of done asks for chapter 04 plus one of nav
+or footer; it has all four, because a page nothing links to is a page nobody sees.
+
+### Standards
+
+`/ecosystem/` is in `ROUTES` in **both** `tests/links.mjs` and `tests/responsive.mjs`, and
+both count assertions went 17 → 18, in the same change that created the route.
+`components/ecosystem/` and `lib/ecosystem/` were added to `OURS` in `standards.mjs` — a
+new directory nobody adds there is a directory the suite reports green having never opened.
+
+### Open
+
+- **Nobody has scrolled it who has not built it.** The same note the gate carries. The
+  machine checks prove one panel is near at a time, that seven are inert, that nothing
+  overflows at any of sixteen sizes, and that the static composition is content-complete.
+  They cannot prove the floor reads as a space.
+- **The two-screen depth moment at the end of chapter 04** — decision 6 above.
+- **`hero.mjs` is flaky and was not fixed.** Its *material is blue, not paper* check
+  reads one pixel of one frame of an animating shader and compares blue against red;
+  four runs of identical, untouched hero code gave one fail and three passes. Recorded
+  in `.claude/rules/tests.md` with the numbers. It is an assertion about a signed-off
+  component, so it is flagged rather than retuned.
+- **`ECOSYSTEM-BRIEF.md` names Lenis as the one thing worth evaluating**, about 3KB, purely
+  for scroll feel. It was not evaluated. Nothing here needs it and two of the three
+  reference sites ship no animation library at all, but it is an open question rather than
+  a closed one.
+
+### The floor did not come out well, and why — 2026-09-07, later
+
+Nazir, on the built `/ecosystem/`: *"the ecosystem has not come out well."* He was right, and
+the diagnosis is worth keeping because four of the five faults were things a machine check
+cannot see.
+
+**One was an outright bug.** Through every handover, two products' names, taglines and
+links printed on top of each other at four tenths of an opacity each. Adjacent panels sit
+in almost the same place on screen, so a caption that fades by distance from focus
+*guarantees* a collision. Only the panel holding the front gets a caption now, and it is at
+nothing on both sides of the swap so the two can never meet.
+
+**The other four were the design.**
+
+1. **Washed out.** White panels, near-white ground, `#e4eafe` borders. The far band
+   dissolved into grey smears instead of reading as objects at a distance, so depth read as
+   blur rather than as space.
+2. **No room.** The brief's metaphor is *an operations floor seen from inside* and there was
+   no floor — no ground plane, no horizon, nothing for the panels to stand on.
+3. **A carousel, not a floor.** One big panel with two ghosts behind it. The composition the
+   page exists to arrive at — all eight at once — was two screens out of twelve. The other
+   ten were a slideshow with depth of field.
+4. **The signage was noise.** "MANUFACTURING" and "ENERGY" collided into one word, others
+   were chopped by the frame, and they cut through the caption.
+
+Faults 1 and 2 are the root, and they have the same cause: **objects were built and no room
+was built around them.** A lit room is what makes the reference feel physical.
+
+### Two rooms, built to be scrolled — `/variations/floor-dark/` and `/variations/floor-room/`
+
+Nazir's call was *build both, then choose*, which is what this project does with everything
+else. Both are `noindex`, nothing links to them, and the loser is deleted rather than left
+lying around. `/ecosystem/` still runs the first geometry until one wins.
+
+**The mechanism is shared byte for byte.** `lib/ecosystem/room.ts` and
+`components/ecosystem/Room.tsx` are identical between the two; everything that differs is
+under `[data-look="dark"]` or `[data-look="paper"]` at the bottom of `app/styles/room.css`.
+What is being compared is the room and nothing else.
+
+**The structural change: the camera moves and the objects do not.** In `field.ts` a panel's
+position was a function of its distance from focus, so eight objects rearranged themselves
+around a fixed camera — which is a carousel however it is dressed. In `room.ts` the eight
+stand in fixed places on an irregular ring and scroll turns the whole room with one
+`rotateY`. Four or five are visible at any moment instead of one and two ghosts, and the
+pull-back is the same room from further back rather than a different arrangement. That is
+the brief's first borrowed principle taken literally, and it is what the first attempt only
+half did.
+
+Six things it took looking at screenshots to find, none of which any suite reports:
+
+- **`poseFor` was being handed the wrong number, and TypeScript could not catch it.** The
+  parameter had been `count` and became `aim` — the angle the camera is pointed at — but
+  the old signature survived the edit and both call sites passed the aim into the count.
+  Both are `number`. The result was that a panel's *facing* was computed from the raw
+  focus while the room was *turned* by the eased one, so the product in focus was
+  eighty degrees edge-on at the exact moment it was supposed to be square to you, and
+  half the room was rendering mirror-reversed. It measured 86px wide where it should have
+  been 460.
+- **The camera never came to rest.** Turning at a constant rate against a constant scroll
+  means nothing is ever centred except at the instant focus crosses a whole number. `dwell`
+  holds through the first and last third of each product's turn and eases across the
+  middle, so every product gets a beat where it is dead centre — and the caption is at full
+  strength for exactly that beat.
+- **The camera pointed at the slot, not at the product.** Each stand carries a hashed wobble
+  off its slot; aiming at the slot left the panel in focus up to a hundred pixels off centre
+  while it was supposed to be standing still. `focusAngle` interpolates between the actual
+  angles. The irregularity belongs in the spacing, never in whether the thing you are
+  reading is in the middle of the screen.
+- **Depth was coming out of the panels' opacity, and a white interface at 0.7 is
+  see-through.** On the dark ground you could read the panel behind through the one in
+  front; on the white one two panels merged into a single grey shape. Distance is haze
+  drawn *over* an opaque panel now — `.room-haze`, the room's own ground, clipped by the
+  panel's corners.
+- **Neighbouring panels intersected.** At a reach of 0.84–1.18 two adjacent stands sat 300px
+  apart in radius and their planes cut through each other as they turned — real 3D
+  behaviour that looks exactly like a rendering fault, a hard diagonal seam across the
+  interface you are reading. Reach is a narrow band now and the panel is narrower than the
+  chord between two stands.
+- **The height wobble put the product in focus under the header.** ±150px is 255px of
+  spread on screen after perspective; the two extremes measured −5px and +253px of
+  clearance on a 900px window. It is ±78 now, and `base` pushes the whole room further down
+  on short windows — the same height-not-width lesson the card stack cost two passes.
+
+Known and not fixed: **the eyebrow line still crosses the bottom edge of the panel to its
+left.** A `filter` on a child inside a `transform-style: preserve-3d` parent flattens that
+subtree and takes it out of the depth sort, so Chrome paints the neighbour over the caption
+whatever `translateZ` says. The caption was moved down rather than fighting the sort, which
+clears the name and the link but not the 10px mono line above them.
+
+**Verified on both:** sixteen viewports, no horizontal overflow, no text off the page, no
+page errors, and reduced motion collapses each to a column of eight complete articles with
+all eight links live and nothing inert. They are NOT in `ROUTES` in either suite — nothing
+links to them and they are temporary; the real route is already in both, and whichever room
+wins moves into `app/ecosystem/page.tsx`.
+
+### The dark room wins, and it was unusable — 2026-09-08
+
+Nazir picked the dark one and named two faults: *"the animation is not smooth, its very stuck
+stuck"* and *"it is not responsive"*, with `/products/` given as the page to measure against.
+
+Both were true, both were much worse than they looked, and both are fixed.
+
+#### Stuck: 333ms a frame, against 16.7 on `/products/`
+
+Profiled rather than guessed — median frame time while scrolling the scene, at 1440x900:
+
+| | median | p90 | worst |
+|---|---|---|---|
+| `/products/` (the control) | **16.7ms** | 16.7 | 16.8 |
+| `/ecosystem/`, the first floor | 83.3ms | 100 | 183 |
+| `/variations/floor-dark/`, as shown | **333ms** | 617 | 967 |
+
+Three frames a second. Ablated layer by layer rather than guessed at, and two things were
+almost all of it:
+
+- **A 3D plane that turns is rasterised again every frame, and the cost does not depend on
+  its size.** The floor was inside the rotating room, so its screen projection changed
+  sixty times a second. Measured at 233ms of the 333. Shrinking it from 5200px to 1000px
+  changed **nothing** — 33.3ms either way — which is the finding worth keeping, because
+  shrinking it is the obvious fix and it does not work. The floor is now a static element
+  OUTSIDE the turning room with its transform written once per resize, and it fades during
+  the pull-back rather than following the camera over the top.
+- **`filter: blur()` and a 120px glow on eight panels.** Both force a whole coded interface
+  to be redrawn every time its projected scale moves. The glow alone measured about 16ms
+  after it had already been cut from 120px to 34px, because what costs is the blur pass,
+  not its radius. Depth is carried by scale and by haze now, and the shadow is
+  `--shadow-hard`'s zero-blur offset — the printed-sticker shadow the site already uses.
+
+Two smaller ones after that: the atmospheric wash was a full-viewport `::before`, which is
+one more screen-sized layer to blend every frame — it is a second background on the stage
+now; and panels more than about 140° round the room are culled, which is two of the eight,
+behind the one being read and mostly covered by haze.
+
+**Where it landed, measured against the production build rather than the dev server:**
+
+| | median |
+|---|---|
+| 1440x900 | **16.7ms** |
+| 390x844 | **16.7ms** |
+| 1920x1080 | 33.3ms |
+| 2560x1440 | 50ms |
+
+Sixty frames a second at the two sizes that matter most, from three. **The large-viewport
+numbers are pessimistic and should not be trusted as-is:** headless Chromium here has no
+GPU, so compositing cost scales straight with pixel count in a way it will not on a real
+machine. What is honest is the shape — cost grows with viewport area, because eight coded
+interfaces are rasterised at whatever size the window makes them.
+
+#### Not responsive: it was composed for 1440x900 and nothing else
+
+- **The room's size was a pixel constant.** `radius: 880` with a width multiplier bolted
+  on. At 820x1180 that produced a ring smaller than the panels standing on it, so they
+  overlapped and clipped; at 2560 it left the frame half empty. **The radius now comes from
+  the width the stylesheet actually gives a panel** — `radiusFor`, measured once per resize
+  — and the standoff, the floor's depth and the height scatter are all ratios of it. One
+  CSS rule decides the composition at every window and the geometry cannot disagree with it.
+- **The vertical placement was a pixel constant too**, nudged by window height. An 820x1180
+  tablet got the whole composition crammed into its lower third with the top half empty.
+  It is `padding-top` on the stage grid now: padding shifts a content box's centre by half
+  itself, so 6.5rem puts the room's middle exactly halfway between the underside of the
+  header and the bottom of the window, at any height. A second term gives way below 760px
+  of height, where the tilt and the vanishing point lift the front panel further than the
+  arithmetic accounts for and it measured 29px UNDER the header at 1600x600.
+- **The caption ran off the right edge of a phone.** `max-width: 46ch` is about 370px and
+  the panel is 320px at 390 wide, so the tagline overflowed the panel and then the screen.
+  The stage clips, so the route sweep could not see it — **found by looking at a
+  screenshot, the third time that has been true on this page.**
+- **The pointer target failed at 390.** The caption's link is inside a perspective, so what
+  a finger gets is its layout height times the projected scale: 2.25rem measured 23px
+  mid-turn, just under the 24 WCAG 2.2 SC 2.5.8 wants. It is 2.75rem — 44px — now.
+- **The cull hid a product in the static tier.** One panel is server-rendered in the `back`
+  band, and reduced motion left it `visibility: hidden` — seven products of eight in the
+  tier whose whole promise is that every one is legible, which is the same fault reduced
+  motion had on chapter 04. The reset has to be written with the attribute selector; a bare
+  `.room-panel` reset was the first attempt and changed nothing, because an attribute
+  selector is one specificity step above a class whatever the order.
+
+Verified across sixteen viewports on both variations: no horizontal overflow, no text off
+the page, no page errors, every pointer target at least 24x24 at 390, and reduced motion
+gives a column of eight complete articles with all eight links live and nothing inert or
+hidden. The panel in focus is centred within a few pixels at every size, and clears the
+header at all of them — the tightest is 49px at 1600x600 and 30px at the bottom on 320x568.
+
+#### Still open
+
+- **`/ecosystem/` still runs the first geometry.** The room lives only on the two variation
+  routes until the winner is moved across, which is one file change plus deleting the loser
+  and `lib/ecosystem/field.ts`.
+- **Large viewports.** 1920 and 2560 are short of 60fps on this machine. Worth re-measuring
+  on real hardware before deciding it needs anything; if it does, the lever is the cull
+  threshold, which is one number.
+
+### `/ecosystem/` deleted, the floor moved onto `/products/` — 2026-09-09
+
+Nazir, after scrolling both rooms: the dark one wins, and *"I am thinking of removing the
+ecosystem and merging this into the Products page."* Then: header, floor, and the practice
+bands left exactly as they are.
+
+**`ECOSYSTEM-BRIEF.md` had explicitly rejected Products for this** — *"that page's job is
+comparison and linking — a spatial world fights it"* — so this overturns a written decision.
+Two things visible after both pages were built are what changed it:
+
+1. **The site was carrying two product indexes.** The bottom half of `/ecosystem/` was a
+   plain list of the eight products with links, which is what `/products/` already is. It
+   was there because a depth field cannot honestly serve a keyboard user or a crawler — but
+   that meant the route duplicated another page, which is the fault this project keeps
+   catching.
+2. **`/products/` showed none of the products.** Four thousand pixels, sixty-eight links,
+   zero images and zero interfaces — the page a buyer opens to see what Azkashine sells was
+   entirely text cards, while the strongest asset in the repo sat behind a word nobody
+   would navigate to. `BRIEF.md` calls the buried interfaces fault #2 of the site this one
+   replaces.
+
+**What the page is now:** route header, the hint line, the floor, then the three practice
+bands and the closing block untouched. Room first was Nazir's call — a buyer landing on
+Products should see the products before reading about them. The cost is that the comparison
+grid starts about seven screens down, which is why the scene is **eight screens rather than
+the twelve it was built at**; it is `--screens` in `Room.tsx`, one number, if it should be
+shorter still.
+
+**What went:** the `/ecosystem/` route, both variation routes, `RoomPage.tsx`,
+`lib/ecosystem/field.ts` (the first geometry), `app/styles/ecosystem.css`, and the ecosystem
+entries in the nav dropdown, the mobile menu and the footer. Chapter 04's way out now lands
+on `/products/`. **Both suites went back to seventeen routes in the same change** — the
+count discipline runs in both directions.
+
+**What was renamed, because the name was a lie the moment the route went:**
+`lib/ecosystem/room.ts` → `lib/floor/room.ts`, `components/ecosystem/` →
+`components/floor/`, `app/styles/room.css` → `floor.css`, `lib/content/ecosystem.ts` →
+`floor.ts` (trimmed to the labels that survive; `PRODUCTS_PAGE` owns the title and lede).
+`standards.mjs`'s scope followed.
+
+#### The bug that had been there for two days and could only be found by looking
+
+**The caption's fade threshold was in the wrong units.** It measured the camera's distance
+from a panel as a fraction of a WHOLE TURN and treated 0.34 of one as "close" — but with
+eight products a slot is 0.125 of a turn, so "close" was nearly three slots. The caption
+never faded at all. It stayed fully lit while its own panel slid a hundred pixels off centre
+and halfway out of the frame, which on a phone — where the panel is 320px of a 390px window
+— reads as a cut-off product name over a cut-off interface.
+
+**It looked correct for two days because every screenshot was taken at a rest point**, where
+the panel is centred anyway. It only surfaced when the scene moved onto `/products/` and the
+sampling happened to land mid-turn. It is measured in slots now: full through the hold, off
+through the move, and at nothing on both sides of the swap.
+
+**And a second, mobile-only fix out of the same look.** The camera held on each product for
+two thirds of its turn and moved across the middle third. On a phone that is too long — the
+panel is out of frame the moment the room turns at all — so a third of every product's turn
+was spent with it half off the screen. `Tuning.hold` is 0.42 on handheld against 0.33 on
+desktop: the camera snaps between products and holds, which is also what the brief means by
+one product per screen on mobile. Measured at 390x844, the panel in focus is now inside the
+frame at four of five sample points against one of five before.
+
+#### Standing decisions this changes
+
+- **The dark ground is now on an interior route.** `DIRECTION.md` says the ground stays
+  white throughout and colour arrives as objects; a full-bleed near-black band on
+  `/products/` is a real departure, made deliberately with the client in the room. The
+  band is an object on the page in the sense that matters — it starts and stops, and the
+  header, the grid and the closing block above and below it are paper.
+- **`ECOSYSTEM-BRIEF.md` is now a design document for a route that does not exist.** Kept,
+  because the reasoning about lusion.co and about what to borrow is what the floor is still
+  built on, with a note at its head saying where the scene ended up.
+- **The interior routes are no longer uniformly quiet.** The rule was that the cinema
+  belongs on the home page and nothing else moves. One interior route moves now. The rule
+  that still stands, and matters more, is the next sentence of it: **do not spread it
+  further.** Fifteen of the seventeen routes are still static and fast.
+
+### Two home-page bugs, both only visible off 1440x900 — 2026-09-09
+
+Nazir, with a screenshot: the trace crossing the product copy in chapter 04, and *"the
+what we do cards and other items are not centrally aligned on larger screens."* Both real,
+both measured before anything was changed.
+
+**1 · The whole page was jammed into the left of a wide window.** `--page-gutter` is
+`max(4.5rem, (100% - 1440px) / 2)`, which centres a 1440px column on a FULL-WIDTH box. Six
+blocks also carried `max-width: 1680px` with no auto margin — `.band-inner`, `.cta-inner`,
+`.ledger-stack`, `.film-ledger-head`, `.film-case-inner`, `.film-signed-inner`. A
+percentage padding resolves against the containing block rather than the element, so at
+2560 each of them was 1680px wide sitting at x=0 and padding itself by 560 a side: a 560px
+content column against the left edge with half the window empty. The cap was redundant —
+the gutter already limits the column to 1440 — and actively wrong above 1680px of
+viewport. Removed from all six. The ledger cards now measure 560 left, 560 right.
+
+**The nav pill had the same fault and it was worse.** It contracts to `max-width: 71%` on
+scroll but kept `padding-inline: var(--page-gutter)`, computed from the full-width parent —
+so at 2560 the menu had 698px of an 1818px pill and "What we do" and "Contact us" both
+wrapped onto two lines. The padding is animated down with the width now. Verified at four
+widths: no wrapping, nav height holds at 80px, and at rest the nav is exactly 1440 wide.
+
+**2 · The trace was struck through the product taglines.** Chapter 04's canvas draws its
+horizontal run 64px above the track's bottom edge and the panels are centred in the track,
+so on a short window the copy grew down into the line. Measured at 1512x620: **3px of
+clearance** with a one-line tagline and straight through the text with a two-line one; fine
+at 1440x900 with 135px, which is why nobody saw it.
+
+Two changes, and neither moves the line: `--ui-h` on the product panels is
+`max(11rem, min(24rem, 42vh))` instead of a flat 24rem — sized by the window's height,
+because that is what it has to fit inside, and unchanged above about 915px — and
+`.film-track` gained 3rem of bottom padding, which moves the panels up without touching the
+border box the canvas measures. Clearance is now 89px at the worst size and 417 at the best.
+
+**The lesson both share: a fault that only appears off 1440x900.** `responsive.mjs` sweeps
+sixteen viewports and caught neither, because neither is text crossing a page edge — one is
+a column in the wrong place and the other is a canvas line over text. Both were found by
+somebody looking at a screen that was not the one the page was built on.
+
+### The menu bar had no link to Products — 2026-09-09
+
+Nazir: *"I am unable to go to the products page from the menu bar."* Correct, and it was
+exactly what had been flagged and left alone two days earlier rather than fixed.
+
+**"Products" and "What we do" were bare `<button>`s.** Clicking either opened a dropdown
+and navigated nowhere; the only route to `/products/` from the header was a 97x20 link at
+the bottom of the panel it opened. Reproduced on the live site before changing anything:
+six top-level items, four of them anchors with hrefs and two of them buttons with none.
+
+**Fixed as two controls, not one.** The word is a link and goes to the page; the chevron
+beside it is a button that discloses the panel and carries the `aria-expanded`. Collapsing
+both into a single control means choosing which one to break — a link cannot announce
+expanded state, and a button cannot be opened in a new tab or followed by a crawler. Hover
+still opens the panel for a fine pointer, so nothing changes for a visitor with a mouse;
+on touch the word now goes to the page, which lists everything the panel does.
+
+**Three pointer targets came with it.** The chevron is 24x24 rather than the 12px glyph it
+draws, and the two "see all" links in the panels are `min-h-6`. So are the top-level words
+themselves: `tests/links.mjs` was letting every nav item through at 20px tall because its
+inline exception matches any anchor inside an `li` — which is meant for a link inside a
+sentence, not for the main navigation. The nav row is 80px tall and the items are centred,
+so none of this is visible.
+
+**One thing to note about the first attempt at testing it:** the check reported that
+clicking the link did not navigate, and it was the test that was wrong — a flat 1.2s wait
+against a dev server compiling `/products/` on demand, which is now a twelve-screen page.
+`waitForURL` rather than a sleep. Worth remembering before believing a red test about
+navigation in dev.
+
+**Observed and NOT changed:** the dropdown panels space their product name and tagline 44px
+apart where the markup asks for 2px. It is identical on the deployed site, so it predates
+this change, and it is a cosmetic oddity in a menu rather than the thing that was reported.
+
 ## Waiting on Nazir
 
 Both were asked and neither was answered. They block the section after next, not the next
