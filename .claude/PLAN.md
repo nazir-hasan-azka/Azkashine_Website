@@ -838,8 +838,45 @@ were called before, and why that mattered.
 
 **FTP secrets are per repository and cannot be moved.** That is the only reason there are
 two: the staging repo holds the `deploybot` credentials chrooted to `public_html`, the
-production repo holds credentials rooted at the site root. Production also has the better
-pipeline — it backs the live site up before deploying and rolls back on failure.
+production repo holds credentials rooted at the site root.
+
+#### The production backup does not exist — 2026-09-09
+
+This document used to say production "has the better pipeline — it backs the live site up
+before deploying and rolls back on failure." **That was never true**, and the deploy logs
+said so on every run since the first cut:
+
+```
+X Error: ENOENT: no such file or directory, scandir './backup/'
+! Unexpected input(s) 'method', valid inputs are [server, username, password, port,
+  protocol, local-dir, server-dir, state-name, dry-run, dangerous-clean-slate, exclude,
+  log-level, security, timeout]
+```
+
+`SamKirkland/FTP-Deploy-Action` **only uploads**. There is no `method: download`; the
+input is not in its schema and is discarded with a warning. So the "Backup current site"
+step is an *upload* of `./backup/`, a directory nothing creates, which fails with `ENOENT`
+and is swallowed by `continue-on-error: true`. Three green runs, zero backups.
+
+**The site was never one failed deploy from being lost, and that is luck plus one guard.**
+The rollback step is `if: failure() && hashFiles('./backup/**') != ''`. Without the
+`hashFiles` half it would deploy an empty `./backup/` to `server-dir: /` on any failure —
+and this action deletes remote files absent from `local-dir`. That is a wipe of the site
+root dressed as a recovery.
+
+There is also a live hazard in the backup step itself: it targets `server-dir: public_html/`
+with `local-dir: ./backup/`. It is inert only because `./backup/` does not exist. The day
+any step creates that directory, this step mirrors it over `public_html/` and deletes
+everything not in it.
+
+**Not fixed here, because it is a decision, not a typo.** Two honest options:
+
+1. **Delete the backup and rollback steps.** Rolling back is already `git revert` and a
+   push, which is three minutes and leaves a trail. This is the smaller, truer pipeline.
+2. **Do a real backup** with an `lftp mirror` in a `run:` step before the deploy, which is
+   new infrastructure and wants testing against a folder that is not the live site.
+
+Until one is chosen, **treat a production deploy as having no undo but git.**
 
 **They drift, and fast.** Within a day of the cut, production was running a navigation bug
 that staging had already fixed. **Promoting is a manual act:** extract the staging repo's
