@@ -562,6 +562,86 @@
   color: var(--color-muted);
 }
 
+/* ── The way out of chapter 04 ───────────────────────────────────────────────
+   The last thing on the track, and the only item on it that is not a product: the
+   link into `/products/`, where the same eight stand in one room at three depths.
+
+   THE PLATES ARE THE WHOLE ILLUSTRATION AND THEY COST NOTHING. Three empty spans in
+   one `perspective`, at three `translateZ` values — the idea of the floor, still, in
+   about a dozen declarations. It is deliberately NOT a second implementation of the
+   floor: chapter 04 is the most performance-sensitive stage on the home page, and the
+   route it points at is where the real thing lives. */
+.film-onward {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.film-onward-depth {
+  /* ONE GRID CELL, EXPLICITLY SIZED, and all three plates stacked in it. Centring
+     three absolutely positioned boxes with percentage margins does not work: a
+     percentage margin resolves against the containing block's WIDTH, including the
+     vertical one, so `margin-top: -19%` centred nothing and two of the three plates
+     ended up outside the frame. A grid needs no arithmetic at all. */
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  height: 22rem;
+  /* CLIPS, AND IT HAS TO. The plates are translated by a percentage of their own size,
+     so on a phone — where the track is a column and the panel is the full content
+     width — the back plate reached 148px outside the frame and the whole document
+     scrolled sideways at every width from 320 to 768. `responsive.mjs` caught it, which
+     is the one thing standard 1 exists for. Clipping is also the honest answer: this is
+     a window onto a floor, and a floor runs past its frame. */
+  overflow: hidden;
+  perspective: 900px;
+  perspective-origin: 50% 46%;
+}
+
+.film-onward-plate {
+  grid-area: 1 / 1;
+  width: min(22rem, 72%);
+  height: 62%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  /* A title strip and a few ruled rows, which is all it takes to read as an interface
+     rather than as a blank card. Three layers, one declaration, and the tint is a
+     custom property so the two plates behind can change colour without redefining the
+     whole stack. */
+  --plate: #ffffff;
+  background:
+    linear-gradient(to bottom, var(--color-surface) 0 18%, transparent 18%),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 1.75rem,
+      var(--color-border) 1.75rem calc(1.75rem + 1px)
+    ),
+    var(--plate);
+}
+
+.film-onward-plate[data-depth="near"] {
+  transform: translate3d(0, 0, 0);
+  box-shadow: 0 22px 50px -26px rgba(15, 17, 37, 0.38);
+}
+
+/* Spread far enough apart that all three read. The first pass put the two back plates
+   behind the front one, which is a picture of one card, not of a floor. */
+.film-onward-plate[data-depth="mid"] {
+  transform: translate3d(58%, 26%, -230px) rotateY(-11deg);
+  --plate: var(--color-surface-2);
+  opacity: 0.88;
+}
+
+.film-onward-plate[data-depth="far"] {
+  transform: translate3d(-70%, -30%, -470px) rotateY(15deg);
+  --plate: var(--color-surface);
+  opacity: 0.66;
+}
+
+.film-onward-more {
+  margin-top: 1.1rem;
+}
+
 /* ── Chapter 06, the case ───────────────────────────────────────────────────
    The three reasons, each showing the receipt for itself. See the note at the
    top of `Case.tsx` for why this is not three cards with icons.

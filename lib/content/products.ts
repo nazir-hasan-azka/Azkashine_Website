@@ -565,6 +565,55 @@ export const PRODUCTS: Product[] = [
 
 export const PRODUCT_SLUGS = PRODUCTS.map((p) => p.slug);
 
+/**
+ * The order the products are shown in when they are shown ONE AT A TIME, in a run —
+ * chapter 04's horizontal traverse on the home page, and the focus run on
+ * the floor at the top of `/products/`. It is not the file's order, and not a
+ * round-robin.
+ *
+ * ROUND-ROBIN WAS WRONG AND IT TOOK SOMEBODY LOOKING AT IT TO SEE WHY. The split is
+ * five AI & Automation, two Digital Platforms, one Cloud Services & Testing. Cycling
+ * the three buckets spends the two smaller ones immediately — Cloud Orchestration
+ * landed third and there was nothing left of its practice afterwards — so the run
+ * finished AI, AI, AI and the last thing anybody saw was three AI products in a row.
+ * The balance was all at the front and the impression was all at the back.
+ *
+ * SO THE TWO NON-AI PRACTICES ARE SPACED TO BREAK THE RUN, and the single Cloud
+ * product goes LAST. Nothing is buried by that: in a run the final item is the one the
+ * scroll comes to rest on, which is the strongest position, and it is the only one of
+ * the eight that can end on a practice other than AI.
+ *
+ * THE RULE THIS ENCODES, for whoever adds a ninth product: never more than two from the
+ * same practice in a row, and never end on the practice that has the most.
+ *
+ * IT LIVES HERE RATHER THAN IN A COMPONENT because two pages now run it, and two copies
+ * of an order that carries an argument is two copies that can disagree. It was private
+ * to `components/film/chapters/RunningPanels.tsx` until the floor was built.
+ */
+const RUN_ORDER = [
+  "savant-ai", // AI & Automation
+  "ethics-intelligence", // Digital Platforms
+  "tawthiq", // AI & Automation
+  "agentos", // AI & Automation
+  "prosiddhi", // Digital Platforms
+  "agent-siddhi", // AI & Automation
+  "smart-ai-assistant", // AI & Automation
+  "cloud-orchestration", // Cloud Services & Testing — the note above says why it is last
+];
+
+/**
+ * `PRODUCTS`, in run order.
+ *
+ * Anything not named in `RUN_ORDER` still travels — a product added above and forgotten
+ * there appears at the end rather than silently vanishing off the page.
+ */
+export const PRODUCTS_IN_RUN_ORDER: Product[] = [
+  ...RUN_ORDER.map((slug) => PRODUCTS.find((p) => p.slug === slug)).filter(
+    (p): p is Product => p !== undefined,
+  ),
+  ...PRODUCTS.filter((p) => !RUN_ORDER.includes(p.slug)),
+];
+
 export function getProduct(slug: string): Product | undefined {
   return PRODUCTS.find((p) => p.slug === slug);
 }

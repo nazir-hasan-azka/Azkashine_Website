@@ -118,7 +118,13 @@ const OURS = (f) =>
     // first file rather than from the day it moves.
     f.startsWith("components/film/") ||
     f.startsWith("components/site/") ||
+    /* The floor is held to the rules from its first file, for the same reason the
+       film is: it is production, not a prototype. A new directory that nobody adds
+       here is a directory this suite reports green having never opened — which is the
+       silent pass the header of this file exists to refuse. */
+    f.startsWith("components/floor/") ||
     f.startsWith("lib/film/") ||
+    f.startsWith("lib/floor/") ||
     (f.startsWith("components/sections/") &&
       !CARRIED_OVER.some((c) => f.startsWith(c))) ||
     f.startsWith("app/")) &&
