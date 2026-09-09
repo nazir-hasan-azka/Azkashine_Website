@@ -2,23 +2,29 @@ import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/content/site";
 
 /**
- * robots.txt.
+ * robots.txt, decided by the deploy target rather than by whoever edited this last.
  *
- * ⚠️ THIS NOW ALLOWS CRAWLING, WHICH IS ONLY CORRECT ON THE PRODUCTION HOST.
+ * THIS FILE USED TO BE A HAND-FLIPPED SWITCH AND IT COST US. It shipped `allow` for the
+ * production cut on 2026-09-07; the next push to `main` carried the same `allow` to
+ * test.azkashine.com, and the staging site spent two days inviting Google to index a
+ * complete duplicate of the live site — pointing at the production sitemap, no less.
+ * Two hosts serving identical content, one canonical, and the search engine choosing.
  *
- * It disallowed everything until 2026-09-07, because the deploy target was
- * `test/` on Hostinger — a public staging URL, and a staging copy competing with
- * azkashine.com for its own content is worse than no staging at all.
- *
- * The two settings have to move together. `server-dir` in
- * `.github/workflows/deploy.yml` and this file are a pair: allowing crawling while
- * still deploying to `test/` gets the staging copy indexed, and disallowing while
- * deploying to production removes the real site from search. Change one, change
- * the other, in the same commit.
+ * So the switch is gone. Production is whatever sets `NEXT_PUBLIC_SITE_ENV`, which is
+ * `.github/workflows/manual.yml` in the Azkashine_Website repository and nothing else.
+ * Every other build — staging, local, anybody's laptop — disallows by default, which is
+ * the safe direction to be wrong in: a staging site nobody indexes costs nothing, and a
+ * production site nobody indexes costs everything.
  */
 export const dynamic = "force-static";
 
+const isProduction = process.env.NEXT_PUBLIC_SITE_ENV === "production";
+
 export default function robots(): MetadataRoute.Robots {
+  if (!isProduction) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
+
   return {
     rules: { userAgent: "*", allow: "/" },
     sitemap: `${SITE.url}/sitemap.xml`,

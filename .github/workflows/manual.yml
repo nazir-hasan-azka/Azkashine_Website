@@ -16,8 +16,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # THIS is what makes robots.txt say Allow. `app/robots.ts` disallows by default
+      # so that staging, local builds and anybody's laptop can never invite Google in;
+      # production is the one build that sets this. Remove it and the live site quietly
+      # tells search engines to go away.
       - name: Build static site
         run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_ENV: production
 
       - name: Backup current site (before deploy)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
