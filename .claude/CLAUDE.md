@@ -24,7 +24,28 @@ before those pages are built.
 
 ## Where it stands
 
-**Built, and deployed.** Seventeen routes, live at **https://test.azkashine.com/**.
+**Live in production.** Seventeen routes at **https://www.azkashine.com** since
+2026-09-07, with staging at **https://test.azkashine.com**.
+
+### Two repositories, and which is which
+
+| | Repo | Branch | Deploys to |
+|---|---|---|---|
+| **Staging** | `nazir-hasan-azka/new-azkashine-website` | `main` | test.azkashine.com |
+| **Production** | `nazir-hasan-azka/Azkashine_Website` | `master` | www.azkashine.com |
+
+**Both hold the same application.** The split exists because FTP credentials are per
+repository and cannot be moved: only the first can reach the staging folder, only the
+second can reach the site root. **They drift** — production ran a day behind staging
+within twenty-four hours, with a navigation bug live the whole time. Until they are
+collapsed into one repository with two workflows, **anything merged to staging has to be
+carried to production deliberately**, and the way to do that is in `PLAN.md` section 5.
+
+**robots.txt is decided by the pipeline, not by editing a file.** `app/robots.ts`
+disallows by default and allows only when `NEXT_PUBLIC_SITE_ENV=production`, which only
+the production workflow sets. It used to be a hand-flipped switch, and the switch shipped
+`Allow` to staging for two days — a complete crawlable duplicate of the live site,
+pointing at the production sitemap. Do not turn it back into a switch.
 
 The home page is the film: seven chapters on one continuous scroll, drawn by one canvas
 and driven by one rAF loop (`components/film/`, `lib/film/`).

@@ -822,25 +822,34 @@ trail applied to the website's own marketing copy.
 Never done on the old site either: `og:image`, sitemap, robots, JSON-LD, a 404 page,
 favicons.
 
-### 5 · Deploy — done 2026-09-07
+### 5 · Deploy — production live 2026-09-07
 
-**Live at https://test.azkashine.com/.** All seventeen routes return 200, `robots.txt`
-and the favicon ship, and the served HTML carries all six film chapters.
+**https://www.azkashine.com is the new site.** Staging is https://test.azkashine.com.
 
-**This folder is now the git repository.** Rather than copying the new app into the old
-repo, `.git` was moved onto this folder — so every path written in `.claude/` stays
-true and the working directory does not change. Remote and workflow came with it. The
-old app is still on disk at `../new-azkashine-website/`, no longer a repo, kept as a
-copy reference.
+#### The two repositories, and why
 
-Nothing was lost. The previous app's 35 uncommitted files — `app/directions/`,
-`components/v3/`, `HANDOFF.md`, `REDESIGN-BRIEF.md` — were committed to
-**`archive/old-design`** and pushed before anything was replaced.
+| | Repo | Branch | Target | Folder |
+|---|---|---|---|---|
+| Staging | `new-azkashine-website` | `main` | `test/` on Hostinger | `new-azkashine-website-decluttered/` |
+| Production | `Azkashine_Website` | `master` | site root `/` | `Azkashine_Website_new/` |
 
-**The repo is PUBLIC**, so `/.claude/references` is gitignored: it holds the 42MB
-corporate portfolio deck and its extracted text. Verified with `git check-ignore` before
-the first commit. Publishing an internal sales deck is not undoable once it is in
-history.
+**FTP secrets are per repository and cannot be moved.** That is the only reason there are
+two: the staging repo holds the `deploybot` credentials chrooted to `public_html`, the
+production repo holds credentials rooted at the site root. Production also has the better
+pipeline — it backs the live site up before deploying and rolls back on failure.
+
+**They drift, and fast.** Within a day of the cut, production was running a navigation bug
+that staging had already fixed. **Promoting is a manual act:** extract the staging repo's
+`HEAD` over the production tree, keep `manual.yml`, drop `deploy.yml`, build locally with
+`NEXT_PUBLIC_SITE_ENV=production`, then push `master`. The fix worth doing when there is
+time is one repository with two workflows — which needs the staging secrets added to the
+production repo, and only Nazir can do that.
+
+#### Nothing was lost
+
+The previous live site is on **`archive/live-site-2026-09`**, pushed before anything
+changed, and in `master` history at `3ca03c9`. Rolling back is `git revert` and a push.
+The previous redesign attempt is on **`archive/old-design`** in the staging repo.
 
 #### Three things the deploy taught, worth not relearning
 
@@ -857,6 +866,31 @@ history.
 - **Both failures happened before the FTP step**, so the live site was never left broken.
   That is the shape of this pipeline: install, build, then publish. A failure early is
   free.
+
+#### robots.txt is a pipeline setting now
+
+It was a hand-flipped switch, and the switch cost us. It shipped `Allow` for the
+production cut on 2026-09-07, correctly; the next push carried the same `Allow` to
+staging, and test.azkashine.com spent two days inviting Google to index a complete
+duplicate of the live site, pointing at the production sitemap. The file's own comment
+said the settings were a pair that had to move together — an instruction that works right
+up until somebody pushes without reading it.
+
+`app/robots.ts` now disallows unless `NEXT_PUBLIC_SITE_ENV=production`, which only the
+production workflow sets. Staging, local builds and anybody's laptop disallow by default:
+a staging site nobody indexes costs nothing, a production site nobody indexes costs
+everything.
+
+#### Still open after the cut
+
+- **No analytics.** Nothing anywhere. Production is live and blind. Plausible needs an
+  account with `azkashine.com` added; Cloudflare Web Analytics needs a beacon token. Both
+  are about ten minutes once the account exists.
+- **Section order**, first asked 2026-09-04 and never answered: the client's deck puts
+  products last, this plan moves them up.
+- **Any home-page metric.** Nothing goes up unless somebody pulls it from a deck.
+- **A Chairman's portrait.** `about.ts` records that the About page uses architecture in a
+  slot that should hold one.
 
 #### Before the MAIN site
 
