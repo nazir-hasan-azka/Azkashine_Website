@@ -1283,6 +1283,45 @@ frame at four of five sample points against one of five before.
   that still stands, and matters more, is the next sentence of it: **do not spread it
   further.** Fifteen of the seventeen routes are still static and fast.
 
+### Two home-page bugs, both only visible off 1440x900 — 2026-09-09
+
+Nazir, with a screenshot: the trace crossing the product copy in chapter 04, and *"the
+what we do cards and other items are not centrally aligned on larger screens."* Both real,
+both measured before anything was changed.
+
+**1 · The whole page was jammed into the left of a wide window.** `--page-gutter` is
+`max(4.5rem, (100% - 1440px) / 2)`, which centres a 1440px column on a FULL-WIDTH box. Six
+blocks also carried `max-width: 1680px` with no auto margin — `.band-inner`, `.cta-inner`,
+`.ledger-stack`, `.film-ledger-head`, `.film-case-inner`, `.film-signed-inner`. A
+percentage padding resolves against the containing block rather than the element, so at
+2560 each of them was 1680px wide sitting at x=0 and padding itself by 560 a side: a 560px
+content column against the left edge with half the window empty. The cap was redundant —
+the gutter already limits the column to 1440 — and actively wrong above 1680px of
+viewport. Removed from all six. The ledger cards now measure 560 left, 560 right.
+
+**The nav pill had the same fault and it was worse.** It contracts to `max-width: 71%` on
+scroll but kept `padding-inline: var(--page-gutter)`, computed from the full-width parent —
+so at 2560 the menu had 698px of an 1818px pill and "What we do" and "Contact us" both
+wrapped onto two lines. The padding is animated down with the width now. Verified at four
+widths: no wrapping, nav height holds at 80px, and at rest the nav is exactly 1440 wide.
+
+**2 · The trace was struck through the product taglines.** Chapter 04's canvas draws its
+horizontal run 64px above the track's bottom edge and the panels are centred in the track,
+so on a short window the copy grew down into the line. Measured at 1512x620: **3px of
+clearance** with a one-line tagline and straight through the text with a two-line one; fine
+at 1440x900 with 135px, which is why nobody saw it.
+
+Two changes, and neither moves the line: `--ui-h` on the product panels is
+`max(11rem, min(24rem, 42vh))` instead of a flat 24rem — sized by the window's height,
+because that is what it has to fit inside, and unchanged above about 915px — and
+`.film-track` gained 3rem of bottom padding, which moves the panels up without touching the
+border box the canvas measures. Clearance is now 89px at the worst size and 417 at the best.
+
+**The lesson both share: a fault that only appears off 1440x900.** `responsive.mjs` sweeps
+sixteen viewports and caught neither, because neither is text crossing a page edge — one is
+a column in the wrong place and the other is a canvas line over text. Both were found by
+somebody looking at a screen that was not the one the page was built on.
+
 ## Waiting on Nazir
 
 Both were asked and neither was answered. They block the section after next, not the next

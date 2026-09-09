@@ -1465,6 +1465,9 @@ body:has([data-hdeck]) > div > footer {
 @keyframes nav-contract {
   from {
     max-width: 100%;
+    /* Full-bleed, so the centring gutter is exactly right: it puts the logo and the menu
+       on the same column as everything else on the page. */
+    padding-inline: var(--page-gutter);
     margin-top: 0;
     border-radius: 0;
     box-shadow: none;
@@ -1472,6 +1475,13 @@ body:has([data-hdeck]) > div > footer {
   }
   to {
     max-width: 71%;
+    /* AND THE PADDING HAS TO COME IN WITH IT. `--page-gutter` is
+       `max(4.5rem, (100% - 1440px) / 2)`, and a percentage padding resolves against the
+       CONTAINING BLOCK — so once the pill is 71% wide it was still padding itself by
+       (2560 - 1440) / 2 = 560 a side. That left 698px of a 1818px pill for the menu, and
+       "What we do" and "Contact us" both wrapped onto two lines. A contracted pill is its
+       own object and wants its own inset, not the page's. */
+    padding-inline: clamp(1.25rem, 2vw, 2.75rem);
     margin-top: 1.25rem;
     border-radius: 12px;
     box-shadow: var(--shadow-hard);
@@ -1553,7 +1563,14 @@ body:has([data-hdeck]) > div > footer {
      pages inventing sixteen margins. */
   padding: clamp(3.5rem, 7vw, 6rem) var(--page-gutter) clamp(3.5rem, 7vw, 6rem)
     calc(var(--page-gutter) + var(--spine-step));
-  max-width: 1680px;
+  /* NO `max-width` HERE, and it must not come back. `--page-gutter` is
+     `max(4.5rem, (100% - 1440px) / 2)`, so a FULL-WIDTH box already resolves to a 1440px
+     column centred on any screen — the cap is redundant. Worse, it is actively wrong:
+     a percentage padding resolves against the CONTAINING BLOCK, not the element, so a box
+     capped at 1680 inside a 2560 window still padded itself by (2560 - 1440) / 2 = 560 a
+     side. The content came out 560px wide, hard against the left edge, with half the
+     window empty. `max-width: 1680px` was on six blocks and broke every one of them above
+     1680px of viewport. Found on a 2560 screen; invisible at 1440. */
 }
 
 /* ── The route header ───────────────────────────────────────────────────── */
@@ -1926,7 +1943,6 @@ body:has([data-hdeck]) > div > footer {
 .cta-inner {
   padding: clamp(4rem, 9vw, 7rem) var(--page-gutter) clamp(4rem, 9vw, 7rem)
     calc(var(--page-gutter) + var(--spine-step));
-  max-width: 1680px;
 }
 
 .cta-heading {
