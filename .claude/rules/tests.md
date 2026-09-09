@@ -20,6 +20,13 @@ Four suites. `standards.mjs` needs nothing; the rest need `npm run dev` running.
   reporting on the code between strings.
 - Routes not built yet go in `PLANNED` in `links.mjs` and report as warnings. Move them
   into `ROUTES` as they land.
+- **The 24x24 check has a hole: its inline exception matches ANY anchor inside a `p` or
+  `li`.** That is meant for a link inside a sentence; it also silently exempts every item
+  in the main navigation, which sat at 20px tall for months. If a target lives in a list
+  because it is a list of targets, the exception should not apply to it.
+- **Do not test navigation with a fixed sleep.** A dev server compiles a route on demand,
+  and the two big pages take seconds — a 1.2s wait reported "clicking Products does not
+  navigate" when it navigated fine. Use `waitForURL`.
 - **`hero.mjs` has one flaky assertion, found 2026-09-07 and NOT fixed.** *and the
   material is blue, not paper* reads `px.best[2] > px.best[0]` — blue over red — on the
   single most opaque pixel in a block of an ANIMATING shader, so which frame

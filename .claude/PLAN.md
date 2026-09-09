@@ -1322,6 +1322,40 @@ sixteen viewports and caught neither, because neither is text crossing a page ed
 a column in the wrong place and the other is a canvas line over text. Both were found by
 somebody looking at a screen that was not the one the page was built on.
 
+### The menu bar had no link to Products — 2026-09-09
+
+Nazir: *"I am unable to go to the products page from the menu bar."* Correct, and it was
+exactly what had been flagged and left alone two days earlier rather than fixed.
+
+**"Products" and "What we do" were bare `<button>`s.** Clicking either opened a dropdown
+and navigated nowhere; the only route to `/products/` from the header was a 97x20 link at
+the bottom of the panel it opened. Reproduced on the live site before changing anything:
+six top-level items, four of them anchors with hrefs and two of them buttons with none.
+
+**Fixed as two controls, not one.** The word is a link and goes to the page; the chevron
+beside it is a button that discloses the panel and carries the `aria-expanded`. Collapsing
+both into a single control means choosing which one to break — a link cannot announce
+expanded state, and a button cannot be opened in a new tab or followed by a crawler. Hover
+still opens the panel for a fine pointer, so nothing changes for a visitor with a mouse;
+on touch the word now goes to the page, which lists everything the panel does.
+
+**Three pointer targets came with it.** The chevron is 24x24 rather than the 12px glyph it
+draws, and the two "see all" links in the panels are `min-h-6`. So are the top-level words
+themselves: `tests/links.mjs` was letting every nav item through at 20px tall because its
+inline exception matches any anchor inside an `li` — which is meant for a link inside a
+sentence, not for the main navigation. The nav row is 80px tall and the items are centred,
+so none of this is visible.
+
+**One thing to note about the first attempt at testing it:** the check reported that
+clicking the link did not navigate, and it was the test that was wrong — a flat 1.2s wait
+against a dev server compiling `/products/` on demand, which is now a twelve-screen page.
+`waitForURL` rather than a sleep. Worth remembering before believing a red test about
+navigation in dev.
+
+**Observed and NOT changed:** the dropdown panels space their product name and tagline 44px
+apart where the markup asks for 2px. It is identical on the deployed site, so it predates
+this change, and it is a cosmetic oddity in a menu rather than the thing that was reported.
+
 ## Waiting on Nazir
 
 Both were asked and neither was answered. They block the section after next, not the next
