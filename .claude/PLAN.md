@@ -830,8 +830,11 @@ favicons.
 
 | | Repo | Branch | Target | Folder |
 |---|---|---|---|---|
-| Staging | `new-azkashine-website` | `main` | `test/` on Hostinger | `new-azkashine-website-decluttered/` |
-| Production | `Azkashine_Website` | `master` | site root `/` | `Azkashine_Website_new/` |
+| Staging | `new-azkashine-website` | `main` | `test/` on Hostinger | `C:\dev\Azkashine\new-azkashine-website\` |
+| Production | `Azkashine_Website` | `master` | site root `/` | `C:\dev\Azkashine\Azkashine_Website\` |
+
+The folder names match the repository names — see "Folders on disk" below for what they
+were called before, and why that mattered.
 
 **FTP secrets are per repository and cannot be moved.** That is the only reason there are
 two: the staging repo holds the `deploybot` credentials chrooted to `public_html`, the
@@ -850,6 +853,39 @@ production repo, and only Nazir can do that.
 The previous live site is on **`archive/live-site-2026-09`**, pushed before anything
 changed, and in `master` history at `3ca03c9`. Rolling back is `git revert` and a push.
 The previous redesign attempt is on **`archive/old-design`** in the staging repo.
+
+#### Folders on disk — cleaned up 2026-09-09
+
+`C:\dev\Azkashine\` held five entries for two projects. Three of them were dead:
+
+| Was | What it actually was | Verdict |
+|---|---|---|
+| `Azkashine_Website_new\` | the production working copy | **kept**, renamed `Azkashine_Website\` |
+| `New-Azkashine-Website\new-azkashine-website-decluttered\` | the staging working copy | **kept**, moved to `new-azkashine-website\` |
+| `New-Azkashine-Website\` | a bare `create-next-app` repo, no remote, one commit | deleted |
+| `New-Azkashine-Website\new-azkashine-website\` | the superseded redesign app | deleted — on `archive/old-design` |
+| `Azkashine_Website_old\` | the site live until 2026-09-07 | deleted — on `archive/live-site-2026-09` |
+
+**Verify before deleting, by counting.** `Azkashine_Website_old\` held 181 files and
+`archive/live-site-2026-09` holds 181; that match is what made the deletion safe rather
+than hopeful.
+
+**The near miss: `assets/` was in neither repo.** Diffing the old app against
+`archive/old-design` turned up 26 files on disk that no branch had — the Landing Page comp
+in PDF, PNG and SVG, the extracted imagery, the partner logos, 15MB in total. They were
+missing because `/assets` is line 48 of `.gitignore`, deliberately, to keep the public repo
+lean. **A gitignore entry means a folder is backed up nowhere.** They were moved into the
+staging working copy, where the same ignore rule still applies, and they still exist in
+exactly one place on one laptop.
+
+**Also cleared:** four orphaned `node` test runners from 2026-09-03, 144 hours old, still
+holding file handles inside the folder being deleted. They were the tail of the suite that
+was stopped by hand and never reaped.
+
+**The stray repo was the actively harmful one.** `New-Azkashine-Website\.git` sat one level
+*above* the real staging working copy, so any `git` command run from the parent directory
+operated on a phantom repo and reported eighteen deleted files belonging to nothing. That
+is what a session opening this tree cold would have seen first.
 
 #### Three things the deploy taught, worth not relearning
 

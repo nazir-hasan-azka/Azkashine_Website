@@ -29,10 +29,17 @@ before those pages are built.
 
 ### Two repositories, and which is which
 
-| | Repo | Branch | Deploys to |
-|---|---|---|---|
-| **Staging** | `nazir-hasan-azka/new-azkashine-website` | `main` | test.azkashine.com |
-| **Production** | `nazir-hasan-azka/Azkashine_Website` | `master` | www.azkashine.com |
+| | Repo | Branch | Deploys to | Folder on disk |
+|---|---|---|---|---|
+| **Staging** | `nazir-hasan-azka/new-azkashine-website` | `main` | test.azkashine.com | `C:\dev\Azkashine\new-azkashine-website\` |
+| **Production** | `nazir-hasan-azka/Azkashine_Website` | `master` | www.azkashine.com | `C:\dev\Azkashine\Azkashine_Website\` |
+
+**The folder is named after the repository, and that is the rule.** Four folders with
+`_new`, `_old` and `decluttered` in their names is how a session ends up reading the wrong
+tree — one of them was a bare `create-next-app` repo with no remote, sitting one level
+above the real working copy, which is why `git status` run from the parent showed eighteen
+deleted files that were never ours. Anything on disk that is not one of the two rows above
+is not part of this project.
 
 **Both hold the same application.** The split exists because FTP credentials are per
 repository and cannot be moved: only the first can reach the staging folder, only the
@@ -68,19 +75,19 @@ every push. Remote: `github.com/nazir-hasan-azka/new-azkashine-website` — and 
 **public**, which is why `/.claude/references` is gitignored: it holds the corporate
 portfolio deck.
 
-The previous site is preserved on the `archive/old-design` branch and in this branch's
-history. The old app also still sits on disk at `../new-azkashine-website/`, no longer a
-repo, kept as a copy reference.
+**Two archive branches, and they are the only copy.** The previous redesign attempt is on
+`archive/old-design` here; the site that was live until 2026-09-07 is on
+`archive/live-site-2026-09` in the production repo. Both were verified file-for-file
+against the working copies before those were removed from disk. Nothing else is kept.
 
-**Two things must change before this deploys to the main site:**
+**`assets/` is gitignored and exists on no remote.** It holds the 15MB design source — the
+Landing Page comp as PDF, PNG and SVG, the extracted imagery, and the partner logos — and
+it came within one command of being deleted with the old app, because `/assets` is in
+`.gitignore` and it was therefore in no branch of either repo. If it matters, it needs a
+backup that is not this laptop.
 
-- `app/robots.ts` disallows everything on purpose, because the deploy target is a public
-  staging URL and a staging copy competing with azkashine.com in search is worse than no
-  staging at all.
-- `SITE.url` is the production host, so canonical URLs already point at azkashine.com.
-
-Still missing for a real launch: `og:image`, a sitemap, and JSON-LD. Sharing a link today
-gets a blank card.
+Launch is done: `og:image`, `sitemap.xml`, JSON-LD, a real 404 and a canonical `SITE.url`
+all shipped on 2026-09-07. Sharing a link gets a real card.
 
 ---
 
