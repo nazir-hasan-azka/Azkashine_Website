@@ -20,6 +20,7 @@ import { INDUSTRIES } from "@/lib/content/industries";
  */
 
 type MenuId = "what-we-do" | "products" | null;
+type MobileSectionId = "what-we-do" | "products" | "industries";
 
 const CAPABILITY_MENU = CATEGORIES.map((c) => ({
   label: c.name,
@@ -30,6 +31,7 @@ const CAPABILITY_MENU = CATEGORIES.map((c) => ({
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menu, setMenu] = useState<MenuId>(null);
+  const [section, setSection] = useState<MobileSectionId | null>(null);
   const headerRef = useRef<HTMLElement>(null);
 
   /**
@@ -45,6 +47,11 @@ export function Navbar() {
   function closeAll() {
     setMenu(null);
     setMobileOpen(false);
+    setSection(null);
+  }
+
+  function toggleSection(id: MobileSectionId) {
+    setSection(section === id ? null : id);
   }
 
   /**
@@ -180,13 +187,17 @@ export function Navbar() {
           {/* Mobile toggle */}
           <button
             type="button"
-            onClick={() => setMobileOpen((v) => !v)}
+            onClick={() => {
+              setMobileOpen(!mobileOpen);
+              setSection(null);
+            }}
             className={cn(
               "inline-flex h-11 w-11 items-center justify-center rounded-lg lg:hidden",
               lightChrome ? "text-white" : "text-ink",
             )}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             <Hamburger open={mobileOpen} />
           </button>
@@ -262,68 +273,83 @@ export function Navbar() {
         </DesktopPanel>
       )}
 
-      {/* Mobile menu panel */}
-      <div
-        className={cn(
-          "overflow-y-auto border-t border-border/70 bg-background lg:hidden",
-          mobileOpen ? "max-h-[75vh]" : "max-h-0 border-t-0",
-        )}
-      >
-        <Container>
-          <div className="flex flex-col gap-6 py-6">
-            <ul>
-              <MobileLink href="/" onNavigate={() => setMobileOpen(false)}>
-                Home
-              </MobileLink>
+      {/* Mobile menu panel.
+
+          EVERY TOP-LEVEL ROW IS A LINK TO ITS PAGE, and the sub-items fold away behind a
+          chevron: the same two-control split `MenuLink` makes on desktop, for the same
+          reasons. It used to be the other way round. "Products" was a grey label, not a
+          link, and the only way to /products/ from a phone was an "All products" link
+          1,150px down a panel 497px tall, under all three practices and all eight
+          products. Nazir could not reach the page from his phone. Folded, all six
+          destinations sit on the first screen.
+
+          No `onClick` on any link in here: `handleHeaderClick` closes the menu for every
+          anchor inside the header, this list included. */}
+      {mobileOpen && (
+        <div
+          id="mobile-menu"
+          className="max-h-[calc(100dvh-5rem)] overflow-y-auto border-t border-border/70 bg-background lg:hidden"
+        >
+          <Container>
+            <ul className="flex flex-col pt-2">
+              <MobileTop href="/">Home</MobileTop>
+
+              <MobileSection
+                id="what-we-do"
+                href="/what-we-do/"
+                label="What we do"
+                open={section === "what-we-do"}
+                onToggle={toggleSection}
+              >
+                {CAPABILITY_MENU.map((c) => (
+                  <MobileLink key={c.href} href={c.href}>
+                    {c.label}
+                  </MobileLink>
+                ))}
+              </MobileSection>
+
+              <MobileSection
+                id="products"
+                href="/products/"
+                label="Products"
+                open={section === "products"}
+                onToggle={toggleSection}
+              >
+                {PRODUCTS.map((p) => (
+                  <MobileLink key={p.slug} href={`/products/${p.slug}/`}>
+                    {p.name}
+                  </MobileLink>
+                ))}
+              </MobileSection>
+
+              <MobileSection
+                id="industries"
+                href="/industries/"
+                label="Industries"
+                open={section === "industries"}
+                onToggle={toggleSection}
+              >
+                {INDUSTRIES.map((i) => (
+                  <MobileLink key={i.slug} href={`/industries/#${i.slug}`}>
+                    {i.name}
+                  </MobileLink>
+                ))}
+              </MobileSection>
+
+              <MobileTop href="/about/">About</MobileTop>
             </ul>
 
-            <MobileGroup title="What we do" seeAll={{ href: "/what-we-do/", label: "All capabilities" }} onNavigate={() => setMobileOpen(false)}>
-              {CAPABILITY_MENU.map((c) => (
-                <MobileLink key={c.href} href={c.href} onNavigate={() => setMobileOpen(false)}>
-                  {c.label}
-                </MobileLink>
-              ))}
-            </MobileGroup>
-
-            <MobileGroup title="Products" seeAll={{ href: "/products/", label: "All products" }} onNavigate={() => setMobileOpen(false)}>
-              {PRODUCTS.map((p) => (
-                <MobileLink
-                  key={p.slug}
-                  href={`/products/${p.slug}/`}
-                  onNavigate={() => setMobileOpen(false)}
-                >
-                  {p.name}
-                </MobileLink>
-              ))}
-            </MobileGroup>
-
-            <MobileGroup title="Industries" onNavigate={() => setMobileOpen(false)}>
-              {INDUSTRIES.map((i) => (
-                <MobileLink
-                  key={i.slug}
-                  href={`/industries/#${i.slug}`}
-                  onNavigate={() => setMobileOpen(false)}
-                >
-                  {i.name}
-                </MobileLink>
-              ))}
-            </MobileGroup>
-
-            <div className="flex flex-col gap-2 border-t border-border pt-5">
-              <MobileLink href="/about/" onNavigate={() => setMobileOpen(false)}>
-                About
-              </MobileLink>
+            <div className="pb-6 pt-5">
               <Link
                 href="/contact/"
-                onClick={() => setMobileOpen(false)}
-                className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-md bg-brand-light px-6 text-[15px] font-semibold text-ink"
+                className="inline-flex h-12 w-full items-center justify-center rounded-md bg-brand-light px-6 text-[15px] font-semibold text-ink"
               >
                 Contact us
               </Link>
             </div>
-          </div>
-        </Container>
-      </div>
+          </Container>
+        </div>
+      )}
     </header>
   );
 }
@@ -464,51 +490,86 @@ function PanelFooter({
   );
 }
 
-function MobileGroup({
-  title,
-  seeAll,
-  onNavigate,
-  children,
-}: {
-  title: string;
-  seeAll?: { href: string; label: string };
-  onNavigate: () => void;
-  children: React.ReactNode;
-}) {
+/** A top-level row in the phone menu: full width, 48px tall, one tap to the page. */
+function MobileTop({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted">
-        {title}
-      </p>
-      <ul className="mt-2 flex flex-col gap-0.5">{children}</ul>
-      {seeAll && (
-        <Link
-          href={seeAll.href}
-          onClick={onNavigate}
-          className="mt-2 inline-flex min-h-6 items-center px-2 text-sm font-semibold text-brand"
-        >
-          {seeAll.label} →
-        </Link>
-      )}
-    </div>
+    <li className="border-b border-border/60">
+      <Link
+        href={href}
+        className="flex min-h-12 items-center text-[17px] font-semibold text-ink hover:text-brand"
+      >
+        {children}
+      </Link>
+    </li>
   );
 }
 
-function MobileLink({
+/**
+ * A phone-menu row that both navigates and discloses. The word goes to the page; the
+ * chevron opens the list under it and carries the `aria-expanded`. The chevron is a full
+ * 48x48 target rather than the 14px glyph it draws, because a thumb is not a cursor.
+ *
+ * The folded list is `hidden`, not merely clipped, so its links leave the tab order and
+ * the accessibility tree along with the screen.
+ */
+function MobileSection({
+  id,
   href,
-  onNavigate,
+  label,
+  open,
+  onToggle,
   children,
 }: {
+  id: MobileSectionId;
   href: string;
-  onNavigate: () => void;
+  label: string;
+  open: boolean;
+  onToggle: (id: MobileSectionId) => void;
   children: React.ReactNode;
 }) {
+  const listId = `mobile-menu-${id}`;
+  return (
+    <li className="border-b border-border/60">
+      <div className="flex items-center justify-between gap-4">
+        <Link
+          href={href}
+          className="flex min-h-12 flex-1 items-center text-[17px] font-semibold text-ink hover:text-brand"
+        >
+          {label}
+        </Link>
+        <button
+          type="button"
+          onClick={() => onToggle(id)}
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-label={`${label} menu`}
+          className="-mr-3 inline-flex h-12 w-12 shrink-0 items-center justify-center text-ink hover:text-brand"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+            className={cn("transition-transform", open && "rotate-180")}
+          >
+            <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+      <ul id={listId} hidden={!open} className="pb-3">
+        {children}
+      </ul>
+    </li>
+  );
+}
+
+function MobileLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
       <Link
         href={href}
-        onClick={onNavigate}
-        className="block rounded-lg px-2 py-2.5 text-[15px] font-medium text-ink/80 hover:bg-surface hover:text-brand"
+        className="flex min-h-11 items-center rounded-lg px-3 text-[15px] font-medium text-ink/80 hover:bg-surface hover:text-brand"
       >
         {children}
       </Link>

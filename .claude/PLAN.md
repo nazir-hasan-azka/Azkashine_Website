@@ -878,6 +878,12 @@ everything not in it.
 
 Until one is chosen, **treat a production deploy as having no undo but git.**
 
+**2026-09-10:** option 1 was prepared — both steps removed, a comment in their place saying
+why — and the edit was refused by the session's permission classifier, which will not let
+Claude change the production deploy pipeline unattended. Nothing was changed. It is a
+two-step deletion in `.github/workflows/manual.yml` of the production repo, and it is
+Nazir's to make.
+
 **They drift, and fast.** Within a day of the cut, production was running a navigation bug
 that staging had already fixed. **Promoting is a manual act:** extract the staging repo's
 `HEAD` over the production tree, keep `manual.yml`, drop `deploy.yml`, build locally with
@@ -1462,6 +1468,46 @@ navigation in dev.
 **Observed and NOT changed:** the dropdown panels space their product name and tagline 44px
 apart where the markup asks for 2px. It is identical on the deployed site, so it predates
 this change, and it is a cosmetic oddity in a menu rather than the thing that was reported.
+
+### Products unreachable from a phone — 2026-09-10
+
+Nazir: *"I am not able to go to products screen on phone."* The page was fine — 200 in
+290ms, no errors, in Chromium and WebKit both. The menu was the fault, and it was two
+faults stacked:
+
+1. **"Products" in the phone menu was a label, not a link.** The 2026-09-09 fix (`f40ddb8`)
+   made the word navigate on the desktop menu bar and never touched the drawer. The only
+   route to `/products/` from a phone was an "All products →" link 1,154px down a scroll
+   panel 497px tall, below all three practices and all eight products.
+2. **Every row was 32px taller than it was built to be.** `app/styles/pages.css` defined a
+   page-spacing class called `.block` — the same name as Tailwind's `display: block`
+   utility — so every element with `className="block …"` took `margin-top:
+   clamp(2rem, 3.5vw, 2.75rem)` as well. Fifteen elements, live since the redesign shipped:
+   every phone-menu row, the desktop dropdown labels, the footer and contact address
+   lines, the stats band, the status dots in the product mock-ups. The element's class list
+   says `block` and nothing else; only Chromium's matched-rules list (over CDP) showed two
+   rules. Renamed `.page-block`; the four uses that meant it were updated.
+
+**The drawer now:** every top-level row is a link to its page, 48px tall. What we do,
+Products and Industries fold their sub-pages behind a 48×48 chevron — the same
+link-plus-disclosure split as the menu bar, for the same reasons. Folded, all six
+destinations fit on the first screen at 375×568. Folded lists are `hidden`, so their links
+leave the tab order too. Verified by tapping, in Chromium and WebKit at iPhone SE size: the
+word goes to the page, the chevron discloses, and the last sub-link of each section
+navigates.
+
+**Why no suite caught it.** `links.mjs` measures the links on screen with every menu
+closed, and neither suite ever opens one. A link that exists but takes four gestures to
+reach passes every check here. The drawer is the one piece of navigation nothing measures.
+
+**Also 2026-09-10:**
+
+- **`assets/` backed up** to `nazir-hasan-azka/azkashine-design-source` — private, 26 files
+  and a README. Both website repositories are public, which is why it could not go in
+  either.
+- **Analytics: still none.** Plausible was wired into `app/layout.tsx` for production builds
+  only — same `NEXT_PUBLIC_SITE_ENV` switch as robots, domain derived from `SITE.url` — and
+  the edit was refused by the same classifier as the workflow change. Nothing was changed.
 
 ## Waiting on Nazir
 
