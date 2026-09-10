@@ -16,41 +16,47 @@ lusion.co without copying it. It names a route, `/ecosystem/`, that no longer ex
 floor lives at the top of `/products/`. The reading of the reference still holds; see
 `PLAN.md` for where it ended up and why.
 
-Content sources beyond `lib/content/`: the previous app at `../new-azkashine-website/`
-(copy and structure only — its visual system is what this project replaces) and the live
-site at https://test.azkashine.com/. **About and Contact copy is hard-coded in the old
-app's route files**, not in its content layer; it has to be lifted into `lib/content/`
-before those pages are built.
+Content sources beyond `lib/content/`: the decks in `.claude/references/` (gitignored) and
+the live site. The previous app that About and Contact copy was lifted from is gone from
+disk as of 2026-09-10; everything it contributed is already in `lib/content/`.
 
 ## Where it stands
 
 **Live in production.** Seventeen routes at **https://www.azkashine.com** since
 2026-09-07, with staging at **https://test.azkashine.com**.
 
-### Two repositories, and which is which
+### One repository, three branches, three folders
 
-| | Repo | Branch | Deploys to | Folder on disk |
-|---|---|---|---|---|
-| **Staging** | `nazir-hasan-azka/new-azkashine-website` | `main` | test.azkashine.com | `C:\dev\Azkashine\new-azkashine-website\` |
-| **Production** | `nazir-hasan-azka/Azkashine_Website` | `master` | www.azkashine.com | `C:\dev\Azkashine\Azkashine_Website\` |
+Everything is **`nazir-hasan-azka/Azkashine_Website`** since 2026-09-10. The branch
+decides where a push goes; each branch has its own folder on disk.
 
-**The folder is named after the repository, and that is the rule.** Four folders with
-`_new`, `_old` and `decluttered` in their names is how a session ends up reading the wrong
-tree — one of them was a bare `create-next-app` repo with no remote, sitting one level
-above the real working copy, which is why `git status` run from the parent showed eighteen
-deleted files that were never ours. Anything on disk that is not one of the two rows above
-is not part of this project.
+| Branch | Deploys to | robots.txt | Folder |
+|---|---|---|---|
+| `main` | www.azkashine.com (site root) | Allow | `C:\dev\Azkashine\Azkashine-Website\Production\` |
+| `staging` | test.azkashine.com (`test/`) | Disallow | `C:\dev\Azkashine\Azkashine-Website\Staging\` |
+| `old` | never | — | `C:\dev\Azkashine\Azkashine-Website\Old\` |
 
-**Both hold the same application.** The split exists because FTP credentials are per
-repository and cannot be moved: only the first can reach the staging folder, only the
-second can reach the site root. **They drift** — production ran a day behind staging
-within twenty-four hours, with a navigation bug live the whole time. Until they are
-collapsed into one repository with two workflows, **anything merged to staging has to be
-carried to production deliberately**, and the way to do that is in `PLAN.md` section 5.
+**Work happens in `Staging`.** Push `staging`, check test.azkashine.com, then promote by
+merging `staging` into `main` and pushing — from the `Production` folder, or with
+`git push origin staging:main` when `main` has nothing of its own. `Old` is the site that
+was live until 2026-09-07, kept to read and never to deploy.
+
+**The three folders are separate clones**, not worktrees, so deleting one cannot break the
+others. Each carries the full history — about 650MB of `.git`, mostly the old site's media.
+
+**Two FTP accounts, one workflow.** `main` uses the `FTP_*` secrets, rooted at the site
+root. `staging` uses `STAGING_FTP_*`, the deploybot account chrooted to `public_html`. A
+staging push with its secrets missing stops before building; it never falls back to the
+production account.
+
+Until 2026-09-10 this was two repositories — `new-azkashine-website` for staging and this
+one for production — because FTP secrets cannot be copied between repositories. They
+drifted within a day: production ran a navigation bug staging had already fixed. One
+repository ended that.
 
 **robots.txt is decided by the pipeline, not by editing a file.** `app/robots.ts`
-disallows by default and allows only when `NEXT_PUBLIC_SITE_ENV=production`, which only
-the production workflow sets. It used to be a hand-flipped switch, and the switch shipped
+disallows by default and allows only when `NEXT_PUBLIC_SITE_ENV=production`, which the
+workflow sets for `main` and nothing else. It used to be a hand-flipped switch, and the switch shipped
 `Allow` to staging for two days — a complete crawlable duplicate of the live site,
 pointing at the production sitemap. Do not turn it back into a switch.
 
@@ -69,16 +75,14 @@ vendors needs those scannable and fast, so they carry a thin static trace down t
 and nothing else. **Do not spread the spatial treatment further** — that contrast is what
 makes it land.
 
-**This IS a git repository, and pushing to `main` deploys.**
-`.github/workflows/deploy.yml` builds and FTPs `out/` into Hostinger's `test/` folder on
-every push. Remote: `github.com/nazir-hasan-azka/new-azkashine-website` — and it is
-**public**, which is why `/.claude/references` is gitignored: it holds the corporate
-portfolio deck.
+**Pushing deploys.** `.github/workflows/deploy.yml` builds and FTPs `out/` on every push to
+`main` (the site root) or `staging` (the `test/` folder). The repository is **public**,
+which is why `/.claude/references` is gitignored: it holds the corporate portfolio deck.
 
-**Two archive branches, and they are the only copy.** The previous redesign attempt is on
-`archive/old-design` here; the site that was live until 2026-09-07 is on
-`archive/live-site-2026-09` in the production repo. Both were verified file-for-file
-against the working copies before those were removed from disk. Nothing else is kept.
+**What is kept, and where.** The site that was live until 2026-09-07 is the `old` branch,
+minus its deploy workflow so it can never deploy again. The last commit of production's
+former `master` is the tag `archive/master-2026-09-10`. The previous redesign attempt lived
+in the retired staging repository and goes with it.
 
 **`assets/` is gitignored here and backed up privately.** It holds the 15MB design source —
 the Landing Page comp as PDF, PNG and SVG, the extracted imagery, and the partner logos. It

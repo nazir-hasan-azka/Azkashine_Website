@@ -884,6 +884,9 @@ Claude change the production deploy pipeline unattended. Nothing was changed. It
 two-step deletion in `.github/workflows/manual.yml` of the production repo, and it is
 Nazir's to make.
 
+**Closed 2026-09-10:** the one-repository workflow replaced `manual.yml` and has no backup
+step at all.
+
 **They drift, and fast.** Within a day of the cut, production was running a navigation bug
 that staging had already fixed. **Promoting is a manual act:** extract the staging repo's
 `HEAD` over the production tree, keep `manual.yml`, drop `deploy.yml`, build locally with
@@ -1512,29 +1515,55 @@ reach passes every check here. The drawer is the one piece of navigation nothing
   and WebKit, iPhone SE, iPhone 13 and iPhone SE landscape. 126 taps, all through — three
   WebKit taps needed a re-run, see `rules/tests.md`.
 
+### One repository — 2026-09-10
+
+Nazir asked for one folder with three inside it, one repository, three branches. Done:
+
+- **`nazir-hasan-azka/Azkashine_Website`** holds `main`, `staging` and `old`; `main` is
+  the default branch.
+- **`main` and `staging` carry the staging repository's history**, not production's. The
+  two were already identical in source; taking staging's lineage makes promotion a merge
+  instead of a file copy. Production's former `master` is the tag
+  `archive/master-2026-09-10`.
+- **`old`** is `archive/live-site-2026-09` plus one commit deleting its `manual.yml`. That
+  workflow deployed to the site root on push; left in, a push to `old` could have put the
+  old site back over the live one.
+- **One workflow**, `.github/workflows/deploy.yml`, decides by branch. Proven both ways
+  before anything was removed: a staging push without its secrets stopped at the first
+  step with every build and deploy step skipped, and the first `main` push deployed
+  production — routes 200, robots `Allow`, the phone-menu fix present.
+- **Folders:** `C:\dev\Azkashine\Azkashine-Website\{Production,Staging,Old}`, separate
+  clones. `assets/`, `.claude/references/` and `.claude/settings.local.json` were copied
+  into `Staging`; git carries none of them.
+- **Claude memory** was copied to the keys the new folders use; the cleanup script copies
+  the chat history into `Staging`'s.
+
 ## Waiting on Nazir
 
-Updated 2026-09-10. Each of these is blocked on something only Nazir can do or decide.
+Updated 2026-09-10, after the move to one repository.
 
-- **The production deploy pipeline.** The backup and rollback steps in
-  `.github/workflows/manual.yml` (production repo) have never worked — see section 5.
-  Recommendation: delete both; rolling back is `git revert` and a push. Claude's edit was
-  refused by the session's permission classifier.
-- **Analytics.** None. Plausible is the choice made. It needs `azkashine.com` added in a
-  Plausible account, plus the `app/layout.tsx` wiring (production builds only), which
-  Claude prepared and was refused permission to make.
-- **Folder cleanup.** Close VS Code, then run `C:\dev\Azkashine\cleanup-folders.ps1`. It
-  checks everything before it touches anything, and renames the two working copies to
-  match their repositories.
-- **One repository instead of two.** Needs the staging FTP secrets added to
-  `Azkashine_Website` on GitHub.
-- **The portfolio deck** in `.claude/references/` is one copy on one laptop. It is an
-  internal document, so where it is backed up is Nazir's call.
-- **Section order** (asked 2026-09-04). The client's deck puts products last; the site
-  moves them up, on the argument that the coded product interfaces are the strongest
-  asset. Keep, or go back to the deck's order?
+1. **Add the staging FTP secrets** to `Azkashine_Website`: `STAGING_FTP_SERVER`,
+   `STAGING_FTP_USERNAME`, `STAGING_FTP_PASSWORD` — the deploybot account (Hostinger
+   hPanel > Files > FTP Accounts). Until then every push to `staging` stops at the guard
+   and test.azkashine.com does not update.
+2. **Delete two branches** in `Azkashine_Website`: `master` and
+   `archive/live-site-2026-09`. Both are preserved — the tag `archive/master-2026-09-10`,
+   and `old`'s parent commit. Claude's delete was refused by the permission classifier.
+3. **Run the cleanup script** with VS Code closed:
+   `powershell -ExecutionPolicy Bypass -File C:\dev\Azkashine\cleanup-folders.ps1`,
+   then open `Azkashine-Website\Staging`.
+4. **Delete the repository `new-azkashine-website`** — after step 1 and a first working
+   staging deploy from `Azkashine_Website`. Claude's GitHub token has no `delete_repo`
+   scope.
+5. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
+   Plausible account, plus the production-only wiring in `app/layout.tsx`, which Claude
+   was refused permission to make.
+6. **The portfolio deck** in `.claude/references/` is on this laptop only. Where it is
+   backed up is Nazir's call.
+7. **Section order** (asked 2026-09-04). Keep products moved up, or go back to the deck's
+   order?
 
-"Our partners" was on this list and is closed — confirmed 2026-09-06, below.
+"Our partners" is closed — confirmed 2026-09-06, below.
 
 ## Open questions for the client
 
