@@ -1538,23 +1538,31 @@ Nazir asked for one folder with three inside it, one repository, three branches.
 - **Claude memory** was copied to the keys the new folders use; the cleanup script copies
   the chat history into `Staging`'s.
 
+**Later the same day Nazir dropped the test site:** *"I don't want test.azkashine.com."*
+The workflow now deploys `main` and nothing else, and the job refuses to run on any other
+branch even by hand; the staging secrets check went with it. The `Staging` folder's
+gitignored files (`assets/`, `.claude/references/`, `.claude/settings.local.json`) were
+copied into `Production`, which is where work happens now. **The cost, stated once:**
+there is no longer anywhere to see a change on a real server before it is live.
+
 ## Waiting on Nazir
 
-Updated 2026-09-10, after the move to one repository.
+Updated 2026-09-10, after dropping the test site.
 
-1. **Add the staging FTP secrets** to `Azkashine_Website`: `STAGING_FTP_SERVER`,
-   `STAGING_FTP_USERNAME`, `STAGING_FTP_PASSWORD` — the deploybot account (Hostinger
-   hPanel > Files > FTP Accounts). Until then every push to `staging` stops at the guard
-   and test.azkashine.com does not update.
-2. **Delete two branches** in `Azkashine_Website`: `master` and
-   `archive/live-site-2026-09`. Both are preserved — the tag `archive/master-2026-09-10`,
-   and `old`'s parent commit. Claude's delete was refused by the permission classifier.
+1. **Remove the test site on Hostinger** (hPanel): delete the subdomain
+   test.azkashine.com (Domains > Subdomains), the `test` folder in `public_html` (Files >
+   File Manager), and the deploybot FTP account (Files > FTP Accounts). Until then
+   test.azkashine.com keeps serving its last copy — with robots `Disallow`, so it is not
+   indexed.
+2. **Delete three branches** in `Azkashine_Website`: `staging`, `master` and
+   `archive/live-site-2026-09`. All are preserved — `staging` is an ancestor of `main`,
+   `master` is the tag `archive/master-2026-09-10`, and the archive is `old`'s parent.
+   Claude's branch delete was refused by the permission classifier.
 3. **Run the cleanup script** with VS Code closed:
    `powershell -ExecutionPolicy Bypass -File C:\dev\Azkashine\cleanup-folders.ps1`,
-   then open `Azkashine-Website\Staging`.
-4. **Delete the repository `new-azkashine-website`** — after step 1 and a first working
-   staging deploy from `Azkashine_Website`. Claude's GitHub token has no `delete_repo`
-   scope.
+   then open `Azkashine-Website\Production`.
+4. **Delete the repository `new-azkashine-website`.** Nothing waits on it any more.
+   Claude's GitHub token has no `delete_repo` scope.
 5. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
    Plausible account, plus the production-only wiring in `app/layout.tsx`, which Claude
    was refused permission to make.

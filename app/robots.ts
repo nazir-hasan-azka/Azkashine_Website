@@ -11,8 +11,8 @@ import { SITE } from "@/lib/content/site";
  * Two hosts serving identical content, one canonical, and the search engine choosing.
  *
  * So the switch is gone. Production is whatever sets `NEXT_PUBLIC_SITE_ENV`, which is
- * `.github/workflows/manual.yml` in the Azkashine_Website repository and nothing else.
- * Every other build — staging, local, anybody's laptop — disallows by default, which is
+ * `.github/workflows/deploy.yml`, on a push to `main`, and nothing else.
+ * Every other build — local, anybody's laptop — disallows by default, which is
  * the safe direction to be wrong in: a staging site nobody indexes costs nothing, and a
  * production site nobody indexes costs everything.
  */

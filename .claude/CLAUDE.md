@@ -23,36 +23,28 @@ disk as of 2026-09-10; everything it contributed is already in `lib/content/`.
 ## Where it stands
 
 **Live in production.** Seventeen routes at **https://www.azkashine.com** since
-2026-09-07, with staging at **https://test.azkashine.com**.
+2026-09-07.
 
-### One repository, three branches, three folders
+### One repository, one site
 
-Everything is **`nazir-hasan-azka/Azkashine_Website`** since 2026-09-10. The branch
-decides where a push goes; each branch has its own folder on disk.
+Everything is **`nazir-hasan-azka/Azkashine_Website`**. Two branches, one folder each:
 
-| Branch | Deploys to | robots.txt | Folder |
-|---|---|---|---|
-| `main` | www.azkashine.com (site root) | Allow | `C:\dev\Azkashine\Azkashine-Website\Production\` |
-| `staging` | test.azkashine.com (`test/`) | Disallow | `C:\dev\Azkashine\Azkashine-Website\Staging\` |
-| `old` | never | — | `C:\dev\Azkashine\Azkashine-Website\Old\` |
+| Branch | Deploys to | Folder |
+|---|---|---|
+| `main` | www.azkashine.com, on every push | `C:\dev\Azkashine\Azkashine-Website\Production\` |
+| `old` | never | `C:\dev\Azkashine\Azkashine-Website\Old\` |
 
-**Work happens in `Staging`.** Push `staging`, check test.azkashine.com, then promote by
-merging `staging` into `main` and pushing — from the `Production` folder, or with
-`git push origin staging:main` when `main` has nothing of its own. `Old` is the site that
-was live until 2026-09-07, kept to read and never to deploy.
+**There is no test site.** test.azkashine.com was retired on 2026-09-10 at Nazir's call, so
+nothing sits between a push and the live site. The check happens before the push, on this
+machine: `npm run check`, `npm test` against `npm run dev`, and `npm run build`. Run all
+three for anything a visitor will see.
 
-**The three folders are separate clones**, not worktrees, so deleting one cannot break the
-others. Each carries the full history — about 650MB of `.git`, mostly the old site's media.
+`Old` is the site that was live until 2026-09-07, kept to read and never to deploy. The two
+folders are separate clones, so deleting one cannot break the other.
 
-**Two FTP accounts, one workflow.** `main` uses the `FTP_*` secrets, rooted at the site
-root. `staging` uses `STAGING_FTP_*`, the deploybot account chrooted to `public_html`. A
-staging push with its secrets missing stops before building; it never falls back to the
-production account.
-
-Until 2026-09-10 this was two repositories — `new-azkashine-website` for staging and this
-one for production — because FTP secrets cannot be copied between repositories. They
-drifted within a day: production ran a navigation bug staging had already fixed. One
-repository ended that.
+For part of 2026-09-10 this repository also had `staging` → test.azkashine.com, and before
+that staging was a second repository, `new-azkashine-website`, which drifted from
+production within a day. Both are gone.
 
 **robots.txt is decided by the pipeline, not by editing a file.** `app/robots.ts`
 disallows by default and allows only when `NEXT_PUBLIC_SITE_ENV=production`, which the
@@ -75,9 +67,10 @@ vendors needs those scannable and fast, so they carry a thin static trace down t
 and nothing else. **Do not spread the spatial treatment further** — that contrast is what
 makes it land.
 
-**Pushing deploys.** `.github/workflows/deploy.yml` builds and FTPs `out/` on every push to
-`main` (the site root) or `staging` (the `test/` folder). The repository is **public**,
-which is why `/.claude/references` is gitignored: it holds the corporate portfolio deck.
+**Pushing deploys.** `.github/workflows/deploy.yml` builds and FTPs `out/` to the site root
+on every push to `main`, and refuses to run on any other branch. The repository is
+**public**, which is why `/.claude/references` is gitignored: it holds the corporate
+portfolio deck.
 
 **What is kept, and where.** The site that was live until 2026-09-07 is the `old` branch,
 minus its deploy workflow so it can never deploy again. The last commit of production's
