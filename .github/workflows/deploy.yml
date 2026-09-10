@@ -1,63 +1,86 @@
-name: Build and Deploy to Hostinger
+name: Deploy to Hostinger
 
-# WHEN does the robot wake up?
+# One repository, two sites. The branch decides everything:
+#
+#   main    -> www.azkashine.com   site root, robots.txt Allow
+#   staging -> test.azkashine.com  test/ folder, robots.txt Disallow
+#   old     -> never deploys; the site that was live until 2026-09-07
+#
+# Promote staging to production by merging `staging` into `main`.
 on:
   push:
-    branches: [main]      # every time you push to the "main" branch
-  workflow_dispatch: {}    # ...and a "Run" button you can click by hand in the Actions tab
+    branches: [main, staging]
+  workflow_dispatch: {}
+
+# A second push to the same branch waits for the running deploy instead of racing it
+# over FTP. Different branches deploy to different folders, so they may overlap.
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest # the robot rents a fresh Linux computer for each run
+  deploy:
+    runs-on: ubuntu-latest
     steps:
-      # 1) Grab a copy of your code onto that fresh computer
+      # The two sites use DIFFERENT FTP accounts. Production uses FTP_*, rooted at the
+      # site root. Staging uses STAGING_FTP_*, the deploybot account chrooted to
+      # public_html. Never let staging fall back to the production credentials: stop
+      # here, before anything is built or uploaded, if its own are missing.
+      - name: Check the staging FTP secrets exist
+        if: github.ref_name == 'staging'
+        env:
+          S: ${{ secrets.STAGING_FTP_SERVER }}
+          U: ${{ secrets.STAGING_FTP_USERNAME }}
+          P: ${{ secrets.STAGING_FTP_PASSWORD }}
+        run: |
+          if [ -z "$S" ] || [ -z "$U" ] || [ -z "$P" ]; then
+            echo "::error::STAGING_FTP_SERVER, STAGING_FTP_USERNAME and STAGING_FTP_PASSWORD must all be set under Settings > Secrets and variables > Actions. Nothing was built or deployed."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2) Install Node.js (the engine that runs Next.js)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm        # remember downloaded packages between runs = faster
+          cache: npm
 
-      # 3) Install the libraries listed in package-lock.json
+      # `npm install`, not `npm ci`: developed on Windows, deployed on Linux, and npm on
+      # Windows will not write the Linux-only optional dependencies (@emnapi/core and
+      # @emnapi/runtime, via @tailwindcss/oxide-wasm32-wasi) that `npm ci` then demands.
       - name: Install dependencies
-        # `npm install`, not `npm ci`, and deliberately so.
-        #
-        # This project is developed on Windows and deployed on Linux. `npm ci` refuses
-        # to install when the lock file disagrees with package.json by even one entry,
-        # and npm on Windows will not write the Linux-only optional dependencies that
-        # the runner then demands — @emnapi/core and @emnapi/runtime, pulled in by
-        # @tailwindcss/oxide-wasm32-wasi. Regenerating the lock file from scratch on
-        # Windows does not add them; there is no Windows incantation that does.
-        #
-        # `npm install` still honours every pinned version in the lock file. It simply
-        # resolves the handful of platform-specific extras the runner needs instead of
-        # failing. The cost is a slightly slower install and a lock file that CI may
-        # update in memory; the alternative is a deploy that cannot run at all.
         run: npm install
 
-      # 4) Build the site into the out/ folder (our "plain files" from Step 1)
+      # NEXT_PUBLIC_SITE_ENV=production is what makes robots.txt say Allow, and it is
+      # set for `main` and nothing else. See app/robots.ts.
       - name: Build static site
         run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_ENV: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
 
-      # 5) Copy everything in out/ onto Hostinger over FTP
-      - name: Deploy to Hostinger via FTP
+      # There is no backup-and-rollback step. The one this replaces never worked: the FTP
+      # action only uploads, so its "backup" failed with ENOENT on every run. Rolling back
+      # is `git revert <sha>` and a push.
+      - name: Deploy to www.azkashine.com
+        if: github.ref_name == 'main'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          # These three come from GitHub's locked "Secrets" vault.
-          # FTP_SERVER must be the hostname (ftp.azkashine.com), not a raw IP.
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # Plain FTP (the action's default) — this is what the main azkashine.com
-          # site uses and what Hostinger reliably accepts. FTPS handshakes were
-          # flaking out, so we don't set protocol/port/timeout overrides here.
-          # WHERE the built files come FROM (on the robot's computer):
           local-dir: ./out/
-          # WHERE they go TO. The deploybot FTP account is locked ("chrooted")
-          # to .../public_html, so from its point of view the subdomain folder
-          # is simply "test/". (We deliberately keep the "test/" leaf so a deploy
-          # can never write into the main site's root.)
+          server-dir: /
+
+      - name: Deploy to test.azkashine.com
+        if: github.ref_name == 'staging'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.STAGING_FTP_SERVER }}
+          username: ${{ secrets.STAGING_FTP_USERNAME }}
+          password: ${{ secrets.STAGING_FTP_PASSWORD }}
+          local-dir: ./out/
+          # The deploybot account sees public_html as its root, so the subdomain folder is
+          # "test/". Keep the leaf: a staging deploy must never write into the site root.
           server-dir: test/
