@@ -1,5 +1,10 @@
 # Build brief — the whole site, one run
 
+> **HISTORICAL, 2026-09-10.** This is the instruction the whole site was built from, and the
+> site is built and live. Its rules on claims, on balance across the three practices, and on
+> testing still hold. Its paths and housekeeping do not: `../new-azkashine-website/` is
+> deleted, the site is in git (see `CLAUDE.md`), and test.azkashine.com is retired.
+
 **Written 2026-09-06.** Nazir is away. When he is back the site should be finished.
 This is the instruction; `DIRECTION.md` is the design; `PLAN.md` is the running record.
 

@@ -9,9 +9,7 @@ static files to Hostinger. No backend, no database, no CDN.
 diagnosis it all comes from — read it once. `.claude/DIRECTION.md` is where the design is
 going: **the trace**, and the reading of the reference sites it came from. The language is
 approved; individual chapters are not. It carries the implementation brief — read it
-before building anything on the home page. **`.claude/BUILD-BRIEF.md` is the current
-instruction** for the site as a whole: content sources, route inventory, and what must
-not go wrong. `.claude/ECOSYSTEM-BRIEF.md` is the design for the spatial product floor, reasoned from
+before building anything on the home page. `.claude/BUILD-BRIEF.md` is the instruction the whole site was built from; read it for what must not go wrong, not for its paths, which are gone. `.claude/ECOSYSTEM-BRIEF.md` is the design for the spatial product floor, reasoned from
 lusion.co without copying it. It names a route, `/ecosystem/`, that no longer exists — the
 floor lives at the top of `/products/`. The reading of the reference still holds; see
 `PLAN.md` for where it ended up and why.

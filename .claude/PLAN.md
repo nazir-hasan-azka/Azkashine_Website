@@ -1554,15 +1554,14 @@ Updated 2026-09-10, after dropping the test site.
    File Manager), and the deploybot FTP account (Files > FTP Accounts). Until then
    test.azkashine.com keeps serving its last copy — with robots `Disallow`, so it is not
    indexed.
-2. **Delete three branches** in `Azkashine_Website`: `staging`, `master` and
-   `archive/live-site-2026-09`. All are preserved — `staging` is an ancestor of `main`,
-   `master` is the tag `archive/master-2026-09-10`, and the archive is `old`'s parent.
-   Claude's branch delete was refused by the permission classifier.
+2. **Delete the `staging` branch** in `Azkashine_Website`. It is an ancestor of `main`, so
+   nothing is lost. `master` and `archive/live-site-2026-09` are already gone — deleted by
+   Nazir on 2026-09-10; `master` survives as the tag `archive/master-2026-09-10`, the
+   archive as `old`'s parent.
 3. **Run the cleanup script** with VS Code closed:
    `powershell -ExecutionPolicy Bypass -File C:\dev\Azkashine\cleanup-folders.ps1`,
    then open `Azkashine-Website\Production`.
-4. **Delete the repository `new-azkashine-website`.** Nothing waits on it any more.
-   Claude's GitHub token has no `delete_repo` scope.
+4. ~~Delete the repository `new-azkashine-website`~~ — **done by Nazir, 2026-09-10.**
 5. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
    Plausible account, plus the production-only wiring in `app/layout.tsx`, which Claude
    was refused permission to make.
