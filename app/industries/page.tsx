@@ -98,7 +98,7 @@ export default function IndustriesPage() {
 
                 <p className="copy">{industry.intro}</p>
 
-                <div className="block">
+                <div className="page-block">
                   <h3 className="subhead">
                     {INDUSTRIES_PAGE.capabilitiesHeading}
                   </h3>

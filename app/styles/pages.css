@@ -79,7 +79,13 @@
   color: var(--color-muted);
 }
 
-.block {
+/* `.page-block`, NOT `.block`. It was `.block` from 2026-09-07 to 2026-09-10, which is
+   also the name of Tailwind's `display: block` utility — so every element anywhere with
+   `className="block ..."` picked up this 32-44px top margin as well. Fifteen of them: every
+   row of the phone menu (which is what pushed Products off the first screen), the desktop
+   dropdown labels, the footer and contact address lines, the stats band, and the status
+   dots inside the product mock-ups. Never name a class after a utility. */
+.page-block {
   margin-top: clamp(2rem, 3.5vw, 2.75rem);
 }
 

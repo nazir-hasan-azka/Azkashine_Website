@@ -56,14 +56,14 @@ export default function ContactPage() {
 
         <div className="contact-split">
           <div className="reveal-group">
-            <div className="block">
+            <div className="page-block">
               <h3 className="subhead">{CONTACT.emailHeading}</h3>
               <a href={`mailto:${SITE.email}`} className="cmail">
                 {SITE.email}
               </a>
             </div>
 
-            <div className="block">
+            <div className="page-block">
               <h3 className="subhead">{CONTACT.phoneHeading}</h3>
               <ul className="clist">
                 {NUMBERS.map(({ number, note }) => (
@@ -77,7 +77,7 @@ export default function ContactPage() {
               </ul>
             </div>
 
-            <div className="block">
+            <div className="page-block">
               <h3 className="subhead">{CONTACT.officeHeading}</h3>
               <address className="caddr">
                 <span className="caddr-org">{SITE.legalName}</span>

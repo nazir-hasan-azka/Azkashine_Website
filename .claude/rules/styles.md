@@ -44,5 +44,11 @@ paths:
 - **An attribute selector beats a class, whatever the order.** A
   `.room-panel[data-band="back"] { visibility: hidden }` cull could not be undone in the
   reduced-motion block by `.room-panel { visibility: visible }`; it needs the attribute too.
+- **Never name a class after a Tailwind utility.** `.block` in `pages.css` merged with
+  Tailwind's `block` and put a 32-44px top margin on fifteen elements for three days,
+  including every row of the phone menu — which is what pushed Products off the first
+  screen. The element's class list shows `block` and nothing else; only the browser's
+  matched-rules list shows the second rule. Prefix area classes: `.page-block`, `.wwd-*`,
+  `.eco-*`.
 - Motion picks from `--dur-fast/base/slow/slower` and the two easings. Do not invent
   timings. Animate `transform` and `opacity` only.

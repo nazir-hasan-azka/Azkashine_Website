@@ -80,11 +80,13 @@ portfolio deck.
 `archive/live-site-2026-09` in the production repo. Both were verified file-for-file
 against the working copies before those were removed from disk. Nothing else is kept.
 
-**`assets/` is gitignored and exists on no remote.** It holds the 15MB design source — the
-Landing Page comp as PDF, PNG and SVG, the extracted imagery, and the partner logos — and
-it came within one command of being deleted with the old app, because `/assets` is in
-`.gitignore` and it was therefore in no branch of either repo. If it matters, it needs a
-backup that is not this laptop.
+**`assets/` is gitignored here and backed up privately.** It holds the 15MB design source —
+the Landing Page comp as PDF, PNG and SVG, the extracted imagery, and the partner logos. It
+is in `.gitignore` because this repo is public, so for two days it was in no branch of any
+repo and came within one command of being deleted with the old app. Since 2026-09-10 a copy
+lives in **`nazir-hasan-azka/azkashine-design-source` (private)** — new design source goes
+there too, never here. `.claude/references/` (the portfolio deck) is still one copy on
+this laptop, deliberately: it is an internal document, and where it is kept is Nazir's call.
 
 Launch is done: `og:image`, `sitemap.xml`, JSON-LD, a real 404 and a canonical `SITE.url`
 all shipped on 2026-09-07. Sharing a link gets a real card.
