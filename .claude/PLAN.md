@@ -1508,17 +1508,33 @@ reach passes every check here. The drawer is the one piece of navigation nothing
 - **Analytics: still none.** Plausible was wired into `app/layout.tsx` for production builds
   only — same `NEXT_PUBLIC_SITE_ENV` switch as robots, domain derived from `SITE.url` — and
   the edit was refused by the same classifier as the workflow change. Nothing was changed.
+- **Every phone-menu link tapped on the live site** after the deploy: 21 links, Chromium
+  and WebKit, iPhone SE, iPhone 13 and iPhone SE landscape. 126 taps, all through — three
+  WebKit taps needed a re-run, see `rules/tests.md`.
 
 ## Waiting on Nazir
 
-Both were asked and neither was answered. They block the section after next, not the next
-one, so work can continue — but they go stale quietly, which is why they are written here.
+Updated 2026-09-10. Each of these is blocked on something only Nazir can do or decide.
 
-- **Section order.** The client's deck puts products last. My plan moves them up, on the
-  argument that the coded product interfaces are the strongest asset on the site and
-  burying them is fault #2 in the diagnosis. Keep the client's order, or move products up?
-- **"Our partners".** Is that the right wording for the logo row heading, and is it a
-  claim the client will stand behind for all five?
+- **The production deploy pipeline.** The backup and rollback steps in
+  `.github/workflows/manual.yml` (production repo) have never worked — see section 5.
+  Recommendation: delete both; rolling back is `git revert` and a push. Claude's edit was
+  refused by the session's permission classifier.
+- **Analytics.** None. Plausible is the choice made. It needs `azkashine.com` added in a
+  Plausible account, plus the `app/layout.tsx` wiring (production builds only), which
+  Claude prepared and was refused permission to make.
+- **Folder cleanup.** Close VS Code, then run `C:\dev\Azkashine\cleanup-folders.ps1`. It
+  checks everything before it touches anything, and renames the two working copies to
+  match their repositories.
+- **One repository instead of two.** Needs the staging FTP secrets added to
+  `Azkashine_Website` on GitHub.
+- **The portfolio deck** in `.claude/references/` is one copy on one laptop. It is an
+  internal document, so where it is backed up is Nazir's call.
+- **Section order** (asked 2026-09-04). The client's deck puts products last; the site
+  moves them up, on the argument that the coded product interfaces are the strongest
+  asset. Keep, or go back to the deck's order?
+
+"Our partners" was on this list and is closed — confirmed 2026-09-06, below.
 
 ## Open questions for the client
 

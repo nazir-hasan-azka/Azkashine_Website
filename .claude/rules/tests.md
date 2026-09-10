@@ -11,10 +11,18 @@ Four suites. `standards.mjs` needs nothing; the rest need `npm run dev` running.
   while checking zero files, because `join(".", x)` drops the `./` prefix and every filter
   matched nothing. Every suite must refuse to report a pass it did not earn — assert the
   count of things inspected, not just the count of failures.
-- **A collapsed panel still reports boxes.** The mobile drawer is `overflow-y: auto` with
-  height 0; its links are laid out, clipped and unreachable. `checkVisibility()` does not
-  catch this — walk up for an ancestor that clips and has zero height. They are not
-  covered; they are simply not reachable yet.
+- **Nothing measures the phone menu.** Neither browser suite ever opens a menu, so every
+  link in the drawer — the only navigation a phone has — is invisible to standard 2. That
+  is how "Products" sat unreachable on phones from 2026-09-07 to 2026-09-10 with every
+  suite green. Since the rebuild the drawer is not in the DOM until it is opened, and
+  folded sections are `hidden`, so a closed-state check finds nothing at all rather than
+  a zero-height box. The check run by hand on 2026-09-10, which belongs in `links.mjs`:
+  open the drawer, disclose each section, tap every one of its 21 links, and assert the
+  URL, the menu closing, the link being the top element at its centre, and 44px height —
+  in Chromium and WebKit, at iPhone SE, iPhone 13 and iPhone SE landscape. 126 taps.
+- **WebKit's "Navigation canceled by policy check" is usually the test, not the site.**
+  Three taps failed with it in that 126-tap run; the same three links went 30 for 30 on a
+  re-run, before and after hydration. Re-run before believing it.
 - **Match every string, then filter.** A minimum length in the string regex pairs a short
   literal's closing quote with the next literal's opening quote, and the checker starts
   reporting on the code between strings.
