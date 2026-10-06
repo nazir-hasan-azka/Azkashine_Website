@@ -5,6 +5,7 @@ import { RouteHeader } from "@/components/site/RouteHeader";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Cta } from "@/components/site/Cta";
 import { INDUSTRIES } from "@/lib/content/industries";
+import { SERVICES } from "@/lib/content/services";
 import { CATEGORY_BY_SLUG } from "@/lib/content/taxonomy";
 import { getProduct } from "@/lib/content/products";
 import { SERVICES_PAGE } from "@/lib/content/routes";
@@ -47,6 +48,41 @@ export default function ServicesPage() {
         lede={SERVICES_PAGE.lede}
       />
 
+      {/* The four services, each with an anchor the home page links to. */}
+      <Section tone="paper" labelledBy="services-heading">
+        <SectionHead
+          id="services-heading"
+          title={SERVICES_PAGE.servicesHeading}
+        />
+        <div className="svc-grid reveal-group">
+          {SERVICES.map((service) => (
+            <article
+              key={service.slug}
+              id={service.slug}
+              className="svc-card anchor"
+            >
+              <h3 className="svc-name">{service.name}</h3>
+              <p className="svc-line">{service.line}</p>
+              <p className="svc-detail">{service.detail}</p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      {/* The industries, as they were, under their own heading. */}
+      <Section
+        id="industries"
+        tone="tint"
+        labelledBy="industries-heading"
+        className="anchor"
+      >
+        <SectionHead
+          id="industries-heading"
+          title={SERVICES_PAGE.industriesHeading}
+          lede={SERVICES_PAGE.industriesLede}
+        />
+      </Section>
+
       {INDUSTRIES.map((industry, i) => {
         const practice = CATEGORY_BY_SLUG[industry.primaryCategory];
         // One pass, and no type predicate: `?? []` drops a slug with no product behind
@@ -64,10 +100,7 @@ export default function ServicesPage() {
             labelledBy={headingId}
             className="anchor"
           >
-            <div
-              className="split"
-              data-media={i % 2 === 0 ? "left" : "right"}
-            >
+            <div className="split" data-media={i % 2 === 0 ? "left" : "right"}>
               <div className="split-media">
                 <div className="frame">
                   {/* Decoration, so the alt is empty: the section's own heading and

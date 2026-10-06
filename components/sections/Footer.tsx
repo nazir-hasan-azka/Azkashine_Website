@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { CATEGORIES } from "@/lib/content/taxonomy";
 import { PRODUCTS } from "@/lib/content/products";
-import { INDUSTRIES } from "@/lib/content/industries";
+import { SERVICES } from "@/lib/content/services";
 import { SITE } from "@/lib/content/site";
 
 /**
@@ -99,9 +99,9 @@ export function Footer() {
             links={[
               { label: "About", href: "/about/" },
               { label: "Services", href: "/services/" },
-              ...INDUSTRIES.map((i) => ({
-                label: i.name,
-                href: `/services/#${i.slug}`,
+              ...SERVICES.map((s) => ({
+                label: s.name,
+                href: `/services/#${s.slug}`,
               })),
               { label: "Contact", href: "/contact/" },
             ]}

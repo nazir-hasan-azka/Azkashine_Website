@@ -657,3 +657,48 @@
     align-items: stretch;
   }
 }
+
+
+/* ── Services: the four services, before the industries ─────────────────── */
+.svc-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+@media (min-width: 768px) {
+  .svc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.svc-card {
+  min-width: 0;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: white;
+  box-shadow: var(--shadow-hard);
+}
+
+.svc-name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+
+.svc-line {
+  margin-top: 0.5rem;
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-blue-700);
+}
+
+.svc-detail {
+  margin-top: 0.75rem;
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--color-muted);
+}

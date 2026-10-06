@@ -25,7 +25,12 @@ import { registerSegment, type TraceFrame } from "@/lib/film/trace";
 
 const SCENE = "running";
 
-export function Running({ children }: { children: ReactNode }) {
+/**
+ * `screens` is how long the traverse holds the scroll on a wide screen. It was 8 on the
+ * film; the enterprise home page (2026-10-07) runs it at 4, because management found the
+ * film's holds slow. Below `lg` it never holds — the panels flow as a column.
+ */
+export function Running({ children, screens = 8 }: { children: ReactNode; screens?: number }) {
   const railRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -140,7 +145,7 @@ export function Running({ children }: { children: ReactNode }) {
   return (
     <ScrollScene
       id={SCENE}
-      screens={8}
+      screens={screens}
       screensSm={1}
       flowBelowLg
       className="film-running"

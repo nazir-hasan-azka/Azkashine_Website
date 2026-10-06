@@ -93,10 +93,13 @@ export const PRODUCT_PAGE = {
 export const SERVICES_PAGE = {
   metaTitle: "Services",
   metaDescription:
-    "Telecom, public sector, manufacturing, and energy — the sectors Azkashine builds and operates software for.",
+    "Custom software development, cloud infrastructure engineering (DevOps), managed services and software quality validation — and the industries Azkashine serves.",
   crumb: "Services",
   title: "Services",
-  lede: "Four sectors where operational complexity is high and the cost of getting software wrong is measured in more than money.",
+  lede: "We build, run and validate what we deliver, for telecom, public sector, manufacturing and energy organisations.",
+  servicesHeading: "What we deliver",
+  industriesHeading: "Industries we serve",
+  industriesLede: "Four sectors where operational complexity is high and the cost of getting software wrong is measured in more than money.",
   capabilitiesHeading: "Capabilities applied",
   practiceLink: "Explore the practice",
   productsHeading: "Relevant products",

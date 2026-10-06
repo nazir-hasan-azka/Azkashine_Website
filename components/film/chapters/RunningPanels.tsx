@@ -31,13 +31,21 @@ import Link from "next/link";
  * decelerating, the frame dissolving, the eight settling at different depths — and what
  * is built is the link with a still of that idea behind it. `PLAN.md` records the call.
  */
-export function RunningPanels() {
+/**
+ * `eyebrow` replaces the numbered chapter mark with a plain label, which is how the
+ * enterprise home page heads every section.
+ */
+export function RunningPanels({ eyebrow }: { eyebrow?: string } = {}) {
   const products = PRODUCTS_IN_RUN_ORDER;
 
   return (
     <>
       <div className="film-running-head">
-        <ChapterMark number={FILM_RUNNING.chapter} title={FILM_RUNNING.title} />
+        {eyebrow ? (
+          <p className="sh-eyebrow">{eyebrow}</p>
+        ) : (
+          <ChapterMark number={FILM_RUNNING.chapter} title={FILM_RUNNING.title} />
+        )}
         <p className="film-heading">{FILM_RUNNING.heading}</p>
         <p className="film-lede">{FILM_RUNNING.lede}</p>
       </div>

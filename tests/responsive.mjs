@@ -90,12 +90,12 @@ for (const [w, h, name] of SIZES) {
        property lookup on :root hands back unresolved. So the two gutter assertions
        below have been measuring the headline against zero: they could only catch type
        running off the viewport, never type off the gutter, which is the thing standard
-       1 names. `.film-signed-inner` pads its right side with `var(--page-gutter)`
+       1 names. `.band-inner` pads its right side with `var(--page-gutter)`
        directly. It was `.clients-inner`'s left padding until 2026-10-06, when the
        partner logos moved onto the closing chapter's column and that padding grew by
        the spine step. */
     const gutter = parseFloat(
-      getComputedStyle(document.querySelector(".film-signed-inner")).paddingRight,
+      getComputedStyle(document.querySelector(".band-inner")).paddingRight,
     );
 
     const cta = [...document.querySelectorAll("a")].filter((el) =>

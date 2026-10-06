@@ -32,8 +32,8 @@ export const FLOOR = {
 
   /** The link out of chapter 04 on the home page, which now lands on `/products/`. */
   onward: {
-    label: "See the whole floor",
-    line: "All of it at once, at depth.",
-    cta: "All eight products",
+    label: "All eight products",
+    line: "Compare them side by side, with details on each.",
+    cta: "Explore all products",
   },
 } as const;

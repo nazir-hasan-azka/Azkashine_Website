@@ -124,6 +124,7 @@ const OURS = (f) =>
        silent pass the header of this file exists to refuse. */
     f.startsWith("components/floor/") ||
     f.startsWith("components/about/") ||
+    f.startsWith("components/home/") ||
     f.startsWith("lib/film/") ||
     f.startsWith("lib/floor/") ||
     (f.startsWith("components/sections/") &&

@@ -56,26 +56,26 @@ export const CATEGORIES: Category[] = [
     slug: "ai-automation",
     name: "AI & Automation",
     navLabel: "AI & Automation",
-    tagline: "Put AI to work on the decisions people still make by hand.",
+    tagline: "Intelligent automation for enterprise operations.",
     image: "ai-automation",
     intro:
-      "Anything you can write down in advance, ordinary automation already handles. What is left is the messy part. An exception to chase. A policy to apply. Two or three systems to open before anyone can sign anything off. We build the software that does that work, and stops at the point where a person has to approve it.",
+      "We design, build and run AI agents and automation for high-volume operational work, from document processing to exception handling, with a person approving every critical step.",
     capabilities: [
       {
         title: "AI-driven automation",
-        descriptor: "Automating repetitive tasks with GenAI & agentic AI.",
+        descriptor: "GenAI and agentic AI that take on repetitive, rules-heavy work.",
         detail:
           "Agentic systems that pursue a goal rather than replay a script — planning, reasoning, acting, and adapting as conditions change, with human approval at the points that matter.",
       },
       {
         title: "AI-integrated ecosystem",
-        descriptor: "Modernize with AI in real-time applications.",
+        descriptor: "AI added to the systems you already run, in real time.",
         detail:
           "Adding AI to systems already in production — conversational interfaces, document understanding, and CRM-connected retrieval — without rebuilding what already works.",
       },
       {
         title: "AI-based network optimisation",
-        descriptor: "AI-Ops for telecom.",
+        descriptor: "AI operations for telecom networks.",
         detail:
           "AI-Ops for telecom operators: anticipating degradation, prioritising interventions, and reducing manual triage across network operations.",
       },
@@ -85,32 +85,32 @@ export const CATEGORIES: Category[] = [
     slug: "digital-platforms",
     name: "Digital Platforms",
     navLabel: "Digital Platforms",
-    tagline: "Platforms built to be run for years.",
+    tagline: "Enterprise platforms, built to last.",
     image: "digital-platforms",
     intro:
       "Our platforms have more than one kind of user. An advertiser, a partner and an administrator, each seeing a different thing, over one engine. Real money moves through them, or real compliance does — our whistleblowing platform is built to the EU Whistleblower Directive and ISO 37002, with anonymous reporting and a complete audit trail. And somebody has to run the whole thing on a Tuesday two years from now, without calling us.",
     capabilities: [
       {
         title: "Custom software solutions",
-        descriptor: "Evolving hybrid smart platforms.",
+        descriptor: "Multi-portal platforms built around your business.",
         detail:
           "End-to-end platform builds spanning multiple portals and roles — advertiser, partner, and administrator views over one core engine, each with its own permissions and reporting.",
       },
       {
         title: "Smart applications",
-        descriptor: "Web & mobile applications.",
+        descriptor: "Web and mobile applications for every kind of user.",
         detail:
           "Web and mobile applications designed for the conditions they actually run in: shared devices, patchy connectivity, and users who will not be trained.",
       },
       {
         title: "Data governance & ETL",
-        descriptor: "Integrating and transforming data.",
+        descriptor: "Integrating, transforming and governing enterprise data.",
         detail:
           "Integrating and transforming data across systems, with the lineage, validation, and access controls needed to trust what comes out the other side.",
       },
       {
         title: "AI-enabled platforms",
-        descriptor: "Sector-agnostic AI platforms.",
+        descriptor: "Platforms with AI at the core, for any sector.",
         detail:
           "Platforms where AI is the product rather than a feature — case triage, risk detection, and document intelligence built into the core workflow.",
       },

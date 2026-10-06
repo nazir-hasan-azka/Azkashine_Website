@@ -125,10 +125,12 @@ export function TraceCanvas() {
     const drop = (): number | null => {
       const o = traceOrigin();
       if (!o || heroTop === null) return null;
-      /* Straight to the settled state for anyone who is already past the hero — a
-         visitor who scrolled hard on arrival should not find a page with no line on it
-         waiting for an animation they never saw. */
-      const skip = frame.reduced || frame.scrollY > frame.h * 0.75;
+      /* Straight to the settled state the moment the visitor scrolls at all. It used to
+         wait until three-quarters of a screen had gone by, so anyone who began scrolling
+         inside the 3.4s drop — most people — scrolled down a page with no line on it
+         (reported by Nazir, 2026-10-07). Left alone, the drop still plays on its own
+         timing once the headline has landed. */
+      const skip = frame.reduced || frame.scrollY > 4;
       const t = skip ? 1 : clamp01((frame.now - o.at - DROP_DELAY) / DROP_MS);
       if (t <= 0) return null;
 

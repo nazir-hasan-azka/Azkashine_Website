@@ -17,22 +17,56 @@ export const HOME_HERO = {
 } as const;
 
 /**
- * "What we do" — the section head only.
+ * THE HOME PAGE BELOW THE HERO, rewritten 2026-10-07 for an enterprise reader.
  *
- * Three strings, because everything else in that section is already written: the practice
- * names, taglines, intros and all eight capability lines come from `taxonomy.ts`, deck
- * p4 verbatim. Nothing here needs the client to clear it.
- *
- * The lede counts things rather than describing a posture — two practices, seven
- * capabilities (3 + 4 in `taxonomy.ts`) and eight products (`PRODUCTS`). Both figures
- * were checked against the tree, not assumed, and the section prints all seven
- * capabilities underneath, so a reader can verify the sentence on the page it sits on.
- * A competitor can print "we start from the outcome"; they cannot print this.
+ * Management found the previous page, the scroll "film", slow and unclear: about 24 of
+ * its 29 desktop screens held the scroll while labels narrated an animation ("Ruled
+ * out", "Awaiting approval", "Keep scrolling"). This page scrolls normally, in about a
+ * third of the length, and every line says what Azkashine does or what it delivers.
+ * The wording was reviewed line by line in the copy document of 2026-10-07. Practice,
+ * capability, product and industry lines come from `taxonomy.ts`, `products.ts` and
+ * `industries.ts`; only the page's own headings live here.
  */
-export const HOME_WHAT_WE_DO = {
-  eyebrow: "Practices",
-  heading: "What we do",
-  lede: "Two practices, seven capabilities, and the eight products built on them.",
-  /** Suffix after the practice name: "AI & Automation in detail →". */
-  linkSuffix: "in detail",
+export const HOME_PAGE = {
+  whatWeDo: {
+    eyebrow: "What we do",
+    title: "Two practices, seven capabilities and eight products in production.",
+    more: "More on",
+  },
+  products: {
+    eyebrow: "Our products",
+    /* The heading and lede are `FILM_RUNNING`'s, which the traverse renders. */
+  },
+  why: {
+    eyebrow: "Why Azkashine",
+    title: "Proven in production.",
+    points: [
+      {
+        title: "In production",
+        body: "Our products are in use today, from regulator-ready financial filings to agentic workflows and hiring platforms.",
+      },
+      {
+        title: "Built and run in-house",
+        body: "We build the software and operate the cloud beneath it, on AWS, Azure or GCP.",
+      },
+      {
+        /* "Partners", not "teams": the fifteen partners in `clients.ts` are what is on
+           record in these regions. */
+        title: "Delivering across regions",
+        body: "With partners across India, the Middle East, Europe and the US.",
+      },
+      {
+        title: "Governed by default",
+        body: "Approval checkpoints, audit trails and role-based access in every platform we deliver.",
+      },
+    ],
+  },
+  services: {
+    eyebrow: "Services",
+    title: "We build, run and validate what we deliver.",
+    /* The industries, as one line under the services. Kept at Nazir's request when the
+       home page's industries section became services (2026-10-07); the link that
+       followed it was removed at his request the same day. */
+    industriesLead: "Serving",
+  },
 } as const;

@@ -55,7 +55,7 @@ export const REASONS: Reason[] = [
     id: "governed",
     title: "Governed by default",
     description:
-      "Our clients answer to regulators, so we design for that from the first sprint. Our cloud platform runs five phases — requirements, architecture, policy check, infrastructure as code, deploy — and puts a human approval checkpoint before anything irreversible. Audit trails and role-based access come as standard, because adding them later costs far more than building them in.",
+      "Our clients answer to regulators. Every platform we deliver includes approval checkpoints, complete audit trails and role-based access as standard.",
     icon: "/why/scalable-impact.png",
     iconWidth: 358,
     iconHeight: 335,

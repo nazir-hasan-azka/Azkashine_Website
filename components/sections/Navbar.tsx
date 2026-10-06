@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/content/taxonomy";
 import { PRODUCTS } from "@/lib/content/products";
-import { INDUSTRIES } from "@/lib/content/industries";
+import { SERVICES } from "@/lib/content/services";
 
 /**
  * Nav follows the Services-and-Products-as-peers model: the two things Azkashine sells
@@ -329,9 +329,9 @@ export function Navbar() {
                 open={section === "services"}
                 onToggle={toggleSection}
               >
-                {INDUSTRIES.map((i) => (
-                  <MobileLink key={i.slug} href={`/services/#${i.slug}`}>
-                    {i.name}
+                {SERVICES.map((s) => (
+                  <MobileLink key={s.slug} href={`/services/#${s.slug}`}>
+                    {s.name}
                   </MobileLink>
                 ))}
               </MobileSection>

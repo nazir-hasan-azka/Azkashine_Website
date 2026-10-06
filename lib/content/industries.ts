@@ -27,7 +27,7 @@ export const INDUSTRIES: Industry[] = [
     slug: "telecom",
     image: "telecom",
     name: "Telecom",
-    tagline: "AI-Ops for networks that cannot wait for a ticket queue.",
+    tagline: "AI-driven network operations and automated provisioning.",
     intro:
       "Telecom operators carry the most operational complexity and the least tolerance for downtime. Our work here centres on AI-based network optimisation and on automating the provisioning cycles that slow customer onboarding.",
     capabilities: ["AI-based network optimisation", "AI-driven automation"],
@@ -38,7 +38,7 @@ export const INDUSTRIES: Industry[] = [
     slug: "public-sector",
     image: "public-sector",
     name: "Public sector",
-    tagline: "Governed automation for organisations that answer to the public.",
+    tagline: "Governed, auditable platforms for public institutions.",
     intro:
       "Public sector work carries obligations that commercial projects do not — auditability, data residency, procurement rigour, and the requirement that a decision can be explained after the fact. Our platforms are built with approval checkpoints, audit trails, and role-based access as defaults rather than additions.",
     capabilities: [
@@ -53,9 +53,9 @@ export const INDUSTRIES: Industry[] = [
     slug: "manufacturing",
     image: "manufacturing",
     name: "Manufacturing",
-    tagline: "Visibility across the floor, the supply chain, and the workforce.",
+    tagline: "Frontline hiring and operational data platforms.",
     intro:
-      "Manufacturing generates more data than most sectors and uses less of it. Our work spans operational analytics — OEE, defect rates, yield, throughput, downtime — alongside the platforms that manage site access and frontline hiring.",
+      "Manufacturing generates more data than most sectors and uses less of it. Our work here centres on integrating and governing operational data, and on frontline hiring through ProSiddhi.",
     capabilities: [
       "Data governance & ETL",
       "Smart applications",
@@ -67,7 +67,7 @@ export const INDUSTRIES: Industry[] = [
     slug: "energy",
     image: "energy",
     name: "Energy",
-    tagline: "Infrastructure-grade software for critical operations.",
+    tagline: "Data governance and cloud automation for critical operations.",
     intro:
       "Energy operations combine distributed physical assets with strict compliance obligations. Our work focuses on the data engineering, governance, and cloud infrastructure automation that make those operations legible and repeatable.",
     capabilities: [
