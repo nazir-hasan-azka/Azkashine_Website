@@ -1,6 +1,6 @@
 # Plan
 
-**Written 2026-09-04. Updated 2026-09-06.** Where things stand, what is being built, and in what order.
+**Written 2026-09-04. Updated 2026-10-07.** Where things stand, what is being built, and in what order.
 `BRIEF.md`, beside this file, is the diagnosis it all comes from; read it once, then this.
 
 This is a running record, not a set of rules. Variations are how this project decides —
@@ -1545,32 +1545,179 @@ gitignored files (`assets/`, `.claude/references/`, `.claude/settings.local.json
 copied into `Production`, which is where work happens now. **The cost, stated once:**
 there is no longer anywhere to see a change on a real server before it is live.
 
+## 2026-10-06 and 07 — the products renamed, the home page rebuilt
+
+Two commits, both live: `cee9055` and `bdd159a`. Everything below is on
+www.azkashine.com.
+
+### What shipped
+
+**Products, renamed to the Siddhi family** (Nazir's list, his taglines):
+AgentOS → **NodeSiddhi**, Smart AI Assistant → **SmartSiddhi**, Agent Siddhi →
+**AgentSiddhi**, Tawthiq → **AuditSiddhi**, Cloud Orchestration Platform →
+**CloudSiddhi** (moved into AI & Automation), Ethics Intelligence → **ShieldSiddhi**.
+**Savant AI removed.** **ConnectSiddhi** added as a live product from its deck
+(`AI-Powered Chatbot for Qatar Aeronautical Academy (QAA).pptx`), with a coded WhatsApp
+screen. **VigilSiddhi, IntentSiddhi, ApexSiddhi, GateSiddhi** listed as coming soon:
+name, one line, a tag, no page. Twelve in total: 8 live, 4 coming soon. Every old
+product address forwards through a page in `public/products/<old-slug>/`; image files
+were renamed too, so no old name survives even in the page source.
+
+**Two practices.** Cloud Services & Testing was retired everywhere — its page, its four
+capabilities (DevOps, Automation & Quality Engineering, Managed Services, Wireless
+Testing), the film's chapter 05, every count. **Advanced analytics** was removed from AI &
+Automation. Two practices, seven capabilities, eight products.
+
+**"Industries" became "Services"** — the route is `/services/`, `/industries/` forwards to
+it. On 2026-10-07 the page was made to mean what it says: it now leads with **four
+services** (custom software development, cloud infrastructure engineering (DevOps),
+managed services, software quality validation — `lib/content/services.ts`), with the four
+industries underneath under "Industries we serve". The phone menu and footer list the
+services.
+
+**Fifteen partners** (Nazir's list), each logo taken from the company's own site and shown
+as a **card wall** with the partner's country. Qudrah and Open Insights have no logo file
+— their names are live text beside an icon — so both were rebuilt from their own icon and
+the exact font their site uses. Notes and sources are at the top of `clients.ts`.
+
+**About:** Nazir's new opening paragraph; the Chairman's portrait in an **editorial
+panel** in the photo's own grey (`#838383` is exactly `muted-2`); **values on the trace**
+(a line through five points on the one dark band); value names only; heading "From
+Azkashine Chairman's desk".
+
+**Contact and footer:** sales@ ("New projects, product demos and pricing."), support@
+("Help with a product you already use."), contact@ ("Partnerships and everything
+else."). Product walkthrough requests go to sales@.
+
+**The closing band** (`Cta.tsx`, every inner route) is now a **light two-column panel**,
+not a full-width `blue-900` band, so no page carries two dark bands.
+
+**Sentence case** across every visible string — all 561 were extracted from the running
+site and read. Two spellings moved to British with it ("optimisation", "programmes").
+
+**The home page, rebuilt for an enterprise reader.** See the next section.
+
+### The home page — why the film went
+
+Management's verdict, via Nazir: the content was **"absolute gibberish"**, and **"it
+truly irked the management and they felt irritated that the scroll was taking a lot of
+time. They could not get our idea."** Measured: the film was **28.6 screens** on a
+1440×900 desktop, and about **24 of them held the scroll** — request 5, gate 4, breath 3,
+products 8, why-us 4 — for roughly six screens of content. Its labels narrated the trace
+("A request comes in", "Ruled out", "The one that works", "Awaiting approval", "Keep
+scrolling. The page is not stuck — the work is.") and meant nothing to anyone who had not
+read `DIRECTION.md`.
+
+**What replaced it** (`components/home/HomeBody.tsx`): hero (unchanged, Nazir: "Keep the
+hero as is") → What we do (two practice cards) → **the products' sideways traverse, kept at
+Nazir's request** ("I want the horizontal scroll which we had for our products, that was
+nice, the size of the products image etc was nice") but held for **4 screens instead of
+8** and never on a phone → Why Azkashine (four points) → Services (four cards, then one
+line naming the industries) → partners → closing panel. **The trace stays** ("lets have
+the black line on the side which follows us"), now leaving the hero the moment the
+visitor scrolls rather than after the 3.4s drop. About **11 screens** on desktop.
+
+The copy was reviewed line by line in a document before it was built
+(claude.ai artifact `FBGoLx1rSY2cG43JtoD6yE`): **cut first** ("we want to remove a lot of
+the unnecessary content and keep it polished"), then plain enterprise wording, no
+invented facts ("leave this" when asked for founding year, team size, certifications or
+offices), India and the GCC both visible ("Both equally").
+
+**Retired:** `Film.tsx` and the Request, Gate, Breath, Ledger, Why and Signed chapters,
+`WhatWeDo.tsx`, and their copy. `Running`, `RunningPanels`, `TraceCanvas`, `TraceEnd`,
+`ScrollScene` and `lib/film/` remain, because the new page uses them. Their CSS in
+`film.css` and `globals.css` was **not** pruned — dead rules for the retired chapters are
+still there, harmless, and worth a careful sweep one day.
+
+### Tried and rejected — so nobody rebuilds them
+
+- **Values, design A "Statement"** (five values as one line of large type) and **B
+  "Tiles"** (tinted tiles with oversized numerals). Built, compared on full previews of
+  the About page, rejected for **C, the trace** — Nazir: "What we have is good, we will
+  keep it."
+- **Chairman layouts 2 "Signed letter"** (pull quote, round thumbnail) and **3 "Portrait
+  first"** (sticky photo left). Nazir: "do what is best"; **1 "Editorial"** shipped, because
+  it is the one that stops the photo reading as a picture dropped beside text. The first
+  placement — a small square beside the note — was rejected: "the photo is not correctly
+  placed".
+- **Partners, design A "Moving rows"** (two marquees) and **C "The reach"** ("15 partners
+  across 7 countries", grouped by region). Nazir chose **B, the card wall**: "I like this".
+  C was the recommendation; the reasoning for it is still sound if the row ever needs to
+  make a claim.
+- **A plain 5×3 logo grid** (the first version of the fifteen): "They are very bland, we can
+  do better right ?"
+- **A products row with arrow buttons** on the new home page — built, and replaced the same
+  hour by the original traverse at Nazir's request.
+- **A Governance section of its own** on the new home page (the gate's message, without the
+  pause). Nazir: "why do we have this section?" — folded into Why Azkashine as **"Governed by
+  default"**.
+- **"Built for India and the GCC"** as the third Why point — renamed **"Delivering across
+  regions"**. Written with **"partners"**, not "teams and partners": only the partners are
+  on record in those regions.
+- **"See the industries we serve →"** under the home Services cards — removed at Nazir's
+  request; the line "Serving telecom, public sector, manufacturing and energy." stays.
+- **Two dark bands on one page** (About's values and the old dark closing band). Fixed by
+  making the closing band light everywhere, not by changing the values.
+
+### Decisions, in Nazir's words where he was specific
+
+- Cloud & Testing: first "Menu only", then **"No more cloud testing, remove all
+  references"**; its four capabilities: "Remove all four"; the home chapter: "Now, with
+  this change".
+- Product spelling: "All one word"; "it is - AuditSiddhi"; taglines: "Yes, use as
+  taglines"; Savant: "drop Savant"; new products: "Add as 'Coming soon'".
+- ConnectSiddhi: details arrived as the QAA deck; **QAA is not named on the site** until
+  Nazir confirms it may be.
+- Industries → Services: "Rename everything"; then on 2026-10-07, **"we must change it
+  into services"** — four services as proposed, industries kept on the Services page, and
+  on the home page "Yes, a short line".
+- The four services reverse the 2026-10-06 removal of DevOps, managed services and testing
+  — confirmed explicitly ("Yes, as proposed"). They are **services**, not a practice.
+- Fayaz: his three Kalsun logo directions were credited, then the name was removed — "its
+  all from AZKASHINE". (Kalsun work lives outside this repo.)
+- Hero copy: still closed. "Keep the hero as is."
+
+### Faults found, and the fix — the ones that cost time
+
+- **The dev server served stale CSS** for a page-level stylesheet — the screenshots showed
+  the old design. Restart with `rm -rf .next` (already in `rules/styles.md`).
+- **Logos sized `min(Npx, 100%)` blew their cards up** to the image file's pixel width
+  inside a box that sizes to its content. Now in `rules/styles.md`.
+- **`responsive.mjs` read the gutter from an element the new home page does not have**
+  (`.film-signed-inner`), then from `.band-inner`. Now in `rules/tests.md`.
+- **"ConnectSiddhi" ran 2px past a 320px screen** — one unbreakable word at the display
+  step's 44px floor. `.rh-title` is capped at `12.5vw`.
+- **The trace did not leave the hero for anyone who scrolled early**: the drop waited 3.4s
+  and only skipped once three-quarters of a screen had gone. It now skips at any scroll.
+
 ## Waiting on Nazir
 
-Updated 2026-09-10, after dropping the test site.
+Updated 2026-10-07.
 
-1. **Remove the test site on Hostinger** (hPanel): delete the subdomain
-   test.azkashine.com (Domains > Subdomains), the `test` folder in `public_html` (Files >
-   File Manager), and the deploybot FTP account (Files > FTP Accounts). Until then
-   test.azkashine.com keeps serving its last copy — with robots `Disallow`, so it is not
-   indexed.
-2. **Delete the `staging` branch** in `Azkashine_Website`. It is an ancestor of `main`, so
-   nothing is lost. `master` and `archive/live-site-2026-09` are already gone — deleted by
-   Nazir on 2026-09-10; `master` survives as the tag `archive/master-2026-09-10`, the
-   archive as `old`'s parent.
-3. **Run the cleanup script** with VS Code closed:
-   `powershell -ExecutionPolicy Bypass -File C:\dev\Azkashine\cleanup-folders.ps1`,
-   then open `Azkashine-Website\Production`.
-4. ~~Delete the repository `new-azkashine-website`~~ — **done by Nazir, 2026-09-10.**
-5. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
-   Plausible account, plus the production-only wiring in `app/layout.tsx`, which Claude
-   was refused permission to make.
-6. **The portfolio deck** in `.claude/references/` is on this laptop only. Where it is
+1. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
+   Plausible account, plus the production-only wiring in `app/layout.tsx`.
+2. **The portfolio deck** in `.claude/references/` is on this laptop only. Where it is
    backed up is Nazir's call.
-7. **Section order** (asked 2026-09-04). Keep products moved up, or go back to the deck's
-   order?
+3. **Remove the test site on Hostinger** (hPanel): the test.azkashine.com subdomain, the
+   `test` folder in `public_html`, and the deploybot FTP account. Not confirmed done.
+4. **The closing panel's last clause** — "…or whether you'd be better served elsewhere."
+   Asked 2026-10-06 whether to keep it; not answered. It is on every inner route.
+5. **May Qatar Aeronautical Academy be named** on the ConnectSiddhi page? Asked
+   2026-10-07; not answered. Until then the page says "users" and "in-country hosting".
+6. **Permission for the ten new partner logos.** "Our partners" was confirmed for the
+   original five on 2026-09-06; the new ten came from Nazir's list without a separate
+   confirmation that each company is happy to be shown.
+7. **Better artwork**: official logo files from Qudrah and Open Insights (both rebuilt from
+   their sites), a larger Prowess logo (their site serves 264×40), and a larger
+   Chairman's photo (the file is 397px, so the panel caps it at 24rem).
+8. **The Digital Platforms practice intro** still reads in the old voice ("…on a Tuesday two
+   years from now, without calling us"). It is not on the home page, so the review
+   document did not cover it; it is on `/what-we-do/` and `/what-we-do/digital-platforms/`.
+9. **Details for the four coming-soon products**, to give them pages.
 
-"Our partners" is closed — confirmed 2026-09-06, below.
+Closed since 2026-09-10: the `staging` branch is gone from GitHub; the folder cleanup ran
+(only `Production` and `Old` remain); **section order** is moot — the home page was
+rebuilt.
 
 ## Open questions for the client
 

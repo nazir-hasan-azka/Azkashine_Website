@@ -52,3 +52,8 @@ paths:
   `.eco-*`.
 - Motion picks from `--dur-fast/base/slow/slower` and the two easings. Do not invent
   timings. Animate `transform` and `opacity` only.
+- **Never size an image `width: min(Npx, 100%)` inside a box that sizes to its content**
+  (a flex item, an inline-block card, a marquee track). The percentage has nothing to
+  resolve against, so the browser falls back to the image's intrinsic width — a 1196px
+  logo file made its card 1196px wide. Use `width: Npx; max-width: 100%`, which only
+  needs the parent once it already has a size. Found on the partner cards, 2026-10-07.

@@ -20,8 +20,10 @@ disk as of 2026-09-10; everything it contributed is already in `lib/content/`.
 
 ## Where it stands
 
-**Live in production.** Seventeen routes at **https://www.azkashine.com** since
-2026-09-07.
+**Live in production.** Sixteen routes at **https://www.azkashine.com** since
+2026-09-07; last deployed 2026-10-07 (`bdd159a`). Eight live products under the Siddhi
+names, four coming soon, two practices, four services. `PLAN.md` has the 2026-10-06/07
+record.
 
 ### One repository, one site
 
@@ -50,17 +52,23 @@ workflow sets for `main` and nothing else. It used to be a hand-flipped switch, 
 `Allow` to staging for two days — a complete crawlable duplicate of the live site,
 pointing at the production sitemap. Do not turn it back into a switch.
 
-The home page is the film: seven chapters on one continuous scroll, drawn by one canvas
-and driven by one rAF loop (`components/film/`, `lib/film/`).
+**The home page is an enterprise page, not the film** (`components/home/HomeBody.tsx`,
+since 2026-10-07). Management found the film — 28.6 screens, 24 of them holding the
+scroll, labels narrating an animation — slow and unclear. The page now scrolls normally,
+about 11 screens on desktop. Two pieces of the film stay at Nazir's request: **the trace**
+down the gutter (`TraceCanvas`, `TraceEnd`) and **the products' sideways traverse**
+(`Running`, held 4 screens, never on a phone). **Write for an enterprise buyer:** plain,
+complete sentences, no labels that narrate a design idea, nothing that holds the scroll
+without a reason a visitor can see.
 
 **`/products/` is the one other route that moves.** The floor opens it — eight coded
 product interfaces standing in a dark room, turned by scroll, on the same rAF loop
-(`components/floor/`, `lib/floor/`) — and the three practice bands follow it unchanged.
+(`components/floor/`, `lib/floor/`) — and the two practice bands follow it.
 It was its own route, `/ecosystem/`, for two days; that route was deleted on 2026-09-09
 because it was carrying a second copy of the product index while `/products/` showed none
 of the products. `PLAN.md` has the reasoning.
 
-The remaining fifteen routes are deliberately nothing like either: a buyer comparing
+The remaining fourteen routes are deliberately nothing like either: a buyer comparing
 vendors needs those scannable and fast, so they carry a thin static trace down the gutter
 and nothing else. **Do not spread the spatial treatment further** — that contrast is what
 makes it land.
@@ -97,7 +105,7 @@ these four is advisory, and belongs in a rule file, not here.
 
 | | Enforced by |
 |---|---|
-| **1 · It works on every screen** | `npm test` → `responsive.mjs` — 17 routes × 16 viewports, 320×568 to 2560×1440. No overflow, headline on the gutter at both edges, every gap that must stay positive |
+| **1 · It works on every screen** | `npm test` → `responsive.mjs` — 16 routes × 16 viewports, 320×568 to 2560×1440. No overflow, headline on the gutter at both edges, every gap that must stay positive |
 | **2 · Every link resolves and can be clicked** | `npm test` → `links.mjs` — dead hrefs, links painted over at three widths, and 24×24 pointer targets (WCAG 2.2 SC 2.5.8, inline links exempt) |
 | **3 · Copy and tokens hold** | `npm run check` → `standards.mjs` — apostrophes, double spaces, stray whitespace; no raw hex, no arbitrary type sizes |
 | **4 · Types and lint are clean** | `npm run check` — `tsc --noEmit` and `eslint`, both exit 0 |

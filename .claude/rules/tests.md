@@ -44,3 +44,13 @@ Four suites. `standards.mjs` needs nothing; the rest need `npm run dev` running.
   It wants a margin or a sample over several frames rather than one pixel of one frame —
   but it is an assertion about a signed-off hero, so it is flagged here rather than
   quietly retuned. **A run that fails only this line has not found a regression.**
+- **Every element `responsive.mjs` reads on `/` has to exist on the home page.** It takes
+  the gutter from an element's padding, and it has had to move three times as the home
+  page changed: `.hero-frame` (padding moved, so it measured against 0), `.clients-inner`,
+  `.film-signed-inner` (deleted with the film on 2026-10-07, so every route failed to
+  start), and now `.band-inner`'s right padding. When the home page changes structure,
+  check this line first.
+- **Screenshots from ad-hoc Playwright scripts go in the scratchpad, never the repo.**
+  A script run with the repo as its working directory wrote seventeen PNGs into the
+  project root on 2026-10-07, and `git add -A` would have shipped them to the live site.
+  Give every `screenshot({ path })` an absolute path outside the repo.
