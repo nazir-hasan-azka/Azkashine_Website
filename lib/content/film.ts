@@ -80,13 +80,13 @@ export const FILM_GATE = {
 export const FILM_BREATH = {
   chapter: "02",
   title: "What we do",
-  line: "Three practices, twelve capabilities, eight products.",
+  line: "Two practices, seven capabilities, eight products.",
 } as const;
 
-/** Chapter 03 — the ledger. All three practices, twelve capabilities, operated by scroll. */
+/** Chapter 03 — the ledger. Both practices, seven capabilities, operated by scroll. */
 export const FILM_LEDGER = {
   chapter: "03",
-  title: "Three practices",
+  title: "Two practices",
   heading: "What each practice covers",
   /** Sits beside the practice name while its rows rule themselves in. */
   countLabel: "capabilities",
@@ -101,47 +101,32 @@ export const FILM_LEDGER = {
  * already in `products.ts` with a `deckPage`: the regulator list is deck p8, the model
  * list deck p9, weeks-to-hours deck p15. Nothing here is a new claim.
  *
- * It also names one product from each practice, which is the cheapest guard there is
- * against the home page reading as an AI-agent company with two side practices.
+ * It also names a product from both practices, which is the cheapest guard there is
+ * against the home page reading as an AI-agent company with a side practice.
  */
 export const FILM_RUNNING = {
   chapter: "04",
   title: "Eight products",
   heading: "Eight products, built and operating",
-  lede: "Real interfaces from products in use today. Tawthiq generates regulator-ready filings for SOCPA, Tadawul, Q-Disclosure, SEC EDGAR and MCA India. AgentOS orchestrates agents across OpenAI, Gemini and Claude. Cloud Orchestration takes infrastructure onboarding from weeks to hours. All three practices are here.",
+  lede: "Real interfaces from products in use today. AuditSiddhi generates regulator-ready filings for SOCPA, Tadawul, Q-Disclosure, SEC EDGAR and MCA India. NodeSiddhi orchestrates agents across OpenAI, Gemini and Claude. CloudSiddhi takes infrastructure onboarding from weeks to hours. ProSiddhi connects employers with skilled and semi-skilled workers across India.",
   sourceHint: "Every claim here shows the deck page it came from.",
 } as const;
 
 /**
- * Chapter 05 — the failure. Cloud Services & Testing, and the only backwards motion.
- *
- * Heading and lede come from `CATEGORY_BY_SLUG["cloud-testing"]`, same as chapter 01.
- */
-export const FILM_FAILURE = {
-  chapter: "05",
-  title: "Cloud & Testing",
-  states: {
-    running: "Running",
-    failed: "Failed",
-    tracing: "Tracing back",
-    found: "Cause found",
-  },
-} as const;
-
-/**
- * Chapter 06 — the case. The three reasons, each with its receipt.
+ * The case. The reasons, each with its receipt. Not rendered since `Why.tsx` replaced it.
  *
  * Carries no sentence of its own: the eyebrow, heading and lede are `WHY_SECTION` in
  * `routes.ts` and the claims are `REASONS` in `why.ts`, whose `evidence` and `products`
  * had never been rendered anywhere before this chapter existed.
  */
 export const FILM_CASE = {
-  chapter: "06",
   title: "Why us",
 } as const;
 
 /**
- * Chapter 07 — signed. Industries, partners, and the mark.
+ * Chapter 05 — signed. Industries, partners, and the mark. It was 07 until the Cloud
+ * Services & Testing chapter was removed on 2026-10-06; the why-us chapter before it
+ * carries no mark.
  *
  * `closing` was "Intelligence that can be held to account." — the direction's own thesis,
  * and the last thing on the page. It leaned on the word this site must not lean on, and
@@ -149,14 +134,14 @@ export const FILM_CASE = {
  * covers all three in the order the deck puts them and is checkable on the pages above it.
  */
 export const FILM_SIGNED = {
-  chapter: "07",
+  chapter: "05",
   /* The mark, the heading and the list label were "Who we build for", "Who we build
      for" and "Sectors we build for" — the same phrase three times in one screen. The
      mark names the section, the heading asks the question, and the list needs no label
      at all because the four names under it are self-evidently the answer. */
-  title: "Industries & partners",
+  title: "Services & partners",
   heading: "Who we build for",
-  closing: "Built, run, and independently validated.",
+  closing: "Built, run, and governed.",
   cta: { label: "Start a conversation", href: "/contact/" },
   secondary: { label: "See the products", href: "/products/" },
 } as const;
@@ -194,9 +179,9 @@ export const FILM_WHY = {
       body: "Financial filings, agentic workflows and hiring platforms are running today. Ask to see any of them before you commit to anything.",
     },
     {
-      label: "Built, run and tested",
-      value: "all three, in-house",
-      body: "We write the software, run the cloud beneath it, and test both — including the AI itself. Most firms do one of the three.",
+      label: "Built and run",
+      value: "both, in-house",
+      body: "We write the software and run the cloud beneath it, on AWS, Azure or GCP.",
     },
     {
       label: "Nothing ships unsigned",

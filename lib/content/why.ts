@@ -1,5 +1,5 @@
 /**
- * The three reasons the site gives for choosing Azkashine.
+ * The reasons the site gives for choosing Azkashine.
  *
  * Lifted out of `components/sections/WhyChooseUs.tsx` so the copy lives in the content
  * layer with everything else, and so the redesign directions can render the same three
@@ -14,9 +14,11 @@
  *
  * Each is checkable rather than asserted. The previous copy ("We align every solution
  * with your goals and challenges") asserted nothing a reader could verify or a competitor
- * could not equally claim. These point at things Azkashine demonstrably does: eight
- * products in production, AI-specific validation as a service (deck p17), and governance
- * defaults built into the platforms.
+ * could not equally claim. These point at things Azkashine demonstrably does: products in
+ * production, and governance defaults built into the platforms.
+ *
+ * TWO REASONS FROM 2026-10-06. "We build it, run it, and test it" went with the Cloud
+ * Services & Testing practice: its evidence was that practice's capabilities.
  *
  * `evidence` holds supporting points that are themselves traceable — capability names are
  * verbatim from deck p4, and `products` refers to entries in `products.ts` rather than
@@ -42,27 +44,12 @@ export const REASONS: Reason[] = [
     id: "in-production",
     title: "Eight products, already running",
     description:
-      "Eight of our products are live and in use today. Tawthiq generates regulator-ready filings for SOCPA and Tadawul in Saudi Arabia, Q-Disclosure in Qatar, SEC EDGAR, MCA India and ESEF in Europe. AgentOS runs multi-agent workflows across OpenAI, Gemini and Claude. When we say we can build something, there is usually a version of it already running that you can go and look at.",
+      "Eight of our products are live and in use today. AuditSiddhi generates regulator-ready filings for SOCPA and Tadawul in Saudi Arabia, Q-Disclosure in Qatar, SEC EDGAR, MCA India and ESEF in Europe. NodeSiddhi runs multi-agent workflows across OpenAI, Gemini and Claude. When we say we can build something, there is usually a version of it already running that you can go and look at.",
     icon: "/why/business-first.png",
     iconWidth: 486,
     iconHeight: 414,
     evidence: [],
-    products: ["tawthiq", "agentos", "prosiddhi"],
-  },
-  {
-    id: "build-run-test",
-    title: "We build it, run it, and test it",
-    description:
-      "We build the product, run the cloud underneath it on AWS, Azure or GCP, and test both. The testing goes as far as the AI itself — prompt validation, RAG groundedness, model and data-quality checks — alongside the usual functional, performance, security and penetration work.",
-    icon: "/why/ai-powered.png",
-    iconWidth: 485,
-    iconHeight: 390,
-    evidence: [
-      "Custom Software Solutions",
-      "DevOps",
-      "Automation & Quality Engineering",
-      "Managed Services",
-    ],
+    products: ["auditsiddhi", "nodesiddhi", "prosiddhi"],
   },
   {
     id: "governed",

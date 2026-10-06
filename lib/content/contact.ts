@@ -22,7 +22,7 @@ import { SITE } from "./site";
 
 export const CONTACT = {
   metaTitle: "Contact",
-  metaDescription: `Get in touch with Azkashine — Bengaluru, India. Email ${SITE.email} or call ${SITE.phones[0]}.`,
+  metaDescription: `Get in touch with Azkashine — Bengaluru, India. Sales ${SITE.emails[0].address}, support ${SITE.emails[1].address}, or call ${SITE.phones[0]}.`,
   crumb: "Contact",
   title: "Contact us",
   lede: "Tell us what you are trying to solve. If we are not the right fit, we will say so.",
@@ -51,7 +51,7 @@ export const CONTACT = {
 
 /** `mailto:` with the subject filled in, so a reply already knows what it is about. */
 export function productEnquiryHref(name: string): string {
-  return `mailto:${SITE.email}?subject=${encodeURIComponent(
+  return `mailto:${SITE.emails[0].address}?subject=${encodeURIComponent(
     `${name} ${CONTACT.enquiry.subjectSuffix}`,
   )}`;
 }

@@ -12,12 +12,12 @@ export const metadata: Metadata = {
     template: "%s | Azkashine",
   },
   description:
-    "Azkashine builds AI products, digital platforms, and cloud engineering services for telecom, public sector, manufacturing, and energy organisations.",
+    "Azkashine builds AI products and digital platforms for telecom, public sector, manufacturing, and energy organisations.",
   metadataBase: new URL(SITE.url),
   openGraph: {
     title: "Azkashine — AI products, platforms, and engineering services",
     description:
-      "Eight products across AI & automation, digital platforms, and cloud services & testing — built, run, and independently validated.",
+      "Eight products across AI & automation and digital platforms — built, run, and governed.",
     url: SITE.url,
     siteName: SITE.name,
     type: "website",
@@ -36,7 +36,7 @@ export default function RootLayout({
     >
       <body>
         {/* Organization schema. Every field comes from `site.ts` or `taxonomy.ts` —
-            the legal name, the real address, the real numbers, the three practices.
+            the legal name, the real address, the real numbers, the two practices.
             Nothing here is written for search engines that is not already true on the
             page, which is the same rule the copy follows. */}
         <script

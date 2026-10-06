@@ -20,7 +20,7 @@ import { INDUSTRIES } from "@/lib/content/industries";
  */
 
 type MenuId = "what-we-do" | "products" | null;
-type MobileSectionId = "what-we-do" | "products" | "industries";
+type MobileSectionId = "what-we-do" | "products" | "services";
 
 const CAPABILITY_MENU = CATEGORIES.map((c) => ({
   label: c.name,
@@ -162,8 +162,8 @@ export function Navbar() {
               />
             </li>
             <li onMouseEnter={() => canHover() && setMenu(null)}>
-              <TopLink href="/industries/" onClick={closeAll} light={lightChrome}>
-                Industries
+              <TopLink href="/services/" onClick={closeAll} light={lightChrome}>
+                Services
               </TopLink>
             </li>
             <li onMouseEnter={() => canHover() && setMenu(null)}>
@@ -207,7 +207,7 @@ export function Navbar() {
       {/* Desktop dropdown panels */}
       {menu === "what-we-do" && (
         <DesktopPanel onNavigate={() => setMenu(null)}>
-          <div className="grid gap-8 py-8 lg:grid-cols-3">
+          <div className="grid gap-8 py-8 lg:grid-cols-2">
             {CAPABILITY_MENU.map((item) => (
               <Link
                 key={item.href}
@@ -226,7 +226,7 @@ export function Navbar() {
           </div>
           <PanelFooter
             href="/what-we-do/"
-            label="All twelve capabilities"
+            label="All capabilities"
             onNavigate={() => setMenu(null)}
           />
         </DesktopPanel>
@@ -234,7 +234,7 @@ export function Navbar() {
 
       {menu === "products" && (
         <DesktopPanel onNavigate={() => setMenu(null)}>
-          <div className="grid gap-x-10 gap-y-8 py-8 lg:grid-cols-3">
+          <div className="grid gap-x-10 gap-y-8 py-8 lg:grid-cols-2">
             {CATEGORIES.map((cat) => {
               const items = PRODUCTS.filter((p) => p.category === cat.slug);
               if (items.length === 0) return null;
@@ -323,14 +323,14 @@ export function Navbar() {
               </MobileSection>
 
               <MobileSection
-                id="industries"
-                href="/industries/"
-                label="Industries"
-                open={section === "industries"}
+                id="services"
+                href="/services/"
+                label="Services"
+                open={section === "services"}
                 onToggle={toggleSection}
               >
                 {INDUSTRIES.map((i) => (
-                  <MobileLink key={i.slug} href={`/industries/#${i.slug}`}>
+                  <MobileLink key={i.slug} href={`/services/#${i.slug}`}>
                     {i.name}
                   </MobileLink>
                 ))}

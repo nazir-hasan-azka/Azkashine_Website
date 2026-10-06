@@ -8,6 +8,27 @@ export const SITE = {
   legalName: "Azkashine Software and Services Private Limited",
   url: "https://www.azkashine.com",
   email: "contact@azkashine.com",
+  /**
+   * Three addresses, each with one job, so an enquiry lands with the people who can act on
+   * it. Sales and support added 2026-10-06 by Nazir; contact@ stays the general address.
+   */
+  emails: [
+    {
+      label: "Sales",
+      address: "sales@azkashine.com",
+      note: "New projects, product demos and pricing.",
+    },
+    {
+      label: "Support",
+      address: "support@azkashine.com",
+      note: "Help with a product you already use.",
+    },
+    {
+      label: "General",
+      address: "contact@azkashine.com",
+      note: "Partnerships and everything else.",
+    },
+  ],
   landline: "080-25301553",
   phones: ["+91 9492062249", "+91 7026554789", "+966 582836442"],
   address: {
@@ -29,38 +50,19 @@ export const VISION =
 export const MISSION =
   "To be the most reliable partner in addressing the diverse software and service needs of our clients.";
 
-export const VALUES: { title: string; description: string }[] = [
-  {
-    title: "Trusted Team",
-    description:
-      "A team of experts combining deep business knowledge with hands-on technical experience.",
-  },
-  {
-    title: "Excellence",
-    description:
-      "Setting new benchmarks in delivery quality rather than meeting the minimum bar.",
-  },
-  {
-    title: "Integrity",
-    description:
-      "Doing what we said we would do, including when it is inconvenient.",
-  },
-  {
-    title: "Innovation",
-    description:
-      "Applying emerging technology where it creates measurable advantage, not where it looks impressive.",
-  },
-  {
-    title: "Customer Centric",
-    description:
-      "Judging our work by the outcome it produces for the client, not the effort it took us.",
-  },
+/** Values, deck p3. Names only since 2026-10-06, at Nazir's request. */
+export const VALUES: { title: string }[] = [
+  { title: "Trusted team" },
+  { title: "Excellence" },
+  { title: "Integrity" },
+  { title: "Innovation" },
+  { title: "Customer-centric" },
 ];
 
 /** Executive summary bullets, deck p3. */
 export const AT_A_GLANCE: string[] = [
   "Fast-paced, growing IT software and services company",
-  "Specialised in custom software (web, mobile), AI, automation, cloud services, and E2E testing",
+  "Specialised in custom software (web, mobile), AI and automation",
   "Positioned as a premier technology partner",
   "Enabling enterprises through digital transformation",
 ];

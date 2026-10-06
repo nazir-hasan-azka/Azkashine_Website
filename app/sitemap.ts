@@ -32,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...CATEGORIES.map((c) => at(`/what-we-do/${c.slug}/`, 0.7)),
     at("/products/", 0.8),
     ...PRODUCTS.map((p) => at(`/products/${p.slug}/`, 0.7)),
-    at("/industries/", 0.6),
+    at("/services/", 0.6),
     at("/about/", 0.5),
     at("/contact/", 0.5),
   ];

@@ -435,21 +435,6 @@
   --room-sign: rgba(0, 53, 124, 0.055);
 }
 
-/* ── The line above the room ─────────────────────────────────────────────── */
-
-.room-hint {
-  position: relative;
-  z-index: 2;
-  padding: 0 var(--page-gutter) clamp(1.25rem, 2.5vw, 2rem)
-    calc(var(--page-gutter) + var(--spine-step));
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: var(--text-label);
-  font-weight: 500;
-  letter-spacing: 0.19em;
-  text-transform: uppercase;
-  color: var(--color-muted-2);
-}
-
 /* ── When the room stops being a room ────────────────────────────────────────
    Two conditions, one block, the way `film.css` writes the same idea — a comma in a media
    query is an OR, so the tiers cannot drift apart. Reduced motion wants a static

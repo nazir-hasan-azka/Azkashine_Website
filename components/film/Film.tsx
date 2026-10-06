@@ -6,7 +6,6 @@ import { Breath } from "@/components/film/chapters/Breath";
 import { Ledger } from "@/components/film/chapters/Ledger";
 import { Running } from "@/components/film/chapters/Running";
 import { RunningPanels } from "@/components/film/chapters/RunningPanels";
-import { Failure } from "@/components/film/chapters/Failure";
 import { Why } from "@/components/film/chapters/Why";
 import { Signed } from "@/components/film/chapters/Signed";
 
@@ -27,20 +26,21 @@ import { Signed } from "@/components/film/chapters/Signed";
  *   00  Aperture         the hero, unchanged. The line leaves a letterform it measured
  *   01  The request      AI & Automation — the branch, then the gate
  *   02  What we do       the breath. Near-empty, and the reason 35 screens is survivable
- *   03  The ledger       three practices, twelve capabilities, a different move for each
+ *   03  The ledger       two practices, seven capabilities, a different move for each
  *   04  Already running  eight product interfaces, travelling
- *   05  The failure      Cloud Services & Testing — the only backwards motion on the site
- *   06  The case         the three reasons, each showing the receipt for itself
- *   07  Signed           industries, partners, the mark. Not a scene; the film lets go
+ *   --  Why us           the check run. Carries no chapter mark
+ *   05  Signed           industries, partners, the mark. Not a scene; the film lets go
  *
- * THE THREE PRACTICES CARRY EQUAL WEIGHT BY CONSTRUCTION, not by good intentions.
- * Chapter 01 is AI & Automation and chapter 05 is Cloud Services & Testing, each with a
- * move nothing else has. Digital Platforms runs through chapter 03 — where its lanes are
- * one of the three distinct trace behaviours — and chapter 04, where the audit trail
- * that is its argument is applied to the website's own copy. The ledger comes BEFORE the
- * products deliberately: the products split five, two and one across the practices, and
- * the capabilities split four, four and four. Leading with the twelve is the honest
- * order for a company that does three things in equal measure.
+ * CHAPTER 05 WAS "THE FAILURE" until 2026-10-06: Cloud Services & Testing, with the only
+ * backwards motion on the site. The practice was retired, the chapter went with it, and
+ * Signed took its number.
+ *
+ * THE PRACTICES CARRY EQUAL WEIGHT BY CONSTRUCTION, not by good intentions. Chapter 01
+ * is AI & Automation. Digital Platforms runs through chapter 03 — where its lanes are one
+ * of the distinct trace behaviours — and chapter 04, where its products space the run.
+ * The ledger comes BEFORE the products deliberately: the products split five and two
+ * across the practices, and the capabilities split four and four. Leading with the
+ * capabilities is the honest order.
  *
  * Anyone editing this file should read that paragraph again before reordering it.
  */
@@ -59,7 +59,6 @@ export function Film() {
       <Running>
         <RunningPanels />
       </Running>
-      <Failure />
       <Why />
       <Signed />
     </div>

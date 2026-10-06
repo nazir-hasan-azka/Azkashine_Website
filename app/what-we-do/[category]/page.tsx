@@ -66,9 +66,9 @@ export async function generateMetadata({
  * client work band is the one conditional, because printing an empty heading is worse
  * than not printing it.
  *
- * THE THREE ARE NAVIGABLE AS A SET. The band before the close links across to the other
- * two, so a visitor who arrived on Cloud Services & Testing from a search finds the
- * other two practices without going back up to the index.
+ * THE PRACTICES ARE NAVIGABLE AS A SET. The band before the close links across to the
+ * other one, so a visitor who arrived on a practice from a search finds the other
+ * without going back up to the index.
  */
 export default async function CategoryPage({
   params,

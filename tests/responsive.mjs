@@ -90,9 +90,12 @@ for (const [w, h, name] of SIZES) {
        property lookup on :root hands back unresolved. So the two gutter assertions
        below have been measuring the headline against zero: they could only catch type
        running off the viewport, never type off the gutter, which is the thing standard
-       1 names. `.clients-inner` pads with `var(--page-gutter)` directly. */
+       1 names. `.film-signed-inner` pads its right side with `var(--page-gutter)`
+       directly. It was `.clients-inner`'s left padding until 2026-10-06, when the
+       partner logos moved onto the closing chapter's column and that padding grew by
+       the spine step. */
     const gutter = parseFloat(
-      getComputedStyle(document.querySelector(".clients-inner")).paddingLeft,
+      getComputedStyle(document.querySelector(".film-signed-inner")).paddingRight,
     );
 
     const cta = [...document.querySelectorAll("a")].filter((el) =>
@@ -154,11 +157,11 @@ for (const [w, h, name] of SIZES) {
     "copy sits inside the hero",
     `gap ${(m.hero.bottom - m.bottom.bottom).toFixed(0)}px`,
   );
-  // The logo row is the hero's floor, so it has to be reachable without hunting and
-  // every mark has to render — a missing file shows as a zero-height image, not an error.
+  // Every partner mark has to render — a missing file shows as a zero-height image, not
+  // an error. Fifteen since 2026-10-06; this changes with `CLIENT_LOGOS` in `clients.ts`.
   log(
-    m.clients !== null && m.logos.length === 5,
-    "five client logos render",
+    m.clients !== null && m.logos.length === 15,
+    "fifteen partner logos render",
     `${m.logos.length} found`,
   );
   log(
@@ -175,7 +178,7 @@ for (const [w, h, name] of SIZES) {
   /* The stacking deck that used to be measured here is gone: `/` is the film now and
      the three practices are chapter 03, which is a pinned scene rather than a card
      stack. What replaced this check is bigger than it was — the whole-site sweep
-     below, which walks every one of the seventeen routes at every one of these
+     below, which walks every one of the sixteen routes at every one of these
      sizes. The deck's own lesson survives in it: measure TEXT INK, not element
      boxes, because a grid child will not shrink under its longest word and paints
      outside a box that never changes. */
@@ -193,7 +196,7 @@ log(errors.length === 0, "no page errors across the home sweep", errors.slice(0,
 /* ─── Every route, every size ─────────────────────────────────────────────────
 
    The checks above are about the hero and only the hero. This is standard 1 for the
-   rest of the site: seventeen routes across sixteen viewports, 320x568 to 2560x1440.
+   rest of the site: sixteen routes across sixteen viewports, 320x568 to 2560x1440.
 
    Until 2026-09-07 this file opened `/` and nothing else, so it reported green having
    never looked at a single interior page. That is the third time that class of bug has
@@ -218,23 +221,22 @@ const ROUTES = [
   "/what-we-do/",
   "/what-we-do/ai-automation/",
   "/what-we-do/digital-platforms/",
-  "/what-we-do/cloud-testing/",
   "/products/",
-  "/products/savant-ai/",
-  "/products/tawthiq/",
-  "/products/agentos/",
-  "/products/agent-siddhi/",
-  "/products/smart-ai-assistant/",
-  "/products/ethics-intelligence/",
-  "/products/cloud-orchestration/",
+  "/products/nodesiddhi/",
+  "/products/smartsiddhi/",
+  "/products/connectsiddhi/",
+  "/products/agentsiddhi/",
+  "/products/auditsiddhi/",
+  "/products/cloudsiddhi/",
   "/products/prosiddhi/",
-  "/industries/",
+  "/products/shieldsiddhi/",
+  "/services/",
   "/about/",
   "/contact/",
 ];
 
-if (ROUTES.length !== 17) {
-  log(false, `ROUTES holds ${ROUTES.length}, expected 17`);
+if (ROUTES.length !== 16) {
+  log(false, `ROUTES holds ${ROUTES.length}, expected 16`);
 }
 
 console.log("\n\n  ── every route, every size ──────────────────────────────────");

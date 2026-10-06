@@ -6,7 +6,7 @@
  * message was signed off; only what it sits on has changed.
  */
 export const HOME_HERO = {
-  eyebrow: "AI & automation · Digital platforms · Cloud services & testing",
+  eyebrow: "AI & automation · Digital platforms",
   /** Set as two mask lines. Sized so each holds on one line from lg up. */
   headingLine1: "Transform your business with",
   headingAccent: "AI-powered",
@@ -20,19 +20,19 @@ export const HOME_HERO = {
  * "What we do" — the section head only.
  *
  * Three strings, because everything else in that section is already written: the practice
- * names, taglines, intros and all twelve capability lines come from `taxonomy.ts`, deck
+ * names, taglines, intros and all eight capability lines come from `taxonomy.ts`, deck
  * p4 verbatim. Nothing here needs the client to clear it.
  *
- * The lede counts things rather than describing a posture — three practices, twelve
- * capabilities (4 + 4 + 4 in `taxonomy.ts`) and eight products (`PRODUCTS`). Both figures
- * were checked against the tree, not assumed, and the section prints all twelve
+ * The lede counts things rather than describing a posture — two practices, seven
+ * capabilities (3 + 4 in `taxonomy.ts`) and eight products (`PRODUCTS`). Both figures
+ * were checked against the tree, not assumed, and the section prints all seven
  * capabilities underneath, so a reader can verify the sentence on the page it sits on.
  * A competitor can print "we start from the outcome"; they cannot print this.
  */
 export const HOME_WHAT_WE_DO = {
   eyebrow: "Practices",
   heading: "What we do",
-  lede: "Three practices, twelve capabilities, and the eight products built on them.",
+  lede: "Two practices, seven capabilities, and the eight products built on them.",
   /** Suffix after the practice name: "AI & Automation in detail →". */
   linkSuffix: "in detail",
 } as const;

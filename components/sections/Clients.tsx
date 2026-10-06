@@ -1,21 +1,22 @@
 import Image from "next/image";
-import { CLIENT_LOGOS, CLIENTS_LABEL } from "@/lib/content/clients";
+import { CLIENT_LOGOS, CLIENTS_LABEL, logoWidth } from "@/lib/content/clients";
 
 /**
- * The logo row, directly under the hero.
+ * The partner logos, as a wall of cards.
  *
- * This is the page's floor for the hero and its first piece of evidence — the one thing
- * a visitor can check that is not Azkashine describing itself. It replaced a band that
- * listed the three practices, which the very next section names again in full.
+ * A CARD PER PARTNER, from 2026-10-07, chosen by Nazir over moving rows and a grouping
+ * by region, all three built and compared in place. A plain grid of fifteen logos read
+ * as a list; a card gives each mark its own ground, and the country under it gives each
+ * one a fact. White cards, the site's flat `--shadow-hard`, a lift on hover.
  *
- * DELIBERATELY QUIET. The hero above it is a prismatic headline on white; a row of logos
- * in five different brand colours immediately beneath would fight it, and these five
- * carry red, orange, purple, green and blue between them. Silhouetted, they read as one
- * row rather than five competing marks, and they hand the colour back to the hero. Full
- * colour returns on hover, which is where a visitor actually looking at a logo will be.
+ * Five across from 1024px, three from 640px, two on a phone — where fifteen leaves one
+ * over, so the last card spans the row rather than sitting alone.
  *
- * The heights come from `clients.ts` and are per-logo on purpose — see the note there
- * about why one shared height makes this row look broken.
+ * FULL BRAND COLOUR, on the decision of 2026-09-06: these are real marks, and dimming
+ * them undersells them. Each logo's width comes from its shape — see `clients.ts`.
+ *
+ * `.clients-row` is kept as the grid's name because `tests/responsive.mjs` counts the
+ * logos through it.
  */
 export function Clients() {
   return (
@@ -27,25 +28,17 @@ export function Clients() {
 
         <ul className="clients-row">
           {CLIENT_LOGOS.map((logo) => (
-            <li key={logo.file}>
-              <Image
-                src={`/partners/${logo.file}.png`}
-                alt={logo.name}
-                width={250}
-                height={200}
-                /*
-                 * Fluid, not stepped. Each logo reaches its full measured height at
-                 * about 1600px and shrinks proportionally below that, so all five scale
-                 * by the same factor and the optical balance holds at every width. A
-                 * breakpoint would hold them still and then jump.
-                 */
-                style={{
-                  height: `clamp(${Math.round(logo.height * 0.5)}px, ${(
-                    logo.height / 16
-                  ).toFixed(2)}vw, ${logo.height}px)`,
-                  width: "auto",
-                }}
-              />
+            <li key={logo.file} className="client-card">
+              <div className="client-logo">
+                <Image
+                  src={`/partners/${logo.file}`}
+                  alt={logo.name}
+                  width={logo.width}
+                  height={logo.height}
+                  style={{ width: `${logoWidth(logo, 52)}px`, maxWidth: "100%", height: "auto" }}
+                />
+              </div>
+              <span className="client-country">{logo.country ?? ""}</span>
             </li>
           ))}
         </ul>

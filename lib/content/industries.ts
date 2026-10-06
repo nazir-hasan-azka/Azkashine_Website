@@ -29,30 +29,24 @@ export const INDUSTRIES: Industry[] = [
     name: "Telecom",
     tagline: "AI-Ops for networks that cannot wait for a ticket queue.",
     intro:
-      "Telecom operators carry the most operational complexity and the least tolerance for downtime. Our work here centres on AI-based network optimisation, wireless validation for 5G and 6G, and automating the provisioning cycles that slow customer onboarding.",
-    capabilities: [
-      "AI Based Network Optimization",
-      "Wireless Testing",
-      "DevOps",
-      "Managed Services",
-    ],
-    products: ["cloud-orchestration", "agentos"],
-    primaryCategory: "cloud-testing",
+      "Telecom operators carry the most operational complexity and the least tolerance for downtime. Our work here centres on AI-based network optimisation and on automating the provisioning cycles that slow customer onboarding.",
+    capabilities: ["AI-based network optimisation", "AI-driven automation"],
+    products: ["cloudsiddhi", "nodesiddhi"],
+    primaryCategory: "ai-automation",
   },
   {
     slug: "public-sector",
     image: "public-sector",
-    name: "Public Sector",
+    name: "Public sector",
     tagline: "Governed automation for organisations that answer to the public.",
     intro:
       "Public sector work carries obligations that commercial projects do not — auditability, data residency, procurement rigour, and the requirement that a decision can be explained after the fact. Our platforms are built with approval checkpoints, audit trails, and role-based access as defaults rather than additions.",
     capabilities: [
-      "AI-Driven Automation",
-      "AI Enabled Platforms",
-      "Custom Software Solutions",
-      "Managed Services",
+      "AI-driven automation",
+      "AI-enabled platforms",
+      "Custom software solutions",
     ],
-    products: ["ethics-intelligence", "tawthiq", "agent-siddhi"],
+    products: ["shieldsiddhi", "auditsiddhi", "agentsiddhi"],
     primaryCategory: "digital-platforms",
   },
   {
@@ -63,12 +57,10 @@ export const INDUSTRIES: Industry[] = [
     intro:
       "Manufacturing generates more data than most sectors and uses less of it. Our work spans operational analytics — OEE, defect rates, yield, throughput, downtime — alongside the platforms that manage site access and frontline hiring.",
     capabilities: [
-      "Advanced Analytics",
-      "Data Governance & ETL",
-      "Smart Applications",
-      "Automation & Quality Engineering",
+      "Data governance & ETL",
+      "Smart applications",
     ],
-    products: ["savant-ai", "prosiddhi"],
+    products: ["prosiddhi"],
     primaryCategory: "ai-automation",
   },
   {
@@ -79,13 +71,11 @@ export const INDUSTRIES: Industry[] = [
     intro:
       "Energy operations combine distributed physical assets with strict compliance obligations. Our work focuses on the data engineering, governance, and cloud infrastructure automation that make those operations legible and repeatable.",
     capabilities: [
-      "Data Governance & ETL",
-      "Advanced Analytics",
-      "DevOps",
-      "AI-Integrated Ecosystem",
+      "Data governance & ETL",
+      "AI-integrated ecosystem",
     ],
-    products: ["agentos", "cloud-orchestration", "savant-ai"],
-    primaryCategory: "cloud-testing",
+    products: ["nodesiddhi", "cloudsiddhi"],
+    primaryCategory: "digital-platforms",
   },
 ];
 

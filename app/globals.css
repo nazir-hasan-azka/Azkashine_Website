@@ -665,71 +665,95 @@ button:hover > .nudge {
 }
 
 /* ─── Clients ────────────────────────────────────────────────────────────────
-   The logo row under the hero. Quiet on purpose: the hero above is a prismatic
-   headline, and five logos in five brand colours would compete with it. */
+   The partner logos, inside the closing chapter of the home page.
+
+   PART OF THE CHAPTER, NOT A STRIP. This began as its own white band with a rule
+   above it, directly under the hero. It now sits in the closing chapter between the
+   sectors and the closing line, so it takes that chapter's ground and column: the
+   same left edge as everything else in it (gutter plus the spine step), and a caption
+   in the same register as "What each practice covers". A centred band in a
+   left-aligned chapter read as a different section pasted in. */
 
 .clients {
-  border-top: 1px solid rgba(15, 17, 37, 0.08);
-  background: #fff;
+  background: transparent;
 }
 
 .clients-inner {
-  padding: 2.75rem var(--page-gutter) 3rem;
+  padding: clamp(2.5rem, 6vh, 4rem) var(--page-gutter) 0
+    calc(var(--page-gutter) + var(--spine-step));
 }
 
 .clients-label {
-  text-align: center;
   font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 10.5px;
+  font-size: var(--text-label);
   font-weight: 500;
   letter-spacing: 0.19em;
+  line-height: 1.7;
   text-transform: uppercase;
   color: var(--color-muted);
 }
 
 .clients-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  /* Centred. Five marks do not fill a 1400px column, and left-aligned they left a wide
-     empty right side that read as a mistake rather than as space. */
-  justify-content: center;
-  /* Wide gaps, because these marks have very little breathing room of their own and a
-     tight row reads as a strip of stickers. */
-  gap: 1.9rem clamp(2.5rem, 5.5vw, 5rem);
-  margin-top: 2.1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
-.clients-row img {
-  /* Full brand colour. A silhouette read as calmer against the hero, but it also read
-     as hedging — these are real marks and dimming them undersells them. */
+@media (min-width: 640px) {
+  .clients-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .clients-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* Fifteen do not divide by two: on a phone the last card spans the row. */
+@media (max-width: 639px) {
+  .client-card:last-child {
+    grid-column: span 2;
+  }
+}
+
+.client-card {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  height: clamp(8rem, 12vw, 10rem);
+  padding: 0.9rem 1rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: white;
+  box-shadow: var(--shadow-hard);
   transition: transform var(--dur-base) var(--ease-out-soft);
 }
 
-.clients-row li:hover img {
-  transform: translateY(-2px);
+.client-card:hover {
+  transform: translateY(-4px);
 }
 
-@media (max-width: 767px) {
-  .clients-inner {
-    padding-top: 2rem;
-    padding-bottom: 2.25rem;
-  }
+.client-logo {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
 
-  .clients-row {
-    gap: 1.4rem 2.25rem;
-    margin-top: 1.4rem;
-  }
-
-  /* The clamp already scales them; this only stops a wide mark crowding the gutter
-     when five wrap to two rows. */
-  .clients-row img {
-    max-width: 40vw;
-  }
+.client-country {
+  min-height: 1rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .clients-row li:hover img {
+  .client-card:hover {
     transform: none;
   }
 }
@@ -1633,7 +1657,10 @@ body:has([data-hdeck]) > div > footer {
    what stops a display size reading as a body face that simply got bigger. */
 .rh-title {
   margin-top: 1rem;
-  font-size: var(--text-display-sm);
+  /* Capped by the window below ~352px: "ConnectSiddhi" is one unbreakable word, and at
+     the scale's 44px floor it ran 2px past a 320px screen. Above 352px this is the
+     display step unchanged. */
+  font-size: min(var(--text-display-sm), 12.5vw);
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 0.98;
@@ -1936,13 +1963,23 @@ body:has([data-hdeck]) > div > footer {
 .cta {
   position: relative;
   z-index: 2;
-  background: var(--color-blue-900);
-  color: #ffffff;
+  background: var(--color-background);
 }
 
 .cta-inner {
-  padding: clamp(4rem, 9vw, 7rem) var(--page-gutter) clamp(4rem, 9vw, 7rem)
+  padding: clamp(3rem, 7vw, 5.5rem) var(--page-gutter) clamp(3.5rem, 8vw, 6rem)
     calc(var(--page-gutter) + var(--spine-step));
+}
+
+/* A tinted panel on the paper — the same pale blue as the home page's practice cards,
+   and the same printed-sticker shadow. */
+.cta-panel {
+  display: grid;
+  gap: 2rem;
+  padding: clamp(2rem, 5vw, 3.5rem);
+  border-radius: 24px;
+  background: var(--color-tint-blue);
+  box-shadow: var(--shadow-hard);
 }
 
 .cta-heading {
@@ -1952,14 +1989,15 @@ body:has([data-hdeck]) > div > footer {
   letter-spacing: -0.028em;
   line-height: 1.05;
   text-wrap: balance;
+  color: var(--color-ink);
 }
 
 .cta-lede {
-  margin-top: 1.25rem;
-  max-width: 54ch;
+  margin-top: 1.1rem;
+  max-width: 52ch;
   font-size: var(--text-body-lg);
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.76);
+  color: var(--color-muted);
 }
 
 .cta-actions {
@@ -1967,7 +2005,31 @@ body:has([data-hdeck]) > div > footer {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.9rem;
-  margin-top: 2.25rem;
+}
+
+/* From 1024px the actions take the right-hand column, stacked and aligned to its
+   foot, so the panel is full across its width instead of half empty. */
+@media (min-width: 1024px) {
+  .cta-panel {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 3rem;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+    justify-self: end;
+    width: min(100%, 20rem);
+  }
+
+  .cta-actions .cta-btn {
+    justify-content: center;
+  }
+
+  .cta-actions .cta-mail {
+    justify-content: center;
+  }
 }
 
 .cta-btn {
@@ -1991,12 +2053,12 @@ body:has([data-hdeck]) > div > footer {
 }
 
 .cta-btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  color: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  color: var(--color-ink);
 }
 
 .cta-btn-ghost:hover {
-  border-color: #ffffff;
+  border-color: var(--color-ink);
 }
 
 /* A standalone action in a row of buttons, so it is held to the same 24x24 pointer
@@ -2009,13 +2071,13 @@ body:has([data-hdeck]) > div > footer {
   min-height: 2.75rem;
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: var(--text-body-sm);
-  color: rgba(255, 255, 255, 0.76);
+  color: var(--color-blue-700);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
 .cta-mail:hover {
-  color: #ffffff;
+  color: var(--color-blue-900);
 }
 
 /* ── Narrow screens, after the rules they override ──────────────────────── */

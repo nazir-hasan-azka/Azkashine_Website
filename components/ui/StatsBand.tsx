@@ -27,7 +27,7 @@ export function StatsBand({
       }
     >
       <Container>
-        {/* Column count follows the number of figures — AgentOS and Cloud Orchestration
+        {/* Column count follows the number of figures — NodeSiddhi and CloudSiddhi
             carry a single real metric each, and one value stranded in a four-column grid
             reads as a rendering fault. */}
         <dl

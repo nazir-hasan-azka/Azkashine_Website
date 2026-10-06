@@ -1,19 +1,16 @@
 /**
- * Route-level copy — the headings, ledes and section labels for the seventeen pages.
+ * Route-level copy — the headings, ledes and section labels for every page.
  *
  * All of it was hard-coded inside the previous app's route files, which meant
  * `standards.mjs` had never read a word of it. It lives here now, with the rest.
  *
- * CORRECTED ON THE WAY ACROSS. The old copy said "nine products" in five places and
- * listed visitor management among them. Community Connect was removed on 2026-09-06, so
- * every count here is EIGHT and the capability lists no longer name it. Counts are
- * derived from `PRODUCTS` where a sentence can carry a variable, so this cannot drift
- * again — a number written as a word in a sentence is a number nobody updates.
+ * Counts are derived from `PRODUCTS` where a sentence can carry a variable, so they cannot
+ * drift — a number written as a word in a sentence is a number nobody updates.
  *
- * THE THREE PRACTICES READ EQUAL. The products split 5 / 2 / 1 across them, which is a
- * fact and not something to hide, but no sentence here presents AI as the main event and
- * the other two as the remainder. Where a count would do that, the sentence counts
- * capabilities instead — those are four, four and four.
+ * TWO PRACTICES FROM 2026-10-06, when Cloud Services & Testing was retired. The products
+ * split 5 / 2 between them, which is a fact and not something to hide, but no sentence
+ * here presents AI as the main event and the other as the remainder. Where a count would
+ * do that, the sentence counts capabilities instead — those are four and four.
  */
 
 import { PRODUCTS } from "./products";
@@ -37,10 +34,10 @@ const productCount = COUNT_WORDS[PRODUCTS.length] ?? String(PRODUCTS.length);
 export const WHAT_WE_DO_PAGE = {
   metaTitle: "What we do",
   metaDescription:
-    "Twelve capabilities across three practices: AI & Automation, Digital Platforms, and Cloud Services & Testing.",
+    "Seven capabilities across two practices: AI & Automation and Digital Platforms.",
   crumb: "What we do",
   title: "What we do",
-  lede: "Three practices, four capabilities each — and the products built on top of them.",
+  lede: "Two practices, seven capabilities — and the products built on top of them.",
   /** Prefix for the link into a practice. The practice name completes it. */
   moreOn: "More on",
   productsLabel: "Products",
@@ -54,19 +51,21 @@ export const CATEGORY_PAGE = {
   productsHeading: "Products in this practice",
   workHeading: "Platforms we have built",
   workLede: "Delivered client platforms, not products in our own line.",
-  siblingsHeading: "The other two practices",
+  siblingsHeading: "The other practice",
 } as const;
 
 export const PRODUCTS_PAGE = {
   metaTitle: "Products",
   metaDescription:
-    "Eight platforms built and operated by Azkashine — AI analytics, financial compliance and XBRL automation, agentic AI, whistleblowing and ethics, cloud orchestration, and blue-collar hiring.",
+    "Eight products built and operated by Azkashine — governed AI agents, conversational AI on WhatsApp and the web, audit intelligence and XBRL automation, cloud orchestration, whistleblowing, and frontline hiring.",
   crumb: "Products",
   title: "Products",
   lede: `${
     productCount.charAt(0).toUpperCase() + productCount.slice(1)
   } platforms, grouped by the practice they belong to. Each one is built, run, and supported by Azkashine.`,
   learnMore: "Learn more",
+  /** The coming-soon list under each practice's live products. */
+  comingSoon: "Coming soon",
   /** The audit interaction. Hovering or focusing a product reveals where it came from. */
   sourceLabel: "Source",
 } as const;
@@ -86,12 +85,17 @@ export const PRODUCT_PAGE = {
   sourceLabel: "Source",
 } as const;
 
-export const INDUSTRIES_PAGE = {
-  metaTitle: "Industries",
+/**
+ * The page at `/services/`. It was `/industries/` until 2026-10-06, when Nazir renamed it
+ * "Services" everywhere; the content — the four sectors — is unchanged, and the old
+ * address forwards here from `public/industries/`.
+ */
+export const SERVICES_PAGE = {
+  metaTitle: "Services",
   metaDescription:
     "Telecom, public sector, manufacturing, and energy — the sectors Azkashine builds and operates software for.",
-  crumb: "Industries",
-  title: "Industries",
+  crumb: "Services",
+  title: "Services",
   lede: "Four sectors where operational complexity is high and the cost of getting software wrong is measured in more than money.",
   capabilitiesHeading: "Capabilities applied",
   practiceLink: "Explore the practice",
@@ -99,15 +103,15 @@ export const INDUSTRIES_PAGE = {
 } as const;
 
 /**
- * The three reasons, which `why.ts` has carried since the start and which no page has
+ * The reasons, which `why.ts` has carried since the start and which no page has
  * ever rendered the evidence of. `REASONS[].evidence` and `REASONS[].products` are the
  * proof behind each claim; showing them is what makes the section checkable rather than
  * a set of assertions.
  */
 export const WHY_SECTION = {
   eyebrow: "Why us",
-  heading: "Three things you can check",
-  lede: "Rather than three things we believe about ourselves.",
+  heading: "Two things you can check",
+  lede: "Rather than two things we believe about ourselves.",
   evidenceLabel: "Evidenced by",
   productsLabel: "Proved by",
 } as const;

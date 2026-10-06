@@ -1,4 +1,4 @@
-import { AppFrame, BarChart, Kpi, Pill, Rail, Row } from "./AppFrame";
+import { AppFrame, Kpi, Pill, Row } from "./AppFrame";
 
 /**
  * One representative interface per product, built in markup. See AppFrame for why these
@@ -6,55 +6,16 @@ import { AppFrame, BarChart, Kpi, Pill, Rail, Row } from "./AppFrame";
  * already claims — nothing here asserts a capability the deck does not.
  */
 
-export function SavantVisual() {
-  return (
-    <AppFrame title="Savant AI — Retail dataset">
-      <div className="flex gap-4">
-        <Rail items={["Upload", "Dashboard", "Ask", "Forecast", "Export"]} active={1} />
-        <div className="min-w-0 flex-1">
-          {/* Conversational query — the product's defining interaction */}
-          <div className="flex items-center gap-2 rounded-lg border border-border-strong bg-surface-2 px-3 py-2">
-            <span className="text-brand" aria-hidden="true">
-              ✦
-            </span>
-            <span className="min-w-0 truncate text-xs text-ink">
-              Which category is losing margin this quarter?
-            </span>
-          </div>
-          <p className="mt-2 text-[11px] text-muted">
-            Domain detected: <span className="font-semibold text-ink">Retail</span> — no
-            configuration required
-          </p>
-
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <Kpi label="Revenue" value="₹4.2Cr" delta="▲ 12%" />
-            <Kpi label="Avg. order" value="₹1,840" delta="▲ 3%" />
-            <Kpi label="Margin" value="21.4%" delta="▼ 1.8%" />
-          </div>
-
-          <div className="mt-3 rounded-xl border border-border p-3">
-            <p className="text-[11px] font-semibold text-muted">Units sold by category</p>
-            <BarChart
-              className="mt-2"
-              bars={[42, 58, 71, 55, 84, 62, 48, 76, 91, 68, 54, 80]}
-            />
-          </div>
-        </div>
-      </div>
-    </AppFrame>
-  );
-}
-
-export function TawthiqVisual() {
+export function AuditSiddhiVisual() {
   const rules = [
     ["Auditor opinion present", "pass"],
     ["Signatures & stamps detected", "pass"],
-    ["Assets = Liabilities + Equity", "pass"],
+    ["Assets = liabilities + equity", "pass"],
     ["Notes cross-reference", "warn"],
     ["Reporting currency", "pass"],
   ] as const;
   return (
-    <AppFrame title="Tawthiq — FY2026 filing validation">
+    <AppFrame title="AuditSiddhi — FY2026 filing validation">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[11px] font-medium text-muted">Compliance score</p>
@@ -88,16 +49,16 @@ export function TawthiqVisual() {
   );
 }
 
-export function AgentOSVisual() {
+export function NodeSiddhiVisual() {
   const agents = [
-    ["Format Detection", "done"],
-    ["Schema Intelligence", "done"],
+    ["Format detection", "done"],
+    ["Schema intelligence", "done"],
     ["Validation", "running"],
-    ["Human Governance", "waiting"],
+    ["Human governance", "waiting"],
     ["Orchestration", "idle"],
   ] as const;
   return (
-    <AppFrame title="AgentOS — pipeline run #2703">
+    <AppFrame title="NodeSiddhi — pipeline run #2703">
       <ul className="space-y-2">
         {agents.map(([name, state]) => (
           <li
@@ -131,7 +92,7 @@ export function AgentOSVisual() {
 
 export function AgentSiddhiVisual() {
   return (
-    <AppFrame title="Agent Siddhi — enterprise discovery">
+    <AppFrame title="AgentSiddhi — enterprise discovery">
       <div className="grid grid-cols-3 gap-2">
         {["ERP", "CRM", "Workflow", "Policy store", "Data lake", "Service desk"].map(
           (s, i) => (
@@ -169,9 +130,9 @@ export function AgentSiddhiVisual() {
   );
 }
 
-export function SmartAssistantVisual() {
+export function SmartSiddhiVisual() {
   return (
-    <AppFrame title="Smart AI Assistant">
+    <AppFrame title="SmartSiddhi">
       <div className="space-y-2.5">
         <Bubble side="user">Can you check the status of invoice INV-8842?</Bubble>
         <Bubble side="bot">
@@ -188,6 +149,55 @@ export function SmartAssistantVisual() {
         <Pill tone="brand">CRM retrieval</Pill>
         <Pill tone="brand">Document processing</Pill>
         <Pill tone="pass">Moderation active</Pill>
+      </div>
+    </AppFrame>
+  );
+}
+
+/**
+ * ConnectSiddhi on WhatsApp: an Arabic question by voice note, an Arabic answer, then a
+ * low-confidence handover to a live agent with an auto-created ticket. Every element is
+ * a feature from the product deck (bilingual, voice, confidence-based escalation,
+ * auto-ticketing) — nothing here claims more.
+ */
+export function ConnectSiddhiVisual() {
+  return (
+    <AppFrame title="ConnectSiddhi — WhatsApp">
+      <div className="space-y-2.5">
+        <div className="flex justify-end">
+          <p className="rounded-2xl rounded-br-sm bg-brand/15 px-3 py-2 text-xs text-ink">
+            <span aria-hidden="true">🎤</span> Voice note · 0:07
+          </p>
+        </div>
+        <p className="text-right text-[11px] text-muted">
+          Transcribed · Arabic detected
+        </p>
+        <div className="flex justify-end">
+          <p
+            lang="ar"
+            dir="rtl"
+            className="max-w-[85%] rounded-2xl rounded-br-sm bg-brand/15 px-3 py-2 text-xs text-ink"
+          >
+            ما هي رسوم البرنامج؟
+          </p>
+        </div>
+        <div className="flex justify-start">
+          <p
+            lang="ar"
+            dir="rtl"
+            className="max-w-[85%] rounded-2xl rounded-bl-sm border border-border bg-surface-2 px-3 py-2 text-xs text-ink"
+          >
+            يمكنني مساعدتك في الرسوم والقبول. هل تريد التحدث مع أحد موظفينا؟
+          </p>
+        </div>
+        <div className="rounded-lg border border-border-strong bg-surface-2 px-3 py-2 text-[11px] text-ink">
+          Confidence 0.42 — handed to an agent with the full conversation
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        <Pill tone="brand">WhatsApp Business API</Pill>
+        <Pill tone="brand">Arabic + English</Pill>
+        <Pill tone="pass">Ticket FD-2291 · Finance</Pill>
       </div>
     </AppFrame>
   );
@@ -215,9 +225,9 @@ function Bubble({
   );
 }
 
-export function EthicsVisual() {
+export function ShieldSiddhiVisual() {
   return (
-    <AppFrame title="Ethics Intelligence — case AZ-1187">
+    <AppFrame title="ShieldSiddhi — case AZ-1187">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-medium text-muted">Reporter</p>
@@ -252,7 +262,7 @@ export function EthicsVisual() {
   );
 }
 
-export function CloudOrchestrationVisual() {
+export function CloudSiddhiVisual() {
   const stages = [
     ["Requirements", "done"],
     ["Architecture", "done"],
@@ -261,7 +271,7 @@ export function CloudOrchestrationVisual() {
     ["Deploy", "idle"],
   ] as const;
   return (
-    <AppFrame title="Cloud Orchestration — work order WO-3391">
+    <AppFrame title="CloudSiddhi — work order WO-3391">
       <ol className="space-y-2">
         {stages.map(([name, state], i) => (
           <li key={name} className="flex items-center gap-3">
@@ -294,10 +304,10 @@ export function CloudOrchestrationVisual() {
 
 export function ProSiddhiVisual() {
   const rows = [
-    ["Machine Operator", "Pune", "26 applicants"],
+    ["Machine operator", "Pune", "26 applicants"],
     ["Electrician", "Chennai", "18 applicants"],
-    ["Warehouse Associate", "Bhiwandi", "41 applicants"],
-    ["Delivery Executive", "Bengaluru", "63 applicants"],
+    ["Warehouse associate", "Bhiwandi", "41 applicants"],
+    ["Delivery executive", "Bengaluru", "63 applicants"],
   ];
   return (
     <AppFrame title="ProSiddhi — employer dashboard">

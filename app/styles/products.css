@@ -1,5 +1,5 @@
 /* ─── The product routes ─────────────────────────────────────────────────────
-   `/products/` and the eight `/products/<slug>/` pages.
+   `/products/` and the `/products/<slug>/` pages.
 
    Everything structural these two routes stand on — the bands, the section heads,
    the ghost word, `.rows`, `.pills`, `.pgrid`, `.pcard`, `.cta-btn` — is
@@ -14,16 +14,12 @@
 
 /* ── The practice grids on the index ─────────────────────────────────────── */
 
-/* The three practices hold five, two and one product. `.pgrid` fills with
-   `auto-fill`, so the short ones leave empty tracks behind — and because the grid
-   draws its rules as a 1px gap over a filled background, an empty track paints as
-   a solid slab of border colour. A one-product practice would read as a lonely
-   card in a broken box, which is exactly the afterthought reading the three
-   practices must not have.
+/* The practices hold five and two products. `.pgrid` fills with `auto-fill`, so
+   the short one leaves empty tracks behind, and a practice with fewer cards would
+   read as an afterthought in a box built for more.
 
-   Capping the BOX to the cards it actually holds is what fixes it: the single
-   card in Cloud Services & Testing is then the same card at the same width as any
-   of the five above it. 26rem is one track of the wide grid; the cap stops
+   Capping the BOX to the cards it actually holds is what fixes it: a two-product
+   practice shows two cards at the same width as the five in the other. 26rem is one track of the wide grid; the cap stops
    binding below it, so narrow screens keep the one-column stack. */
 .pgrid[data-count="1"] {
   max-width: 26rem;
@@ -35,6 +31,34 @@
 
 .pp-more {
   margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+/* ── Coming soon ─────────────────────────────────────────────────────────
+   A second grid under the live one, the same cards with no link and a tag. The
+   quieter ground says "not yet" before the tag is read. */
+.pp-soon {
+  margin-top: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.pp-soon .pcard {
+  background: var(--color-surface-2);
+}
+
+.pp-soon .pcard-name {
+  color: var(--color-muted);
+}
+
+.pp-soon-tag {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label-sm);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-blue-700);
+  white-space: nowrap;
 }
 
 /* WCAG 2.2 SC 2.5.8, which `tests/links.mjs` checks at three widths. The inline

@@ -44,14 +44,21 @@ export function Footer() {
                 </a>
               ))}
             </p>
-            <a
-              href={`mailto:${SITE.email}`}
-              /* py-1 takes this to 28px tall. A standalone link has to clear 24x24 (WCAG 2.5.8);
-                 the inline exception only covers links sitting inside a sentence. */
-              className="mt-1 inline-block py-1 text-sm text-ink underline underline-offset-4"
-            >
-              {SITE.email}
-            </a>
+            {/* py-1 takes each link to 28px tall. A standalone link has to clear 24x24
+                (WCAG 2.5.8); the inline exception only covers links inside a sentence. */}
+            <ul className="mt-2 space-y-0.5 text-sm">
+              {SITE.emails.map((e) => (
+                <li key={e.address} className="flex flex-wrap items-baseline gap-x-2">
+                  <span className="w-16 shrink-0 text-muted">{e.label}</span>
+                  <a
+                    href={`mailto:${e.address}`}
+                    className="inline-block py-1 text-ink underline underline-offset-4"
+                  >
+                    {e.address}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <FooterColumn
@@ -91,10 +98,10 @@ export function Footer() {
             title="Company"
             links={[
               { label: "About", href: "/about/" },
-              { label: "Industries", href: "/industries/" },
+              { label: "Services", href: "/services/" },
               ...INDUSTRIES.map((i) => ({
                 label: i.name,
-                href: `/industries/#${i.slug}`,
+                href: `/services/#${i.slug}`,
               })),
               { label: "Contact", href: "/contact/" },
             ]}

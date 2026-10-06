@@ -13,10 +13,8 @@
  *
  *   - The `about-meeting` image is deliberately architecture, not a person. What belongs
  *     in that slot is a portrait of the Chairman, once one is supplied.
- *   - `VALUES` titles are Title Case ("Trusted Team", "Customer Centric") against the
- *     site's sentence-case rule. They are verbatim from deck p3, so they are treated as
- *     names rather than as headings. Worth a word from Nazir; not worth silently editing
- *     a deck.
+ *   - `VALUES` titles were Title Case in deck p3 ("Trusted Team", "Customer Centric").
+ *     They are sentence case since the casing pass of 2026-10-06, at Nazir's request.
  */
 
 import { SITE } from "./site";
@@ -24,19 +22,17 @@ import { SITE } from "./site";
 export const ABOUT = {
   metaTitle: "About",
   metaDescription:
-    "Azkashine Software and Services Private Limited — a Bengaluru-based IT software and services company building AI products, digital platforms, and cloud engineering services.",
+    "Azkashine Software and Services Private Limited — a Bengaluru-based software and services company: AI & Automation, Digital Platforms, custom software, cloud infra engineering (DevOps), managed services and software quality validation.",
   crumb: "About",
   title: "About Azkashine",
-  /* The old metadata said "IT software and services company" and the lede said
-     "software and services company". Kept as the lede had it; the meta line is the
-     deck's own phrasing and stays. */
-  lede: `${SITE.legalName} is a Bengaluru-based software and services company building AI products, digital platforms, and the cloud engineering to run them.`,
+  /* Nazir's wording, 2026-10-06. */
+  lede: `${SITE.legalName} is a Bengaluru-based software and services company empowering enterprises with AI & Automation, Digital Platforms, custom software solutions, cloud infra engineering (DevOps), managed services and software quality validation for its collaborating organisations, partners and clients.`,
   glanceHeading: "At a glance",
   visionMissionHeading: "Vision and mission",
   visionHeading: "Our vision",
   missionHeading: "Our mission",
   valuesHeading: "What we value",
-  chairmanHeading: "A note from our Chairman",
+  chairmanHeading: "From Azkashine Chairman’s desk",
 } as const;
 
 /**

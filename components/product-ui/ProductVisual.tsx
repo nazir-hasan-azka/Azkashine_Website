@@ -1,23 +1,23 @@
 import {
-  AgentOSVisual,
   AgentSiddhiVisual,
-  CloudOrchestrationVisual,
-  EthicsVisual,
+  AuditSiddhiVisual,
+  CloudSiddhiVisual,
+  ConnectSiddhiVisual,
+  NodeSiddhiVisual,
   ProSiddhiVisual,
-  SavantVisual,
-  SmartAssistantVisual,
-  TawthiqVisual,
+  ShieldSiddhiVisual,
+  SmartSiddhiVisual,
 } from "./visuals";
 
 /** Maps a product slug to its coded interface. */
 const VISUALS: Record<string, () => React.JSX.Element> = {
-  "savant-ai": SavantVisual,
-  tawthiq: TawthiqVisual,
-  agentos: AgentOSVisual,
-  "agent-siddhi": AgentSiddhiVisual,
-  "smart-ai-assistant": SmartAssistantVisual,
-  "ethics-intelligence": EthicsVisual,
-  "cloud-orchestration": CloudOrchestrationVisual,
+  auditsiddhi: AuditSiddhiVisual,
+  nodesiddhi: NodeSiddhiVisual,
+  agentsiddhi: AgentSiddhiVisual,
+  smartsiddhi: SmartSiddhiVisual,
+  shieldsiddhi: ShieldSiddhiVisual,
+  cloudsiddhi: CloudSiddhiVisual,
+  connectsiddhi: ConnectSiddhiVisual,
   prosiddhi: ProSiddhiVisual,
 };
 

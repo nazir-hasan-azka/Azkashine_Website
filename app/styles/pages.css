@@ -1,7 +1,7 @@
 /* Placeholder. Filled by the route build; see app/globals.css for the imports. */
 
 /* ─── The company routes ─────────────────────────────────────────────────────
-   `/industries/`, `/about/` and `/contact/`. Everything structural — the spine, the
+   `/services/`, `/about/` and `/contact/`. Everything structural — the spine, the
    gutter, `.band`, `.rh`, `.sh`, `.pgrid`, `.rows`, `.pills`, `.tlink`, `.cta` — is in
    `globals.css` and is used here as it stands. What follows is only what those three
    pages need on top: a split with a banner, a hairline bullet list, the vision and
@@ -54,6 +54,36 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ── The three email addresses on the contact page ─────────────────────── */
+.cmails {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 0.9rem;
+}
+
+.cmails li {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.cmails .cmail {
+  margin-top: 0;
+}
+
+.cmail-label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.cmail-note {
+  font-size: var(--text-body-sm);
+  color: var(--color-muted);
 }
 
 /* ── A heading below a section's own h2 ─────────────────────────────────────
@@ -485,5 +515,145 @@
 @media (max-width: 767px) {
   .nf-title {
     font-size: var(--text-h2);
+  }
+}
+
+
+/* ── About: what we value ───────────────────────────────────────────────────
+   The trace: the site's own line through the five values. Vertical on a phone, where
+   five stops across would be too narrow; horizontal from 1024px. */
+.val-rail {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-left: 1.75rem;
+}
+
+.val-rail::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: color-mix(in srgb, var(--color-brand-light) 55%, transparent);
+}
+
+.val-stop {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+}
+
+/* The ring is on the deep ground, so it is the ground's own colour inside a cyan
+   stroke — the mark the gate on the home page uses for a point on the line. */
+.val-dot {
+  position: absolute;
+  left: calc(-1.75rem);
+  top: 0.2rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand-light);
+  background: var(--color-blue-900);
+}
+
+.val-n {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.19em;
+  color: var(--color-brand-light);
+}
+
+.val-name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-background);
+}
+
+@media (min-width: 1024px) {
+  .val-rail {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 1.5rem;
+    padding-left: 0;
+    padding-top: 2.25rem;
+  }
+
+  .val-rail::before {
+    left: 0;
+    right: 0;
+    top: 5px;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .val-dot {
+    left: 0;
+    top: -2.25rem;
+  }
+
+  /* Sized by the window so "Customer-centric" holds one line in a fifth of it. */
+  .val-name {
+    white-space: nowrap;
+    font-size: clamp(1.2rem, 1.9vw, var(--text-h2));
+  }
+}
+
+/* ── About: the Chairman's note ─────────────────────────────────────────────
+   EDITORIAL. A panel in the photograph's own grey (#838383, which is `muted-2`) with
+   the portrait standing in its foot, so the photo reads as part of the panel rather
+   than a picture placed beside text. On a phone the panel leads; from 1024px it sits
+   left of the note and stretches to its height. The photo is capped at 24rem because
+   the file is 397px — any wider goes soft on a 2x screen. */
+.chair {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.chair-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--color-muted-2);
+}
+
+.chair-who {
+  display: grid;
+  gap: 0.3rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 1.75rem) 0;
+}
+
+.chair-name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-background);
+}
+
+.chair-role {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-background) 82%, transparent);
+}
+
+.chair-photo {
+  display: block;
+  width: min(100%, 24rem);
+  height: auto;
+  margin: 1.5rem auto 0;
+}
+
+@media (min-width: 1024px) {
+  .chair {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: stretch;
   }
 }

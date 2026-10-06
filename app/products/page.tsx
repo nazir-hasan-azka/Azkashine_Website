@@ -6,11 +6,10 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Cta } from "@/components/site/Cta";
 import { Room } from "@/components/floor/Room";
 import { RoomPanels } from "@/components/floor/RoomPanels";
-import { FLOOR } from "@/lib/content/floor";
 import { PRODUCTS_PAGE, WHAT_WE_DO_PAGE } from "@/lib/content/routes";
 import { PRODUCT_ROUTES } from "@/lib/content/product-pages";
 import { CATEGORIES } from "@/lib/content/taxonomy";
-import { productsByCategory } from "@/lib/content/products";
+import { productsByCategory, upcomingByCategory } from "@/lib/content/products";
 
 export const metadata: Metadata = {
   title: PRODUCTS_PAGE.metaTitle,
@@ -18,11 +17,11 @@ export const metadata: Metadata = {
 };
 
 /**
- * The product index: eight products, grouped by the practice that owns them.
+ * The product index: the live products, grouped by the practice that owns them, with the
+ * ones coming soon listed under each practice's grid.
  *
- * THE THREE PRACTICES GET IDENTICAL TREATMENT. The split is five, two and one — a fact,
- * and not one to hide — but the page must not read as an AI product line with two
- * afterthoughts. So every practice band is built from the same four pieces in the same
+ * THE PRACTICES GET IDENTICAL TREATMENT. The split is five and two — a fact, and not one
+ * to hide — but the page must not read as an AI product line with an afterthought. So every practice band is built from the same four pieces in the same
  * order: heading, tagline, the card grid, the link into the practice. No band gets an
  * extra flourish, and none gets a ghost word the others do not have.
  *
@@ -43,8 +42,12 @@ export const metadata: Metadata = {
  * The one thing that could not stay identical is the grid itself. `.pgrid` fills with
  * `auto-fill`, so a practice with one product would leave two empty tracks — and with a
  * 1px gap over a filled background, an empty track paints as a solid slab. `data-count`
- * caps the box to the cards it has, so the card in Cloud Services & Testing is the same
- * card at the same size as any of the five above it. That hook is new; the pattern
+ * caps the box to the cards it has, so a practice with two products shows two cards at
+ * the same size as the five above them.
+ *
+ * COMING SOON, from 2026-10-06. Announced products get a card with a name, the practice,
+ * one line and a tag, and no link: there is no page behind them yet, and a card that
+ * looks clickable and goes nowhere is the fault `tests/links.mjs` exists to catch. That hook is new; the pattern
  * follows `.band[data-tone]` in `globals.css` rather than inventing a second one.
  */
 export default function ProductsPage() {
@@ -59,18 +62,14 @@ export default function ProductsPage() {
         lede={PRODUCTS_PAGE.lede}
       />
 
-      {/* Outside the stage on purpose. Anything pinned over a floor whose focused panel is
-          centred is one short window away from sitting on it, and the instruction is only
-          needed once. */}
-      <p className="room-hint">{FLOOR.hint}</p>
-
       <Room look="dark">
         <RoomPanels />
       </Room>
 
       {CATEGORIES.map((category, index) => {
         const products = productsByCategory(category.slug);
-        if (products.length === 0) return null;
+        const upcoming = upcomingByCategory(category.slug);
+        if (products.length === 0 && upcoming.length === 0) return null;
         const headingId = `${category.slug}-heading`;
 
         return (
@@ -91,6 +90,21 @@ export default function ProductsPage() {
                 <ProductCard key={product.slug} product={product} />
               ))}
             </div>
+
+            {upcoming.length > 0 && (
+              <div className="pgrid pp-soon" data-count={upcoming.length}>
+                {upcoming.map((product) => (
+                  <article key={product.name} className="pcard">
+                    <div className="pcard-top">
+                      <span className="pcard-cat">{category.navLabel}</span>
+                      <span className="pp-soon-tag">{PRODUCTS_PAGE.comingSoon}</span>
+                    </div>
+                    <h3 className="pcard-name">{product.name}</h3>
+                    <p className="pcard-tagline">{product.tagline}</p>
+                  </article>
+                ))}
+              </div>
+            )}
 
             <p className="pp-more">
               <Link href={`/what-we-do/${category.slug}/`} className="tlink">

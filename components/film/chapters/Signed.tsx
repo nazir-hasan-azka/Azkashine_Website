@@ -37,12 +37,12 @@ export function Signed() {
         </h2>
 
         {/* The four sectors, as names on the line rather than as another card grid.
-            They link into the anchors on the industries page, which is how the footer
+            They link into the anchors on the services page, which is how the footer
             already links them. */}
         <ul className="film-sectors reveal-group">
           {INDUSTRIES.map((industry) => (
             <li key={industry.slug}>
-              <Link href={`/industries/#${industry.slug}`} className="film-sector">
+              <Link href={`/services/#${industry.slug}`} className="film-sector">
                 <span className="film-sector-name">{industry.name}</span>
                 <span className="film-sector-line">{industry.tagline}</span>
               </Link>

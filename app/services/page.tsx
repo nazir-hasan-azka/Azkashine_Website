@@ -7,12 +7,12 @@ import { Cta } from "@/components/site/Cta";
 import { INDUSTRIES } from "@/lib/content/industries";
 import { CATEGORY_BY_SLUG } from "@/lib/content/taxonomy";
 import { getProduct } from "@/lib/content/products";
-import { INDUSTRIES_PAGE } from "@/lib/content/routes";
+import { SERVICES_PAGE } from "@/lib/content/routes";
 import { CRUMB_HOME } from "@/lib/content/company-pages";
 
 export const metadata: Metadata = {
-  title: INDUSTRIES_PAGE.metaTitle,
-  description: INDUSTRIES_PAGE.metaDescription,
+  title: SERVICES_PAGE.metaTitle,
+  description: SERVICES_PAGE.metaDescription,
 };
 
 /**
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
  * sections carry `.anchor` so a jump lands clear of the 5rem sticky header.
  *
  * THE PRACTICE IS THE EYEBROW, and that is the whole argument of the page. Azkashine
- * does three things in equal measure, and the four sectors do not all lead with the
- * same one — telecom and energy come in through Cloud Services & Testing, public sector
- * through Digital Platforms, manufacturing through AI & Automation. Naming the practice
+ * runs two practices, and the four sectors do not all lead with the same one — telecom
+ * and manufacturing come in through AI & Automation, public sector and energy through
+ * Digital Platforms. Naming the practice
  * above each sector's name is what makes that spread visible instead of implied; every
  * sector otherwise reads as a variation on the same sell.
  *
@@ -35,16 +35,16 @@ export const metadata: Metadata = {
  * `SectionHead`'s watermark is worth at most twice on a page and there are four
  * headings, so using it would either be noise or arbitrary.
  */
-export default function IndustriesPage() {
+export default function ServicesPage() {
   return (
     <Page>
       <RouteHeader
         crumbs={[
           { label: CRUMB_HOME, href: "/" },
-          { label: INDUSTRIES_PAGE.crumb },
+          { label: SERVICES_PAGE.crumb },
         ]}
-        title={INDUSTRIES_PAGE.title}
-        lede={INDUSTRIES_PAGE.lede}
+        title={SERVICES_PAGE.title}
+        lede={SERVICES_PAGE.lede}
       />
 
       {INDUSTRIES.map((industry, i) => {
@@ -100,7 +100,7 @@ export default function IndustriesPage() {
 
                 <div className="page-block">
                   <h3 className="subhead">
-                    {INDUSTRIES_PAGE.capabilitiesHeading}
+                    {SERVICES_PAGE.capabilitiesHeading}
                   </h3>
                   <ul className="pills">
                     {industry.capabilities.map((capability) => (
@@ -116,7 +116,7 @@ export default function IndustriesPage() {
                     href={`/what-we-do/${industry.primaryCategory}/`}
                     className="tlink"
                   >
-                    {INDUSTRIES_PAGE.practiceLink}
+                    {SERVICES_PAGE.practiceLink}
                     <span aria-hidden="true" className="nudge">
                       →
                     </span>
@@ -127,7 +127,7 @@ export default function IndustriesPage() {
 
             {products.length > 0 && (
               <div className="ind-products">
-                <h3 className="subhead">{INDUSTRIES_PAGE.productsHeading}</h3>
+                <h3 className="subhead">{SERVICES_PAGE.productsHeading}</h3>
                 <div className="pgrid">
                   {products.map((product) => (
                     <ProductCard key={product.slug} product={product} />

@@ -123,6 +123,7 @@ const OURS = (f) =>
        here is a directory this suite reports green having never opened — which is the
        silent pass the header of this file exists to refuse. */
     f.startsWith("components/floor/") ||
+    f.startsWith("components/about/") ||
     f.startsWith("lib/film/") ||
     f.startsWith("lib/floor/") ||
     (f.startsWith("components/sections/") &&

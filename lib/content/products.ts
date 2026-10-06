@@ -1,20 +1,20 @@
 /**
- * The eight Azkashine products.
+ * The Azkashine products: the live ones with a page each, and the ones coming soon.
  *
  * Facts, figures, and capability lists come from the corporate portfolio deck; the
  * `deckPage` field records provenance so any claim can be traced back. Two products
- * (ProSiddhi, Agent Siddhi) have no portfolio-deck page and are sourced from their own
+ * (ProSiddhi, AgentSiddhi) have no portfolio-deck page and are sourced from their own
  * product decks — noted per-entry.
  *
  * No client names, logos, or outcome numbers are invented here. If it is not in a deck,
  * it is not on the site.
  *
- * TAGLINES, REWRITTEN 2026-09-07. Four of them opened "AI-powered ..." or "Agentic AI
- * ...", which says nothing a competitor could not equally print and was the phrase the
- * home page repeated most — the product taglines run under every card in the product
- * traverse, so it landed four times in one screenful. Each is now what the product's own
- * `summary` already said it does. Nothing new is claimed; the abstraction was removed and
- * the checkable half kept. `.claude/rules/content.md`: say something checkable.
+ * RENAMED 2026-10-06 to the Siddhi family, at Nazir's direction. Was → is:
+ * AgentOS → NodeSiddhi, Smart AI Assistant → SmartSiddhi, Agent Siddhi → AgentSiddhi,
+ * Tawthiq → AuditSiddhi, Cloud Orchestration Platform → CloudSiddhi (moved from the
+ * retired Cloud Services & Testing practice into AI & Automation), Ethics Intelligence →
+ * ShieldSiddhi. Savant AI was removed. The taglines are Nazir's own one-line descriptions.
+ * The old addresses forward to the new ones — see `public/products/`.
  */
 
 import type { CategorySlug } from "./taxonomy";
@@ -39,7 +39,7 @@ export interface Product {
   /** Display name — portfolio-deck naming, per the agreed convention. */
   name: string;
   category: CategorySlug;
-  /** Which of the twelve deck p4 capabilities this sits under. */
+  /** Which of the deck p4 capabilities this sits under. */
   capability: string;
   /** One line under the page title. */
   tagline: string;
@@ -66,91 +66,34 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
   {
-    slug: "savant-ai",
-    image: "prod-savant",
-    name: "Savant AI",
+    slug: "auditsiddhi",
+    image: "prod-auditsiddhi",
+    name: "AuditSiddhi",
     category: "ai-automation",
-    capability: "Advanced Analytics",
-    tagline: "Zero-configuration analytics — insights in minutes, at scale.",
+    capability: "AI-driven automation",
+    tagline: "Data-driven audit intelligence.",
     summary:
-      "Savant AI generates industry-specific dashboards and analytical insights from your data automatically. It identifies the domain, selects the metrics that matter, designs the visualisations, and answers questions in natural language — with no setup, no modelling, and no SQL.",
-    problem:
-      "Most organisations have data but not insight. Exports pile up from ERP, POS, CRM, payroll, and logistics systems, and turning them into something readable takes skilled analysts, expensive BI tooling, or hours in a spreadsheet. Even when a dashboard exists, it is generic — it does not know which KPIs your industry actually tracks.",
-    features: [
-      {
-        title: "Auto Dashboards",
-        description: "Dynamic KPI cards and visualisations generated instantly.",
-      },
-      {
-        title: "Predictive Analytics",
-        description: "Trend forecasting, anomaly detection, and pattern recognition.",
-      },
-      {
-        title: "Conversational AI",
-        description:
-          "Ask questions in natural language and get instant, data-grounded answers.",
-      },
-      {
-        title: "Industry-Aware",
-        description:
-          "Supports Retail, Finance, Healthcare, HR, Logistics, and more.",
-      },
-    ],
-    outcomes: [
-      {
-        title: "Faster decision making",
-        description: "Raw data to insight in minutes.",
-      },
-      {
-        title: "Reduced analytics cost",
-        description: "No dedicated BI team required.",
-      },
-      {
-        title: "Self-service intelligence",
-        description: "No technical skills needed.",
-      },
-      {
-        title: "Improved forecasting",
-        description: "Identify trends before they hit.",
-      },
-      {
-        title: "Increased productivity",
-        description: "Automated data preparation and reporting.",
-      },
-    ],
-    demoUrl: null,
-    deckPage: "p7",
-  },
-  {
-    slug: "tawthiq",
-    image: "prod-tawthiq",
-    name: "Tawthiq",
-    category: "ai-automation",
-    capability: "AI-Driven Automation",
-    tagline:
-      "Financial filings from raw document to regulator-ready submission, Arabic-first.",
-    summary:
-      "Tawthiq automates the entire financial reporting lifecycle — document validation, data extraction, taxonomy mapping, XBRL generation, and regulator-ready submission — with page-level evidence traceability at every step.",
+      "AuditSiddhi automates the entire financial reporting lifecycle — document validation, data extraction, taxonomy mapping, XBRL generation, and regulator-ready submission — with page-level evidence traceability at every step.",
     problem:
       "Financial statements are still reviewed manually, page by page. XBRL preparation needs specialist expertise, and filing errors lead to rejection, resubmission, and penalties — while regulatory obligations across the GCC keep expanding.",
     features: [
       {
-        title: "Document Intelligence",
+        title: "Document intelligence",
         description:
           "Processes PDFs, scanned files, and Excel in Arabic and English; extracts revenue, balance sheet, cash flow, and auditor data automatically.",
       },
       {
-        title: "Compliance Validation",
+        title: "Compliance validation",
         description:
           "Detects missing disclosures, inconsistencies, and violations against regulatory and business rules.",
       },
       {
-        title: "XBRL Generation",
+        title: "XBRL generation",
         description:
           "Auto-generates regulator-ready XBRL packages with multi-country taxonomy support.",
       },
       {
-        title: "Evidence Traceability",
+        title: "Evidence traceability",
         description:
           "Page-level source traceability, evidence highlighting, and audit-ready validation workflows.",
       },
@@ -163,7 +106,7 @@ export const PRODUCTS: Product[] = [
           label: "Saudi Arabia",
           items: ["Qawaem", "Tadawul", "SOCPA", "CMA", "SAMA", "IFRS"],
         },
-        { label: "Qatar", items: ["Q-Disclosure", "IFRS Reporting"] },
+        { label: "Qatar", items: ["Q-Disclosure", "IFRS reporting"] },
         {
           label: "International",
           items: ["SEC EDGAR", "MCA India", "ESEF Europe"],
@@ -174,42 +117,42 @@ export const PRODUCTS: Product[] = [
     deckPage: "p8",
   },
   {
-    slug: "agentos",
+    slug: "nodesiddhi",
     stats: [
       { value: "80%", label: "Less AI development effort" },
     ],
-    image: "prod-agentos",
-    name: "AgentOS",
+    image: "prod-nodesiddhi",
+    name: "NodeSiddhi",
     category: "ai-automation",
-    capability: "AI-Driven Automation",
-    tagline: "Build. Deploy. Govern. Scale.",
+    capability: "AI-driven automation",
+    tagline: "Build, deploy and govern AI agents at scale.",
     summary:
-      "AgentOS lets organisations rapidly build, deploy, orchestrate, and govern intelligent AI agents at scale — combining multi-agent orchestration, autonomous decision-making, human oversight, and enterprise integration in one platform.",
+      "NodeSiddhi lets organisations rapidly build, deploy, orchestrate, and govern intelligent AI agents at scale — combining multi-agent orchestration, autonomous decision-making, human oversight, and enterprise integration in one platform.",
     problem:
       "AI agents are straightforward to prototype and difficult to operate. Getting them into production means solving orchestration, governance, human oversight, and integration — usually rebuilt from scratch for every use case.",
     features: [
       {
-        title: "Knowledge Agent",
+        title: "Knowledge agent",
         description: "Manages memory and context across tasks.",
       },
       {
-        title: "Format Detection Agent",
+        title: "Format detection agent",
         description: "Identifies data structures automatically.",
       },
       {
-        title: "Schema Intelligence Agent",
+        title: "Schema intelligence agent",
         description: "Maps incoming data to business models.",
       },
       {
-        title: "Human Governance Agent",
+        title: "Human governance agent",
         description: "Handles approval and oversight checkpoints.",
       },
       {
-        title: "Validation Agent",
+        title: "Validation agent",
         description: "Performs quality and compliance checks.",
       },
       {
-        title: "Orchestration Agent",
+        title: "Orchestration agent",
         description: "Coordinates workflows across the other agents.",
       },
     ],
@@ -239,44 +182,44 @@ export const PRODUCTS: Product[] = [
     deckPage: "p9",
   },
   {
-    slug: "agent-siddhi",
-    image: "prod-agent-siddhi",
-    name: "Agent Siddhi",
+    slug: "agentsiddhi",
+    image: "prod-agentsiddhi",
+    name: "AgentSiddhi",
     category: "ai-automation",
-    capability: "AI-Driven Automation",
-    tagline: "Discover. Understand. Govern. Execute.",
+    capability: "AI-driven automation",
+    tagline: "Goal-oriented autonomous AI agent platform.",
     summary:
-      "Agent Siddhi is an enterprise intelligence, governance, and agentic execution platform — combining enterprise discovery, digital-twin modelling, knowledge-graph intelligence, and governed agentic execution in a single operating environment.",
+      "AgentSiddhi is an enterprise intelligence, governance, and agentic execution platform — combining enterprise discovery, digital-twin modelling, knowledge-graph intelligence, and governed agentic execution in a single operating environment.",
     problem:
       "Traditional automation works when a process is known and its steps can be listed in advance. It struggles when the goal is known but the execution path varies with data and conditions discovered at runtime. That gap is where manual effort concentrates — people moving between applications, interpreting information, investigating exceptions, and applying policy.",
     features: [
       {
-        title: "Enterprise Discovery",
+        title: "Enterprise discovery",
         description:
           "Maps the applications, workflows, and dependencies already in place.",
       },
       {
-        title: "Digital Twin",
+        title: "Digital twin",
         description:
           "Models operations so changes can be reasoned about before they are made.",
       },
       {
-        title: "Knowledge Graph Intelligence",
+        title: "Knowledge graph intelligence",
         description:
           "Connects systems, policies, and processes into queryable context.",
       },
       {
-        title: "Agentic Execution",
+        title: "Agentic execution",
         description:
           "Pursues goals across systems, adapting the path based on what it finds.",
       },
       {
-        title: "Governance & Compliance",
+        title: "Governance & compliance",
         description:
           "Policy enforcement and compliance automation with execution traceability.",
       },
       {
-        title: "Executive Visibility",
+        title: "Executive visibility",
         description: "Operational transparency across the estate.",
       },
     ],
@@ -285,12 +228,12 @@ export const PRODUCTS: Product[] = [
     deckPage: "product deck — not in the portfolio deck",
   },
   {
-    slug: "smart-ai-assistant",
-    image: "prod-smart-assistant",
-    name: "Smart AI Assistant",
+    slug: "smartsiddhi",
+    image: "prod-smartsiddhi",
+    name: "SmartSiddhi",
     category: "ai-automation",
-    capability: "AI-Integrated Ecosystem",
-    tagline: "Answers pulled from the systems you already run, in plain language.",
+    capability: "AI-integrated ecosystem",
+    tagline: "Conversational AI assistant.",
     summary:
       "A conversational platform that handles multi-turn guidance, extracts data from documents, retrieves from connected systems, and classifies business activity for compliance — with protection and moderation built in rather than bolted on.",
     problem:
@@ -301,15 +244,15 @@ export const PRODUCTS: Product[] = [
         description: "Natural language, multi-turn guidance.",
       },
       {
-        title: "Document Processing",
+        title: "Document processing",
         description: "Auto-extracts data from submitted documents.",
       },
       {
-        title: "CRM Integration",
+        title: "CRM integration",
         description: "Seamless retrieval from connected systems.",
       },
       {
-        title: "Compliance Validation",
+        title: "Compliance validation",
         description: "Classifies business activities against policy.",
       },
     ],
@@ -340,40 +283,115 @@ export const PRODUCTS: Product[] = [
     deckPage: "p6",
   },
   {
-    slug: "ethics-intelligence",
-    image: "prod-ethics",
-    name: "Ethics Intelligence",
+    /* From the product deck "AI-Powered Chatbot for Qatar Aeronautical Academy (QAA)",
+       2026-10. That deck is one client's deployment; the client is NOT named on the site
+       until Nazir confirms it may be, so "students" is generalised to "users" and
+       "hosted in Qatar" to in-country hosting. Every other claim is the deck's. */
+    slug: "connectsiddhi",
+    image: "prod-connectsiddhi",
+    name: "ConnectSiddhi",
+    category: "ai-automation",
+    capability: "AI-integrated ecosystem",
+    tagline: "Agentic AI and WhatsApp API integration.",
+    summary:
+      "A bilingual conversational AI platform that runs on WhatsApp, through the Business API, and on your website. It answers in Arabic and English, by text or voice, from a governed knowledge base, verifies who it is talking to when it needs to, and hands the conversation to a live agent — with the full context — when it is not confident.",
+    problem:
+      "Service teams are overwhelmed by the same questions asked again and again. Responses slow down at peak periods, there is no support after hours, and the answer someone gets depends on which channel they asked on.",
+    features: [
+      {
+        title: "Bilingual and voice-first",
+        description:
+          "Arabic and English, automatic language detection, and voice messages transcribed across Arabic dialects.",
+      },
+      {
+        title: "WhatsApp and web",
+        description: "One assistant on the WhatsApp Business API and embedded on your website.",
+      },
+      {
+        title: "Intent matching",
+        description:
+          "Menus and free text together, with LLM intent matching over a decision tree your team keeps in Excel.",
+      },
+      {
+        title: "Confidence-based escalation",
+        description:
+          "Low-confidence questions go to a live agent on WhatsApp, with the full conversation attached.",
+      },
+      {
+        title: "Auto-ticketing",
+        description: "Requests are ticketed and routed to the right team through Freshdesk or email.",
+      },
+      {
+        title: "Operations dashboard",
+        description: "Queues, agent load, SLAs, satisfaction and compliance in one place.",
+      },
+    ],
+    outcomes: [
+      {
+        title: "Answers around the clock",
+        description: "Instant AI answers at any hour, with after-hours queuing for anything that needs a person.",
+      },
+      {
+        title: "One consistent answer",
+        description: "A shared, governed knowledge base behind every channel.",
+      },
+      {
+        title: "Knowledge that improves",
+        description: "Confidence scoring, supervisor review and continuous learning close gaps over time.",
+      },
+    ],
+    coverage: {
+      heading: "Security & compliance",
+      groups: [
+        {
+          label: "Built in",
+          items: [
+            "In-country hosting on GCP",
+            "Identity verification",
+            "Role-based access control",
+            "Full audit logging",
+            "WhatsApp Business API compliance",
+          ],
+        },
+      ],
+    },
+    demoUrl: null,
+    deckPage: "product deck — AI-powered chatbot (QAA), 2026-10",
+  },
+  {
+    slug: "shieldsiddhi",
+    image: "prod-shieldsiddhi",
+    name: "ShieldSiddhi",
     category: "digital-platforms",
-    capability: "AI Enabled Platforms",
-    tagline:
-      "Whistleblowing that stays anonymous, with the audit trail regulators ask for.",
+    capability: "AI-enabled platforms",
+    tagline: "Anonymity-guaranteed whistleblower tool.",
     summary:
       "A whistleblowing and ethics platform built for privacy, security, and trust. Reports are fully anonymous, communication stays encrypted in both directions, and AI handles risk detection, case analysis, and prioritisation from the first signal.",
     problem:
       "Organisations struggle to build reporting channels employees genuinely trust, so misconduct goes unreported. Identities leak through email and phone trails, manual triage stalls cases for weeks, and low participation leaves real compliance risk undetected.",
     features: [
       {
-        title: "Smart Risk Detection",
+        title: "Smart risk detection",
         description: "Surfaces emerging risk from incoming reports.",
       },
       {
-        title: "Threat Intelligence",
+        title: "Threat intelligence",
         description: "Correlates signals across cases.",
       },
       {
-        title: "Intelligent Case Analysis",
+        title: "Intelligent case analysis",
         description: "Reduces case review and triage effort.",
       },
       {
-        title: "Pattern Recognition Engine",
+        title: "Pattern recognition engine",
         description: "Identifies repeat behaviour across time and teams.",
       },
       {
-        title: "AI-Based Case Prioritisation",
+        title: "AI-based case prioritisation",
         description: "Ranks cases so the serious ones move first.",
       },
       {
-        title: "Predictive Compliance Intelligence",
+        title: "Predictive compliance intelligence",
         description: "Anticipates where compliance gaps are forming.",
       },
     ],
@@ -411,8 +429,8 @@ export const PRODUCTS: Product[] = [
           items: [
             "EU Whistleblower Directive",
             "ISO 37002",
-            "Anti-Bribery & Ethics Programs",
-            "Corporate Governance Frameworks",
+            "Anti-bribery & ethics programmes",
+            "Corporate governance frameworks",
           ],
         },
         {
@@ -441,16 +459,15 @@ export const PRODUCTS: Product[] = [
     deckPage: "p11–12",
   },
   {
-    slug: "cloud-orchestration",
+    slug: "cloudsiddhi",
     stats: [
       { value: "10x", label: "Faster infrastructure onboarding" },
     ],
-    image: "prod-cloud",
-    name: "Cloud Orchestration Platform",
-    category: "cloud-testing",
-    capability: "DevOps",
-    tagline:
-      "Infrastructure onboarding from weeks to hours, with a person signing before deploy.",
+    image: "prod-cloudsiddhi",
+    name: "CloudSiddhi",
+    category: "ai-automation",
+    capability: "AI-driven automation",
+    tagline: "AI-powered cloud orchestration platform.",
     summary:
       "Complete infrastructure lifecycle automation — from requirements and architecture design through policy validation, infrastructure-as-code, deployment, and audit generation. Each phase is handled by a specialised agent, with human approval checkpoints before critical actions.",
     problem:
@@ -458,7 +475,7 @@ export const PRODUCTS: Product[] = [
     features: [
       { title: "Requirements", description: "Captures and structures the business request." },
       { title: "Architecture", description: "Designs the target infrastructure." },
-      { title: "Policy Check", description: "Validates against governance and compliance rules." },
+      { title: "Policy check", description: "Validates against governance and compliance rules." },
       { title: "IaC", description: "Generates infrastructure-as-code." },
       { title: "Deploy", description: "Executes across AWS, Azure, and GCP." },
     ],
@@ -484,8 +501,8 @@ export const PRODUCTS: Product[] = [
     image: "prod-prosiddhi",
     name: "ProSiddhi",
     category: "digital-platforms",
-    capability: "Smart Applications",
-    tagline: "India’s smart blue-collar hiring platform.",
+    capability: "Smart applications",
+    tagline: "India’s employment ecosystem.",
     summary:
       "ProSiddhi connects employers with skilled and semi-skilled workers across India — helpers, drivers, electricians, welders, delivery executives, security guards, machine operators, and technicians — with a pay-as-you-go model and a bilingual interface.",
     problem:
@@ -529,8 +546,8 @@ export const PRODUCTS: Product[] = [
             "Construction",
             "Retail",
             "Hospitality",
-            "Facility Management",
-            "Healthcare Support",
+            "Facility management",
+            "Healthcare support",
           ],
         },
         {
@@ -541,7 +558,7 @@ export const PRODUCTS: Product[] = [
             "Welders",
             "Fitters",
             "Mechanics",
-            "Machine Operators",
+            "Machine operators",
             "Technicians",
           ],
         },
@@ -552,8 +569,8 @@ export const PRODUCTS: Product[] = [
             "Packers",
             "Loaders",
             "Drivers",
-            "Delivery Executives",
-            "Security Guards",
+            "Delivery executives",
+            "Security guards",
           ],
         },
       ],
@@ -566,39 +583,66 @@ export const PRODUCTS: Product[] = [
 export const PRODUCT_SLUGS = PRODUCTS.map((p) => p.slug);
 
 /**
+ * Products announced but not yet live. They are listed on `/products/` with a name, a
+ * practice and one line, and nothing else: no page, no features, no claims, until a deck
+ * or Nazir supplies them. ConnectSiddhi sat here until its deck arrived on 2026-10-07.
+ */
+export interface UpcomingProduct {
+  name: string;
+  category: CategorySlug;
+  tagline: string;
+}
+
+export const UPCOMING_PRODUCTS: UpcomingProduct[] = [
+  { name: "VigilSiddhi", category: "ai-automation", tagline: "Vision AI platform." },
+  {
+    name: "IntentSiddhi",
+    category: "ai-automation",
+    tagline: "Intent-driven telecom automation.",
+  },
+  {
+    name: "ApexSiddhi",
+    category: "digital-platforms",
+    tagline: "Multi-brand marketplace ecosystem.",
+  },
+  {
+    name: "GateSiddhi",
+    category: "digital-platforms",
+    tagline: "Visitor management and smart gate system.",
+  },
+];
+
+export function upcomingByCategory(category: CategorySlug): UpcomingProduct[] {
+  return UPCOMING_PRODUCTS.filter((p) => p.category === category);
+}
+
+/**
  * The order the products are shown in when they are shown ONE AT A TIME, in a run —
- * chapter 04's horizontal traverse on the home page, and the focus run on
- * the floor at the top of `/products/`. It is not the file's order, and not a
- * round-robin.
+ * chapter 04's horizontal traverse on the home page, and the focus run on the floor at
+ * the top of `/products/`. It is not the file's order, and not a round-robin.
  *
- * ROUND-ROBIN WAS WRONG AND IT TOOK SOMEBODY LOOKING AT IT TO SEE WHY. The split is
- * five AI & Automation, two Digital Platforms, one Cloud Services & Testing. Cycling
- * the three buckets spends the two smaller ones immediately — Cloud Orchestration
- * landed third and there was nothing left of its practice afterwards — so the run
- * finished AI, AI, AI and the last thing anybody saw was three AI products in a row.
- * The balance was all at the front and the impression was all at the back.
+ * ROUND-ROBIN WAS WRONG AND IT TOOK SOMEBODY LOOKING AT IT TO SEE WHY: cycling the
+ * practices spends the smaller one immediately, and the run finishes on a row of AI
+ * products. The split is six AI & Automation and two Digital Platforms, so the two
+ * Digital Platforms products are spaced to break the run.
  *
- * SO THE TWO NON-AI PRACTICES ARE SPACED TO BREAK THE RUN, and the single Cloud
- * product goes LAST. Nothing is buried by that: in a run the final item is the one the
- * scroll comes to rest on, which is the strongest position, and it is the only one of
- * the eight that can end on a practice other than AI.
+ * THE RULE THIS ENCODES, for whoever adds a product: never more than two from the same
+ * practice in a row. With six against two the run cannot also end on the smaller
+ * practice without putting three AI products together somewhere, and three in a row is
+ * the worse of the two.
  *
- * THE RULE THIS ENCODES, for whoever adds a ninth product: never more than two from the
- * same practice in a row, and never end on the practice that has the most.
- *
- * IT LIVES HERE RATHER THAN IN A COMPONENT because two pages now run it, and two copies
- * of an order that carries an argument is two copies that can disagree. It was private
- * to `components/film/chapters/RunningPanels.tsx` until the floor was built.
+ * IT LIVES HERE RATHER THAN IN A COMPONENT because two pages run it, and two copies of an
+ * order that carries an argument is two copies that can disagree.
  */
 const RUN_ORDER = [
-  "savant-ai", // AI & Automation
-  "ethics-intelligence", // Digital Platforms
-  "tawthiq", // AI & Automation
-  "agentos", // AI & Automation
+  "auditsiddhi", // AI & Automation
+  "connectsiddhi", // AI & Automation
+  "shieldsiddhi", // Digital Platforms
+  "nodesiddhi", // AI & Automation
+  "cloudsiddhi", // AI & Automation
   "prosiddhi", // Digital Platforms
-  "agent-siddhi", // AI & Automation
-  "smart-ai-assistant", // AI & Automation
-  "cloud-orchestration", // Cloud Services & Testing — the note above says why it is last
+  "agentsiddhi", // AI & Automation
+  "smartsiddhi", // AI & Automation
 ];
 
 /**

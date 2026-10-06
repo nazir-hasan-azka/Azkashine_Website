@@ -57,20 +57,6 @@
 
 /* The rail a chapter's drawn work happens along, where that work needs a length
    rather than a point. */
-/* SPANS THE STAGE, beside the copy rather than under it.
-   As a block in the flow it was 234px tall, which gave the reversal — the only
-   backwards motion on the whole site — about 170px to travel in. Absolutely
-   positioned it runs the full height of the stage, so the dashed pass climbs past
-   the heading it is contradicting. It is zero-width and on the spine, so it never
-   touches the copy. */
-.film-rail-tall {
-  position: absolute;
-  left: 0;
-  top: clamp(9rem, 16vh, 11.5rem);
-  bottom: clamp(3rem, 8vh, 5rem);
-  width: 0;
-}
-
 /* The gate's three governance terms. Short by design: this is the one beat on the
    page where the visitor is standing still, and a four-sentence paragraph is the
    wrong thing to hand somebody who is waiting. The argument itself lives in
@@ -513,8 +499,8 @@
 }
 
 /* THE INTERFACES ARE ALL THE SAME SIZE, and they were not.
-   Measured live, the eight ran from 319px to 789px tall — ProSiddhi two and a half
-   times Cloud Orchestration — so the panels did not line up as they travelled and the
+   Measured live, they ran from 319px to 789px tall — ProSiddhi two and a half
+   times CloudSiddhi — so the panels did not line up as they travelled and the
    row read as broken rather than as a set. A fixed media box makes them a set. What
    overflows is cropped and faded at the cut, which is honest: there IS more interface
    below, and the product page shows it at full height.

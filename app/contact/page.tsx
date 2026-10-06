@@ -58,9 +58,17 @@ export default function ContactPage() {
           <div className="reveal-group">
             <div className="page-block">
               <h3 className="subhead">{CONTACT.emailHeading}</h3>
-              <a href={`mailto:${SITE.email}`} className="cmail">
-                {SITE.email}
-              </a>
+              <ul className="cmails">
+                {SITE.emails.map((e) => (
+                  <li key={e.address}>
+                    <span className="cmail-label">{e.label}</span>
+                    <a href={`mailto:${e.address}`} className="cmail">
+                      {e.address}
+                    </a>
+                    <span className="cmail-note">{e.note}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="page-block">

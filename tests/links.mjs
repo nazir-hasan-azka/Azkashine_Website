@@ -24,8 +24,11 @@ const BASE = process.env.BASE_URL || "http://localhost:3000";
  * that is the failure this whole suite exists to refuse. Written down, a route that
  * stops existing is a 404 the suite reports, not a route it silently stops checking.
  *
- * Seventeen. If that number changes, this list and `ROUTES.length` below both have to
- * change with it, which is the point.
+ * Sixteen. If that number changes, this list and `ROUTES.length` below both have to
+ * change with it, which is the point. It was seventeen until 2026-10-06, when Cloud
+ * Services & Testing was retired and Savant AI removed; their old addresses are now
+ * forwarding pages in `public/`, which are not routes. ConnectSiddhi made it sixteen on
+ * 2026-10-07.
  *
  * It was eighteen for two days: `/ecosystem/` was added on 2026-09-07 and deleted on
  * 2026-09-09, when its scene moved to the top of `/products/` and the route it had been
@@ -38,17 +41,16 @@ const ROUTES = [
   "/what-we-do/",
   "/what-we-do/ai-automation/",
   "/what-we-do/digital-platforms/",
-  "/what-we-do/cloud-testing/",
   "/products/",
-  "/products/savant-ai/",
-  "/products/tawthiq/",
-  "/products/agentos/",
-  "/products/agent-siddhi/",
-  "/products/smart-ai-assistant/",
-  "/products/ethics-intelligence/",
-  "/products/cloud-orchestration/",
+  "/products/nodesiddhi/",
+  "/products/smartsiddhi/",
+  "/products/connectsiddhi/",
+  "/products/agentsiddhi/",
+  "/products/auditsiddhi/",
+  "/products/cloudsiddhi/",
   "/products/prosiddhi/",
-  "/industries/",
+  "/products/shieldsiddhi/",
+  "/services/",
   "/about/",
   "/contact/",
 ];
@@ -60,8 +62,8 @@ const ROUTES = [
  */
 const PLANNED = [];
 
-if (ROUTES.length !== 17) {
-  console.log(`    FAIL ROUTES holds ${ROUTES.length}, expected 17 — the site has seventeen routes`);
+if (ROUTES.length !== 16) {
+  console.log(`    FAIL ROUTES holds ${ROUTES.length}, expected 16 — the site has sixteen routes`);
   process.exit(1);
 }
 

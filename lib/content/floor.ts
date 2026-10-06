@@ -1,7 +1,7 @@
 /**
  * The floor's own labels, and there are deliberately very few of them.
  *
- * The floor is the spatial scene at the top of `/products/` — eight coded product
+ * The floor is the spatial scene at the top of `/products/` — the coded product
  * interfaces standing in a room, turned by scroll. Every sentence a visitor reads on a
  * panel already exists elsewhere: the product's `name` and `tagline` from `products.ts`,
  * the practice's `navLabel` from `taxonomy.ts`. What is here is the furniture around them.
@@ -21,9 +21,6 @@
 export const FLOOR = {
   /** Names the scene for assistive technology. Not shown. */
   label: "Every product, in the room",
-
-  /** Sits above the floor and says what the scroll does. An instruction, not a claim. */
-  hint: "Scroll. Each product comes forward in turn.",
 
   /** Reads "03 / 08" beside the practice name on the panel in focus. */
   counterSeparator: "/",
