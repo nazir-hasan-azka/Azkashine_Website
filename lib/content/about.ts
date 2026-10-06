@@ -44,7 +44,7 @@ export const ABOUT = {
  */
 export const CTA = {
   heading: "Tell us what you’re trying to solve",
-  lede: "Bring us the problem, not a specification. We’ll tell you which of our products fits, what we’d have to build, or whether you’d be better served elsewhere.",
+  lede: "Bring us the problem, not a specification. We’ll tell you which of our products fits and what we’d have to build.",
   primary: { label: "Talk to us", href: "/contact/" },
   secondary: { label: "See the products", href: "/products/" },
 } as const;
