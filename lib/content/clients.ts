@@ -74,3 +74,9 @@ export const CLIENT_LOGOS: ClientLogo[] = [
 export function logoWidth(logo: ClientLogo, base = 62): number {
   return Math.round(base * Math.pow(logo.width / logo.height, 0.6) * (logo.weight ?? 1));
 }
+
+/** The counted claim above the partner cards. The numbers come from `CLIENT_LOGOS`. */
+export const CLIENTS_REACH = {
+  partnersAcross: "partners across",
+  countries: "countries",
+} as const;

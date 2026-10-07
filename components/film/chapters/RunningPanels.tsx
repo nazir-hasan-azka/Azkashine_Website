@@ -2,8 +2,12 @@ import { FILM_RUNNING } from "@/lib/content/film";
 import { FLOOR } from "@/lib/content/floor";
 import { PRODUCTS_IN_RUN_ORDER } from "@/lib/content/products";
 import { CATEGORY_BY_SLUG } from "@/lib/content/taxonomy";
-import { ProductVisual, hasVisual } from "@/components/product-ui/ProductVisual";
+import {
+  ProductVisual,
+  hasVisual,
+} from "@/components/product-ui/ProductVisual";
 import { ChapterMark } from "@/components/film/Beat";
+import { LiveOnView } from "@/components/home/LiveOnView";
 import Link from "next/link";
 
 /**
@@ -35,7 +39,10 @@ import Link from "next/link";
  * `eyebrow` replaces the numbered chapter mark with a plain label, which is how the
  * enterprise home page heads every section.
  */
-export function RunningPanels({ eyebrow }: { eyebrow?: string } = {}) {
+export function RunningPanels({
+  eyebrow,
+  live = false,
+}: { eyebrow?: string; live?: boolean } = {}) {
   const products = PRODUCTS_IN_RUN_ORDER;
 
   return (
@@ -44,7 +51,10 @@ export function RunningPanels({ eyebrow }: { eyebrow?: string } = {}) {
         {eyebrow ? (
           <p className="sh-eyebrow">{eyebrow}</p>
         ) : (
-          <ChapterMark number={FILM_RUNNING.chapter} title={FILM_RUNNING.title} />
+          <ChapterMark
+            number={FILM_RUNNING.chapter}
+            title={FILM_RUNNING.title}
+          />
         )}
         <p className="film-heading">{FILM_RUNNING.heading}</p>
         <p className="film-lede">{FILM_RUNNING.lede}</p>
@@ -53,7 +63,9 @@ export function RunningPanels({ eyebrow }: { eyebrow?: string } = {}) {
       {products.map((product, i) => (
         <article key={product.slug} className="film-panel">
           <div className="film-panel-head">
-            <span className="film-panel-n">{String(i + 1).padStart(2, "0")}</span>
+            <span className="film-panel-n">
+              {String(i + 1).padStart(2, "0")}
+            </span>
             <span className="film-panel-cat">
               {CATEGORY_BY_SLUG[product.category].navLabel}
             </span>
@@ -62,12 +74,21 @@ export function RunningPanels({ eyebrow }: { eyebrow?: string } = {}) {
           {/* The interface itself, at the size it was drawn for. */}
           {hasVisual(product.slug) && (
             <div className="film-panel-ui">
-              <ProductVisual slug={product.slug} />
+              {live ? (
+                <LiveOnView>
+                  <ProductVisual slug={product.slug} />
+                </LiveOnView>
+              ) : (
+                <ProductVisual slug={product.slug} />
+              )}
             </div>
           )}
 
           <h3 className="film-panel-name">
-            <Link href={`/products/${product.slug}/`} className="film-panel-link">
+            <Link
+              href={`/products/${product.slug}/`}
+              className="film-panel-link"
+            >
               {product.name}
             </Link>
           </h3>

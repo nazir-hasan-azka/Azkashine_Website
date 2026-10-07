@@ -1659,6 +1659,27 @@ still there, harmless, and worth a careful sweep one day.
 - **Two dark bands on one page** (About's values and the old dark closing band). Fixed by
   making the closing band light everywhere, not by changing the values.
 
+### Later on 2026-10-07 — the energy pass
+
+Nazir: *"the entire is now bland and plane, not at all exciting."* Shipped:
+
+- **Product screens that play** as they arrive in the traverse — rows, chat bubbles and
+  cards appear in turn, then the status pills pop (`LiveOnView.tsx`, `[data-live-step]` /
+  `[data-live-pop]` in `product-ui/`). Nothing is hidden until it arms, so crawlers, no-JS
+  and reduced motion get the finished screen.
+- **The hero's blue, cyan and pink** as a gradient in small doses: the practice cards' top
+  edge and the rules above the Why points (`--hp-material`, scoped to `.hp-live`).
+- **One spacing rhythm**: measured gaps had run 88–192px and the "tint" ground was
+  indistinguishable from paper; now every section has the same space and the alternate
+  ground is `--color-surface`.
+- **Partners**: "Our partners", then **"15 partners across 7 countries"**, counted, then
+  the card wall, stationary.
+
+Tried and removed the same day: **a dark numbers strip after the hero** (8 products · 15
+partners · 7 countries · 2 practices) — Nazir: "get rid of this to avoid repetition",
+because the partner section counts the partners. **Partners as moving rows** and **grouped
+by region** — he kept the region layout's claim and the stationary cards.
+
 ### Decisions, in Nazir's words where he was specific
 
 - Cloud & Testing: first "Menu only", then **"No more cloud testing, remove all

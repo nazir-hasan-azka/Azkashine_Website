@@ -36,9 +36,15 @@ function listOf(items: string[]): string {
     : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
 }
 
+/**
+ * The energy pass of 2026-10-07 is part of the page: product screens that play as they
+ * arrive (`live` on the traverse) and the hero's colours carried down the page
+ * (`.hp-live`). A numbers strip after the hero was tried and removed the same day, because
+ * the partner section already counts the partners and their countries.
+ */
 export function HomeBody() {
   return (
-    <div className="film">
+    <div className="film hp-live">
       <TraceCanvas />
       <Hero />
 
@@ -83,7 +89,7 @@ export function HomeBody() {
       {/* Products — the sideways traverse, with the interfaces at full size. The
             panels are passed in so they stay server-rendered. */}
       <Running screens={4}>
-        <RunningPanels eyebrow={HOME_PAGE.products.eyebrow} />
+        <RunningPanels eyebrow={HOME_PAGE.products.eyebrow} live />
       </Running>
 
       {/* Why Azkashine — three points, each a fact. */}

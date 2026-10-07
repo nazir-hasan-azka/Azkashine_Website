@@ -57,7 +57,7 @@ export function Kpi({
   delta?: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-surface-2 p-3">
+    <div data-live-step="" className="rounded-xl border border-border bg-surface-2 p-3">
       <p className="text-[11px] font-medium text-muted">{label}</p>
       <p className="mt-1 text-xl font-bold leading-none text-ink">{value}</p>
       {delta && <p className="mt-1 text-[11px] font-semibold text-brand">{delta}</p>}
@@ -95,6 +95,7 @@ export function Pill({
   } as const;
   return (
     <span
+      data-live-pop=""
       className={cn(
         "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold",
         tones[tone],
@@ -114,6 +115,7 @@ export function Row({
 }) {
   return (
     <div
+      data-live-step=""
       className={cn(
         "flex items-center justify-between gap-3 border-b border-border py-2.5 last:border-b-0",
         className,

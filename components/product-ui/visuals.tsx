@@ -63,6 +63,7 @@ export function NodeSiddhiVisual() {
         {agents.map(([name, state]) => (
           <li
             key={name}
+            data-live-step=""
             className="flex items-center gap-3 rounded-lg border border-border px-3 py-2"
           >
             <span
@@ -98,6 +99,7 @@ export function AgentSiddhiVisual() {
           (s, i) => (
             <div
               key={s}
+              data-live-step=""
               className={
                 i === 3
                   ? "rounded-lg border border-brand/50 bg-brand/10 px-2.5 py-2 text-[11px] font-semibold text-blue-900"
@@ -164,15 +166,15 @@ export function ConnectSiddhiVisual() {
   return (
     <AppFrame title="ConnectSiddhi — WhatsApp">
       <div className="space-y-2.5">
-        <div className="flex justify-end">
+        <div data-live-step="" className="flex justify-end">
           <p className="rounded-2xl rounded-br-sm bg-brand/15 px-3 py-2 text-xs text-ink">
             <span aria-hidden="true">🎤</span> Voice note · 0:07
           </p>
         </div>
-        <p className="text-right text-[11px] text-muted">
+        <p data-live-step="" className="text-right text-[11px] text-muted">
           Transcribed · Arabic detected
         </p>
-        <div className="flex justify-end">
+        <div data-live-step="" className="flex justify-end">
           <p
             lang="ar"
             dir="rtl"
@@ -181,7 +183,7 @@ export function ConnectSiddhiVisual() {
             ما هي رسوم البرنامج؟
           </p>
         </div>
-        <div className="flex justify-start">
+        <div data-live-step="" className="flex justify-start">
           <p
             lang="ar"
             dir="rtl"
@@ -190,7 +192,7 @@ export function ConnectSiddhiVisual() {
             يمكنني مساعدتك في الرسوم والقبول. هل تريد التحدث مع أحد موظفينا؟
           </p>
         </div>
-        <div className="rounded-lg border border-border-strong bg-surface-2 px-3 py-2 text-[11px] text-ink">
+        <div data-live-step="" className="rounded-lg border border-border-strong bg-surface-2 px-3 py-2 text-[11px] text-ink">
           Confidence 0.42 — handed to an agent with the full conversation
         </div>
       </div>
@@ -211,7 +213,7 @@ function Bubble({
   children: React.ReactNode;
 }) {
   return (
-    <div className={side === "user" ? "flex justify-end" : "flex justify-start"}>
+    <div data-live-step="" className={side === "user" ? "flex justify-end" : "flex justify-start"}>
       <p
         className={
           side === "user"
@@ -274,7 +276,7 @@ export function CloudSiddhiVisual() {
     <AppFrame title="CloudSiddhi — work order WO-3391">
       <ol className="space-y-2">
         {stages.map(([name, state], i) => (
-          <li key={name} className="flex items-center gap-3">
+          <li key={name} data-live-step="" className="flex items-center gap-3">
             <span
               aria-hidden="true"
               className={

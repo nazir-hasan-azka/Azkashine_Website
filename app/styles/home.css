@@ -184,3 +184,118 @@
     transform: none;
   }
 }
+
+
+/* ─── The energy pass (2026-10-07) ───────────────────────────────────────────
+   Everything below is scoped to `.hp-live` or to the live wrapper, so it does nothing on
+   a page that has not switched it on. */
+
+/* The hero's own material, as a gradient in its three hues: blue, cyan, pink. Used in
+   small doses only — an edge, a rule, the numbers — so the page reads as one design
+   rather than a colourful top and a grey body. */
+.hp-live {
+  --hp-material: linear-gradient(
+    100deg,
+    var(--color-blue-500),
+    var(--color-brand-cyan) 55%,
+    var(--color-accent-pink)
+  );
+}
+
+/* ── The material, carried down ────────────────────────────────────────── */
+.hp-live .hp-practice {
+  position: relative;
+  overflow: hidden;
+}
+
+.hp-live .hp-practice::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--hp-material);
+}
+
+.hp-live .hp-why-point {
+  border-top: 0;
+  background: var(--hp-material) top left / 100% 2px no-repeat;
+}
+
+.hp-live .hp-sector:hover {
+  border-color: var(--color-blue-500);
+}
+
+/* ── Product screens that play ─────────────────────────────────────────── */
+.live[data-live="armed"] [data-live-step] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.live[data-live="armed"] [data-live-pop] {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.live[data-live="on"] [data-live-step] {
+  transition:
+    opacity var(--dur-slow) var(--ease-out-soft),
+    transform var(--dur-slow) var(--ease-out-soft);
+  transition-delay: calc(var(--n, 0) * 140ms);
+}
+
+.live[data-live="on"] [data-live-pop] {
+  transition:
+    opacity var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-base) var(--ease-out-soft);
+  transition-delay: calc(var(--steps, 0) * 140ms + var(--p, 0) * 90ms + 150ms);
+}
+
+/* ─── One rhythm for the home page (2026-10-07) ──────────────────────────────
+   Measured before this: gaps between sections ran from 88px (partners to the closing
+   panel) to 192px (why to services) at 1440, and the "tint" ground (#f9fafe) was
+   indistinguishable from the paper (#fafbff), so neighbouring sections ran together and
+   a large gap read as empty space rather than as a new section. Now every section has the
+   same space above and below its content, and the alternate ground is a blue a reader
+   can actually see. Scoped to `.film`, which is only the home page now. */
+.film {
+  --hp-space: clamp(3rem, 5.5vw, 4.5rem);
+}
+
+.film .band-inner {
+  padding-top: var(--hp-space);
+  padding-bottom: var(--hp-space);
+}
+
+.film .band[data-tone="tint"],
+.film .film-running {
+  background: var(--color-surface);
+}
+
+.film .clients-inner {
+  padding-top: var(--hp-space);
+  padding-bottom: var(--hp-space);
+}
+
+.film .cta-inner {
+  padding-top: var(--hp-space);
+  padding-bottom: calc(var(--hp-space) * 1.5);
+}
+
+/* ─── Partners: the counted claim above the card wall (2026-10-07) ──────────── */
+.cr-stat {
+  margin-top: 1rem;
+  font-size: var(--text-display-sm);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+  color: var(--color-ink);
+}
+
+.cr-num {
+  font-variant-numeric: tabular-nums;
+  background: var(--hp-material, var(--color-blue-700));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
