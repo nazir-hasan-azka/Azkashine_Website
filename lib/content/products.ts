@@ -459,15 +459,15 @@ export const PRODUCTS: Product[] = [
     deckPage: "p11–12",
   },
   {
-    slug: "cloudsiddhi",
+    slug: "intentsiddhi",
     stats: [
       { value: "10x", label: "Faster infrastructure onboarding" },
     ],
-    image: "prod-cloudsiddhi",
-    name: "CloudSiddhi",
+    image: "prod-intentsiddhi",
+    name: "IntentSiddhi",
     category: "ai-automation",
     capability: "AI-driven automation",
-    tagline: "AI-powered cloud orchestration platform.",
+    tagline: "Telecom services fulfilment intelligence platform.",
     summary:
       "Complete infrastructure lifecycle automation — from requirements and architecture design through policy validation, infrastructure-as-code, deployment, and audit generation. Each phase is handled by a specialised agent, with human approval checkpoints before critical actions.",
     problem:
@@ -585,7 +585,8 @@ export const PRODUCT_SLUGS = PRODUCTS.map((p) => p.slug);
 /**
  * Products announced but not yet live. They are listed on `/products/` with a name, a
  * practice and one line, and nothing else: no page, no features, no claims, until a deck
- * or Nazir supplies them. ConnectSiddhi sat here until its deck arrived on 2026-10-07.
+ * or Nazir supplies them. ConnectSiddhi sat here until its deck arrived on 2026-10-07, and
+ * IntentSiddhi until CloudSiddhi took its name the same day.
  */
 export interface UpcomingProduct {
   name: string;
@@ -595,11 +596,6 @@ export interface UpcomingProduct {
 
 export const UPCOMING_PRODUCTS: UpcomingProduct[] = [
   { name: "VigilSiddhi", category: "ai-automation", tagline: "Vision AI platform." },
-  {
-    name: "IntentSiddhi",
-    category: "ai-automation",
-    tagline: "Intent-driven telecom automation.",
-  },
   {
     name: "ApexSiddhi",
     category: "digital-platforms",
@@ -639,7 +635,7 @@ const RUN_ORDER = [
   "connectsiddhi", // AI & Automation
   "shieldsiddhi", // Digital Platforms
   "nodesiddhi", // AI & Automation
-  "cloudsiddhi", // AI & Automation
+  "intentsiddhi", // AI & Automation
   "prosiddhi", // Digital Platforms
   "agentsiddhi", // AI & Automation
   "smartsiddhi", // AI & Automation

@@ -500,7 +500,7 @@
 
 /* THE INTERFACES ARE ALL THE SAME SIZE, and they were not.
    Measured live, they ran from 319px to 789px tall — ProSiddhi two and a half
-   times CloudSiddhi — so the panels did not line up as they travelled and the
+   times IntentSiddhi — so the panels did not line up as they travelled and the
    row read as broken rather than as a set. A fixed media box makes them a set. What
    overflows is cropped and faded at the cut, which is honest: there IS more interface
    below, and the product page shows it at full height.

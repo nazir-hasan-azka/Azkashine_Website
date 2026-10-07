@@ -264,7 +264,7 @@ export function ShieldSiddhiVisual() {
   );
 }
 
-export function CloudSiddhiVisual() {
+export function IntentSiddhiVisual() {
   const stages = [
     ["Requirements", "done"],
     ["Architecture", "done"],
@@ -273,7 +273,7 @@ export function CloudSiddhiVisual() {
     ["Deploy", "idle"],
   ] as const;
   return (
-    <AppFrame title="CloudSiddhi — work order WO-3391">
+    <AppFrame title="IntentSiddhi — work order WO-3391">
       <ol className="space-y-2">
         {stages.map(([name, state], i) => (
           <li key={name} data-live-step="" className="flex items-center gap-3">

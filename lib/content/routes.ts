@@ -57,7 +57,7 @@ export const CATEGORY_PAGE = {
 export const PRODUCTS_PAGE = {
   metaTitle: "Products",
   metaDescription:
-    "Eight products built and operated by Azkashine — governed AI agents, conversational AI on WhatsApp and the web, audit intelligence and XBRL automation, cloud orchestration, whistleblowing, and frontline hiring.",
+    "Eight products built and operated by Azkashine — governed AI agents, conversational AI on WhatsApp and the web, audit intelligence and XBRL automation, telecom service fulfilment, whistleblowing, and frontline hiring.",
   crumb: "Products",
   title: "Products",
   lede: `${

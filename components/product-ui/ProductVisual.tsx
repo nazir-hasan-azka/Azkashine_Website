@@ -1,7 +1,7 @@
 import {
   AgentSiddhiVisual,
   AuditSiddhiVisual,
-  CloudSiddhiVisual,
+  IntentSiddhiVisual,
   ConnectSiddhiVisual,
   NodeSiddhiVisual,
   ProSiddhiVisual,
@@ -16,7 +16,7 @@ const VISUALS: Record<string, () => React.JSX.Element> = {
   agentsiddhi: AgentSiddhiVisual,
   smartsiddhi: SmartSiddhiVisual,
   shieldsiddhi: ShieldSiddhiVisual,
-  cloudsiddhi: CloudSiddhiVisual,
+  intentsiddhi: IntentSiddhiVisual,
   connectsiddhi: ConnectSiddhiVisual,
   prosiddhi: ProSiddhiVisual,
 };

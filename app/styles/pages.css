@@ -604,11 +604,10 @@
 }
 
 /* ── About: the Chairman's note ─────────────────────────────────────────────
-   EDITORIAL. A panel in the photograph's own grey (#838383, which is `muted-2`) with
-   the portrait standing in its foot, so the photo reads as part of the panel rather
-   than a picture placed beside text. On a phone the panel leads; from 1024px it sits
-   left of the note and stretches to its height. The photo is capped at 24rem because
-   the file is 397px — any wider goes soft on a 2x screen. */
+   EDITORIAL. A white card, the site's own border and shadow, with the portrait standing
+   in its foot. The photograph is shot on white, so it reads as part of the card rather
+   than a picture placed beside text. On a phone the card leads; from 1024px it sits left
+   of the note and stretches to its height. The file is 960 × 1200, sharp to 30rem at 2x. */
 .chair {
   display: grid;
   gap: clamp(2rem, 4vw, 3.5rem);
@@ -620,7 +619,9 @@
   justify-content: space-between;
   overflow: hidden;
   border-radius: 16px;
-  background: var(--color-muted-2);
+  border: 1px solid var(--color-border);
+  background: white;
+  box-shadow: var(--shadow-hard);
 }
 
 .chair-who {
@@ -633,7 +634,7 @@
   font-size: var(--text-h3);
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--color-background);
+  color: var(--color-ink);
 }
 
 .chair-role {
@@ -641,12 +642,12 @@
   font-size: var(--text-label);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-background) 82%, transparent);
+  color: var(--color-muted);
 }
 
 .chair-photo {
   display: block;
-  width: min(100%, 24rem);
+  width: min(100%, 26rem);
   height: auto;
   margin: 1.5rem auto 0;
 }

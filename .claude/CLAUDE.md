@@ -22,7 +22,7 @@ disk as of 2026-09-10; everything it contributed is already in `lib/content/`.
 
 **Live in production.** Sixteen routes at **https://www.azkashine.com** since
 2026-09-07; last deployed 2026-10-07 (`bdd159a`). Eight live products under the Siddhi
-names, four coming soon, two practices, four services. `PLAN.md` has the 2026-10-06/07
+names, three coming soon, two practices, four services. `PLAN.md` has the 2026-10-06/07
 record.
 
 ### One repository, one site

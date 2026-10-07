@@ -36,7 +36,7 @@ export const SERVICES: Service[] = [
     name: "Cloud infrastructure engineering (DevOps)",
     line: "Provisioning and DevOps across AWS, Azure and GCP, as governed, repeatable deployments.",
     detail:
-      "DevOps, site reliability engineering and infrastructure provisioning across AWS, Azure and GCP, turning infrastructure requests into governed, repeatable deployments. CloudSiddhi, our own platform, automates the cycle from requirements to deployment.",
+      "DevOps, site reliability engineering and infrastructure provisioning across AWS, Azure and GCP, turning infrastructure requests into governed, repeatable deployments. IntentSiddhi, our own platform, automates the cycle from requirements to deployment.",
   },
   {
     slug: "managed-services",

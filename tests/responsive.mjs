@@ -227,7 +227,7 @@ const ROUTES = [
   "/products/connectsiddhi/",
   "/products/agentsiddhi/",
   "/products/auditsiddhi/",
-  "/products/cloudsiddhi/",
+  "/products/intentsiddhi/",
   "/products/prosiddhi/",
   "/products/shieldsiddhi/",
   "/services/",

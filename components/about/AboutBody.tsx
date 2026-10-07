@@ -64,8 +64,8 @@ function Chairman() {
             className="chair-photo"
             src="/img/chairman.webp"
             alt={`${CHAIRMAN.name}, ${CHAIRMAN.title}`}
-            width={397}
-            height={397}
+            width={960}
+            height={1200}
             loading="lazy"
             decoding="async"
           />

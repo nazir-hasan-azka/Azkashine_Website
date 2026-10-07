@@ -6,7 +6,7 @@
  * TWO PRACTICES, FROM 2026-10-06. The deck has three buckets; the third, Cloud Services &
  * Testing, was removed from the site at Nazir's call, with its four capabilities (DevOps,
  * Automation & Quality Engineering, Managed Services, Wireless Testing). Its one product,
- * the cloud orchestration platform, is now CloudSiddhi under AI & Automation.
+ * the cloud orchestration platform, is now IntentSiddhi under AI & Automation.
  *
  * Capability names and their one-line descriptors are taken from the deck, set in sentence
  * case (2026-10-06) like every other heading on the site;

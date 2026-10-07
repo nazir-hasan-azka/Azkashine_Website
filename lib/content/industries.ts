@@ -31,7 +31,7 @@ export const INDUSTRIES: Industry[] = [
     intro:
       "Telecom operators carry the most operational complexity and the least tolerance for downtime. Our work here centres on AI-based network optimisation and on automating the provisioning cycles that slow customer onboarding.",
     capabilities: ["AI-based network optimisation", "AI-driven automation"],
-    products: ["cloudsiddhi", "nodesiddhi"],
+    products: ["intentsiddhi", "nodesiddhi"],
     primaryCategory: "ai-automation",
   },
   {
@@ -74,7 +74,7 @@ export const INDUSTRIES: Industry[] = [
       "Data governance & ETL",
       "AI-integrated ecosystem",
     ],
-    products: ["nodesiddhi", "cloudsiddhi"],
+    products: ["nodesiddhi", "intentsiddhi"],
     primaryCategory: "digital-platforms",
   },
 ];
