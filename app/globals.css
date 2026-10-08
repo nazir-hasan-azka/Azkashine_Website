@@ -442,12 +442,25 @@ button:hover > .nudge {
   transition: color var(--dur-slower) var(--ease-out-soft);
 }
 
-/* The canvas owns the glyphs from the moment it reports in. It used to wait for the
-   reveal to finish, which was right when the mask was static — now the letters fly in,
-   and an ink heading sitting still underneath them would show through the whole
-   arrival. */
-[data-hero][data-canvas="on"] .hero-h1 {
+/* The canvas owns the glyphs from the moment the page claims them — "pending", set by
+   the inline script in `Hero.tsx` as the HTML parses, then "on" — instantly, with no
+   colour fade. The letters fly in, and ink sitting still underneath them shows through
+   the whole arrival: on a phone, 2026-10-08, the headline read black while the cyan
+   letters spiralled in over it. */
+[data-hero][data-canvas] .hero-h1 {
   color: transparent;
+  transition: none;
+}
+
+/* SAFETY NET. Claimed but never drawn — the script bundle failed to load — and the ink
+   comes back after 8s rather than leaving the page without its headline. "on" removes
+   the animation, and the canvas has the glyphs. */
+[data-hero][data-canvas="pending"] .hero-h1 {
+  animation: hero-ink-back 1ms 8s forwards;
+}
+
+@keyframes hero-ink-back {
+  to { color: var(--hero-ink); }
 }
 
 [data-hero] .hero-h1 span {

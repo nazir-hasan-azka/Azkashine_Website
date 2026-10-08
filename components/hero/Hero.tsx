@@ -45,6 +45,9 @@ export function Hero({ ground = GROUND }: { ground?: HeroGround } = {}) {
     <section
       data-hero
       data-ground={ground}
+      // The inline script below adds `data-canvas` before hydration; React must not
+      // treat that as a mismatch.
+      suppressHydrationWarning
       className="relative isolate -mt-20 min-h-[100svh] overflow-hidden pt-20"
     >
       {/* Order matters: ink heading, then canvas over it, then the page chrome. */}
@@ -53,6 +56,17 @@ export function Hero({ ground = GROUND }: { ground?: HeroGround } = {}) {
           <span key={line}>{line}</span>
         ))}
       </h1>
+
+      {/* CLAIM THE HEADLINE BEFORE FIRST PAINT. Where WebGL2 exists the canvas will draw
+          the letters, so the ink heading must never show: on a phone, 2026-10-08, it sat
+          there in black until the script loaded, then the cyan letters flew in over it.
+          Waiting for React to hydrate is seconds on a slow phone, so this runs as the
+          HTML parses. No WebGL or no JavaScript: nothing is claimed, and the ink stands. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `try{if(document.createElement("canvas").getContext("webgl2"))document.currentScript.parentElement.setAttribute("data-canvas","pending")}catch(e){}`,
+        }}
+      />
 
       <ApertureCanvas lines={lines} fontFamily={heavy.style.fontFamily} ground={ground} />
 

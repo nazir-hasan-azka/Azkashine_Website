@@ -97,7 +97,7 @@ export function Footer() {
           <FooterColumn
             title="Company"
             links={[
-              { label: "About", href: "/about/" },
+              { label: "About us", href: "/about/" },
               { label: "Services", href: "/services/" },
               ...SERVICES.map((s) => ({
                 label: s.name,

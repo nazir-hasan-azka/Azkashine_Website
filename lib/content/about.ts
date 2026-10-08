@@ -20,10 +20,10 @@
 import { SITE } from "./site";
 
 export const ABOUT = {
-  metaTitle: "About",
+  metaTitle: "About us",
   metaDescription:
     "Azkashine Software and Services Private Limited — a Bengaluru-based software and services company: AI & Automation, Digital Platforms, custom software, cloud infra engineering (DevOps), managed services and software quality validation.",
-  crumb: "About",
+  crumb: "About us",
   title: "About Azkashine",
   /* Nazir's wording, 2026-10-06. */
   lede: `${SITE.legalName} is a Bengaluru-based software and services company empowering enterprises with AI & Automation, Digital Platforms, custom software solutions, cloud infra engineering (DevOps), managed services and software quality validation for its collaborating organisations, partners and clients.`,
@@ -32,7 +32,7 @@ export const ABOUT = {
   visionHeading: "Our vision",
   missionHeading: "Our mission",
   valuesHeading: "What we value",
-  chairmanHeading: "From Azkashine Chairman’s desk",
+  chairmanHeading: "Chairman’s message",
 } as const;
 
 /**

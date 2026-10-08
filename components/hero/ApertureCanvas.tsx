@@ -335,6 +335,9 @@ export function ApertureCanvas({
     const canvas = ref.current;
     if (!canvas) return;
     const section = canvas.closest<HTMLElement>("[data-hero]");
+    // The inline script in `Hero.tsx` claimed the headline before first paint. If the
+    // canvas cannot draw after all, hand it straight back to the ink.
+    const release = () => section?.removeAttribute("data-canvas");
     const tune = TUNING[ground];
 
     const gl = canvas.getContext("webgl2", {
@@ -348,19 +351,19 @@ export function ApertureCanvas({
       // assert the volume is actually painted. One fullscreen quad; the cost is noise.
       preserveDrawingBuffer: true,
     });
-    if (!gl) return;
+    if (!gl) return release();
 
     const vs = compile(gl, gl.VERTEX_SHADER, VERT);
     const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
-    if (!vs || !fs) return;
+    if (!vs || !fs) return release();
     const prog = gl.createProgram();
-    if (!prog) return;
+    if (!prog) return release();
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
       console.warn("hero link:", gl.getProgramInfoLog(prog));
-      return;
+      return release();
     }
     gl.useProgram(prog);
 
@@ -403,7 +406,7 @@ export function ApertureCanvas({
 
     const mask = document.createElement("canvas");
     const mctx = mask.getContext("2d");
-    if (!mctx) return;
+    if (!mctx) return release();
 
     /**
      * The headline, as letters rather than as one shape.

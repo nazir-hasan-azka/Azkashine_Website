@@ -168,7 +168,7 @@ export function Navbar() {
             </li>
             <li onMouseEnter={() => canHover() && setMenu(null)}>
               <TopLink href="/about/" onClick={closeAll} light={lightChrome}>
-                About
+                About us
               </TopLink>
             </li>
           </ul>
@@ -336,7 +336,7 @@ export function Navbar() {
                 ))}
               </MobileSection>
 
-              <MobileTop href="/about/">About</MobileTop>
+              <MobileTop href="/about/">About us</MobileTop>
             </ul>
 
             <div className="pb-6 pt-5">
