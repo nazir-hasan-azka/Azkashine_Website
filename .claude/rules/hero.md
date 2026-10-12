@@ -31,3 +31,11 @@ around it. Everything below cost real time to find.
 - **Nothing here measures the DOM.** Every failure of the canvas hero this replaced came
   from measuring. Keep it that way.
 - `prefers-reduced-motion` skips the assembly and paints the final frame. Not optional.
+- **The ink heading must never paint where WebGL2 exists.** It is the fallback, and on a
+  slow phone it sat in black under the flying letters for seconds (2026-10-08). The
+  inline script in `Hero.tsx` sets `data-canvas="pending"` as the HTML parses; the CSS
+  hides the ink on any `data-canvas`, with no transition. If the canvas cannot draw it
+  calls `release()`, and an 8s CSS animation restores the ink if the bundle never loads.
+  Do not move the claim back into the effect: hydration on a throttled phone is seconds.
+  Test it on `out/` with CPU throttling, not on `npm run dev`, which is far too slow to
+  tell you anything.

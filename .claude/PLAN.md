@@ -1711,34 +1711,74 @@ by region** — he kept the region layout's claim and the stationary cards.
 - **The trace did not leave the hero for anyone who scrolled early**: the drop waited 3.4s
   and only skipped once three-quarters of a screen had gone. It now skips at any scroll.
 
+## 2026-10-07 (late) and 08 — IntentSiddhi, the new portrait, the hero's black text
+
+Four commits, all live: `d58417c`, `8d200b6`, `1302089`, `f0d0aa2`. The last deploy is
+`f0d0aa2`, 2026-10-08.
+
+### What shipped
+
+- **CloudSiddhi is now IntentSiddhi** — "Telecom services fulfilment intelligence
+  platform." (Nazir's tagline, in sentence case and the site's British spelling). The
+  coming-soon IntentSiddhi entry is gone, so **8 live, 3 coming soon** (VigilSiddhi,
+  ApexSiddhi, GateSiddhi). Route `/products/intentsiddhi/`; both
+  `/products/cloudsiddhi/` and `/products/cloud-orchestration/` forward to it. Image files
+  renamed with it.
+- **The page body is still CloudSiddhi's deck copy** (deck pp. 14–15: infrastructure
+  lifecycle, AWS / Azure / GCP). There is no IntentSiddhi deck. It is deck-backed, so it
+  satisfies the claims rule, but it reads as cloud provisioning, not telecom fulfilment.
+  See Waiting on Nazir.
+- **New Chairman's portrait** — shot on white, cropped 4:5 to 960 × 1200. The editorial
+  panel turned **white with the card border and shadow** (it was the old photo's grey,
+  `muted-2`), so the photo is part of the card. Capped at 26rem.
+- **"About" → "About us"** in the header, phone menu, footer, crumb and title; the page
+  heading stays "About Azkashine". **"From Azkashine Chairman's desk" → "Chairman's
+  message".** Nazir wrote both in title case; sentence case was kept, as everywhere.
+- **The closing panel's last clause** — "or whether you'd be better served elsewhere" —
+  removed at Nazir's request (`d58417c`).
+- **The hero's black headline, fixed.** On a phone (Nazir's photo, 2026-10-08) the ink
+  heading — the fallback for no WebGL — sat in black while the cyan letters flew in over
+  it. The ink only went transparent once the canvas reported "on", which waited for the
+  JS bundle, hydration and the font. Now an **inline script in `Hero.tsx` claims the
+  headline as the HTML parses** wherever WebGL2 exists (`data-canvas="pending"`), the ink
+  goes transparent with no fade, the canvas hands it back (`release()`) if it cannot draw,
+  and a CSS safety net brings the ink back after 8s if the bundle never arrives. Tested on
+  the production build at 1x and 6x CPU throttle: the ink never painted. Recorded in
+  `rules/hero.md`.
+
+### Tried and rejected
+
+- **Delaying the ink's rise to 1.2s** instead of claiming it at parse time. At 6x CPU
+  throttle the canvas took ~6s to report in, so the ink still showed for seconds and then
+  vanished. A delay only moves the problem; deciding before first paint removes it.
+
 ## Waiting on Nazir
 
-Updated 2026-10-07.
+Updated 2026-10-12. The site is handed over as it stands; these are what is left.
 
-1. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
+1. **IntentSiddhi's page copy.** It still carries CloudSiddhi's deck text (cloud
+   provisioning). Needs a deck or a few lines on what IntentSiddhi does.
+2. **Analytics.** None. Plausible is the choice; it needs `azkashine.com` added in a
    Plausible account, plus the production-only wiring in `app/layout.tsx`.
-2. **The portfolio deck** in `.claude/references/` is on this laptop only. Where it is
+3. **The portfolio deck** in `.claude/references/` is on this laptop only. Where it is
    backed up is Nazir's call.
-3. **Remove the test site on Hostinger** (hPanel): the test.azkashine.com subdomain, the
+4. **Remove the test site on Hostinger** (hPanel): the test.azkashine.com subdomain, the
    `test` folder in `public_html`, and the deploybot FTP account. Not confirmed done.
-4. **The closing panel's last clause** — "…or whether you'd be better served elsewhere."
-   Asked 2026-10-06 whether to keep it; not answered. It is on every inner route.
 5. **May Qatar Aeronautical Academy be named** on the ConnectSiddhi page? Asked
    2026-10-07; not answered. Until then the page says "users" and "in-country hosting".
 6. **Permission for the ten new partner logos.** "Our partners" was confirmed for the
    original five on 2026-09-06; the new ten came from Nazir's list without a separate
    confirmation that each company is happy to be shown.
 7. **Better artwork**: official logo files from Qudrah and Open Insights (both rebuilt from
-   their sites), a larger Prowess logo (their site serves 264×40), and a larger
-   Chairman's photo (the file is 397px, so the panel caps it at 24rem).
+   their sites) and a larger Prowess logo (their site serves 264×40).
 8. **The Digital Platforms practice intro** still reads in the old voice ("…on a Tuesday two
-   years from now, without calling us"). It is not on the home page, so the review
-   document did not cover it; it is on `/what-we-do/` and `/what-we-do/digital-platforms/`.
-9. **Details for the four coming-soon products**, to give them pages.
+   years from now, without calling us"). It is on `/what-we-do/` and
+   `/what-we-do/digital-platforms/`.
+9. **Details for the three coming-soon products**, to give them pages.
 
-Closed since 2026-09-10: the `staging` branch is gone from GitHub; the folder cleanup ran
-(only `Production` and `Old` remain); **section order** is moot — the home page was
-rebuilt.
+Closed since 2026-10-07: the closing panel's last clause (removed, `d58417c`); the larger
+Chairman's photo (new 960 × 1200 portrait, `1302089`). Closed since 2026-09-10: the
+`staging` branch is gone from GitHub; the folder cleanup ran; section order is moot.
 
 ## Open questions for the client
 
